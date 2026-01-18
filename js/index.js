@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const div_pesos = document.getElementById("pesos");
     const btnP18 = document.getElementById("btnP18");
     const btnValidar = document.getElementById("btnValidar"); 
-    const peso_inicial_input = document.getElementById("peso_inicial");       
+    const peso_inicial_input = document.getElementById("peso_inicial");
+    const displayProduccion = document.getElementById("numeroproduccion");
     let mezcladorSeleccionado = null;
     let recetaSeleccionada = null;
     
@@ -29,6 +30,33 @@ document.addEventListener("DOMContentLoaded", function() {
         if (btnValidar.style.display==="none") {
             btnValidar.style.display="block";
         }
+
+        //Obtener la última producción de P18 terminada        
+        console.log("Obteniendo último número de producción...");
+        const datos = new FormData();                
+
+        fetch("procesar.php", {
+            method: "POST",
+            body: datos
+            })
+            .then(response => response.text())
+            .then(data => {
+                //console.log("Respuesta del servidor:", data)
+                const ultimoNumero = parseInt(data, 10); //Convertir a número entero
+
+                if (isNaN(ultimoNumero)) {
+                    console.error("Respuesta inválida del servidor:", data);
+                    return;
+                }   
+
+                window.numeroProduccion = ultimoNumero + 1;
+                displayProduccion.innerHTML = numeroProduccion;
+                //console.log("Número de producción siguiente:", numeroProduccion);
+                //document.getElementById("numeroproduccion").innerHTML = numeroProduccion;                
+            })
+            .catch(error => {
+                console.error(error);
+            });
     })   
 
     // Agregar event listeners a los radio buttons de mezcladores y recetas
@@ -72,29 +100,48 @@ document.addEventListener("DOMContentLoaded", function() {
         //Mostrar en pantalla
         document.getElementById("resultado").innerText = "Validado el: " + fechaHora;
 
-
         //Guardar para el envío posterior
-        document.getElementById("fechaHora").value = fechaHora;
+        /*document.getElementById("fechaHora").value = fechaHora;
         console.log(fechaHora);
         console.log(mezcladorSeleccionado);
-        console.log(recetaSeleccionada);        
-        });
+        console.log(recetaSeleccionada);   
+        console.log("Nº Produccion:", numeroProduccion);*/
 
-        //Obtener la última producción de P18 terminada
-        const numero_produccion = document.getElementById("num_produccion").value;
-        const datos = new FormData();
-        datos.append('numero_produccion', numero_produccion);
+         //Enviar datos a la tabla fab_en_curso
 
-        fetch("procesar.php", {
-            method: "POST",
-            body: datos
+         // Enviar los datos del formulario mediante AJAX
+
+            // Preparar los datos para enviar por AJAX
+            const data = new FormData();
+            data.append("fechaHora", fechaHora);
+            data.append("mezclador", mezcladorSeleccionado);
+            data.append("receta", recetaSeleccionada);
+            data.append("numFabricacion", numeroProduccion);
+
+            // Realizar la solicitud AJAX
+            fetch('procesar.php', {
+                method: 'POST',
+                body: data
             })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("resultado").innerHTML = data;                
+            .then(response => response.json())
+            .then(responseData => {
+                alert(responseData.message);
+                if (responseData.status === 'success') {
+                    // Si los datos fueron guardados correctamente, actualizamos el último número
+                    document.getElementById('ultimoNumero').textContent = numProduccion;
+                }
             })
-            .catch(error => {
-                console.error(error);
-            });
-    
+            .catch(error => console.log('Error al enviar los datos:', error));
+
+
+
+
+
+
+
+
+        });    
+
+       
+       
 });

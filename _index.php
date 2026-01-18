@@ -38,16 +38,18 @@
         <input type="text" id="peso_inicial" name="peso_inicial">
     </div>
 
+    <p id="numeroproduccion"></p>
+
     <div name="botonera">
         <button id="btnValidar" name="btnValidar">Validar</button>
         <p id="resultado"></p>   
         <input type="hidden" id="fechaHora" name="fechaHora">     
     </div>
 
-    <div name="numeroproduccion">
+    <!--<div name="numeroproduccion">
         <label for="num_produccion">Nº de Producción: </label>
         <input type="text" id="num_produccion" name="num_produccion">
-    </div>
+    </div>-->
     
 </body>
     <script src="js/index.js"></script>

@@ -3,8 +3,8 @@
 
     try {
         $conexion = new PDO(DB_DSN, DB_USER, DB_PASS);
-        echo "Conectado";
-        exit();
+        //echo "Conectado";    
+        //echo "<br>";    
     }
     
     catch (PDOException $e) {
