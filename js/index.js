@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function() {
             btnValidar.style.display="block";
         }
 
+        window.producto = "P18";
+
         //Obtener la última producción de P18 terminada        
         console.log("Obteniendo último número de producción...");
         const datos = new FormData();                
@@ -107,24 +109,27 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(recetaSeleccionada);   
         console.log("Nº Produccion:", numeroProduccion);*/
 
-         //Enviar datos a la tabla fab_en_curso
-
-         // Enviar los datos del formulario mediante AJAX
-
+         //Enviar datos a la tabla fab_en_curso mediante AJAX
             // Preparar los datos para enviar por AJAX
+            console.log("Preparando datos para envío AJAX...");
             const data = new FormData();
             data.append("fechaHora", fechaHora);
             data.append("mezclador", mezcladorSeleccionado);
             data.append("receta", recetaSeleccionada);
             data.append("numFabricacion", numeroProduccion);
+            data.append("producto", window.producto);
+            /*console.log("Fecha y Hora:", fechaHora);
+            console.log("Mezclador:", mezcladorSeleccionado);
+            console.log("Receta:", recetaSeleccionada);
+            console.log("Número de Producción:", numeroProduccion);*/
 
             // Realizar la solicitud AJAX
-            fetch('procesar.php', {
+            fetch('enviardatos.php', {
                 method: 'POST',
                 body: data
             })
             .then(response => response.json())
-            .then(responseData => {
+            .then(responseData => {                
                 alert(responseData.message);
                 if (responseData.status === 'success') {
                     // Si los datos fueron guardados correctamente, actualizamos el último número
@@ -132,16 +137,5 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
             .catch(error => console.log('Error al enviar los datos:', error));
-
-
-
-
-
-
-
-
-        });    
-
-       
-       
+        });
 });
