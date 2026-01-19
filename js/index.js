@@ -2,16 +2,19 @@ document.addEventListener("DOMContentLoaded", function() {
     const div_mezcladores = document.getElementById("mezcladores");
     const div_recetas = document.getElementById("recetas");
     const div_pesos = document.getElementById("pesos");
+    const div_reactores = document.getElementById("reactores");    
     const btnP18 = document.getElementById("btnP18");
     const btnValidar = document.getElementById("btnValidar"); 
     const peso_inicial_input = document.getElementById("peso_inicial");
     const displayProduccion = document.getElementById("numeroproduccion");
     let mezcladorSeleccionado = null;
     let recetaSeleccionada = null;
+    let reactorSeleccionado = null;
     
     div_mezcladores.style.display = "none";
     div_recetas.style.display = "none";
     div_pesos.style.display = "none";        
+    div_reactores.style.display="none";
     btnValidar.style.display = "none";    
 
     btnP18.addEventListener("click",function(){

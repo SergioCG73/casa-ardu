@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/style.css" rel="stylesheet" type="text/css">
-    <title>Document</title>
+    <title>Portada</title>
 </head>
 <body>
     <div name="botonera">
         <button id="btnP18" name="btnP18">P18</button>
-    </div>    
+        <button id="btnSulfato" name="btnSulfato">Sulfato</button>
+        <button id="btnFerrico" name="btnFerrico">Férrico</button>
+        <button id="btnHB10" name="btnHB10">HB 10</button>
+        <button id="btnSulfacid" name="btnSulfacid">SulfaCID</button>
+    </div>
 
     <div id="mezcladores">
         <fieldset><legend>Mezcladores</legend>
@@ -33,6 +37,16 @@
         </fieldset>
     </div>
 
+    <div id="reactores">
+        <fieldset><legend>Reactores</legend>
+        <input type="radio" id="R200" name="reactores" value="R200">
+        <label for="R200">R200</label>
+        <input type="radio" id="R201" name="reactores" value="R201">
+        <label for="R201">R201</label>
+        <input type="radio" id="R202" name="reactores" value="R202">
+        <label for="R202">R202</label>
+    </div>
+
     <div id="pesos">
         <label for="peso_inicial">Peso Inicial: </label>
         <input type="text" id="peso_inicial" name="peso_inicial">
@@ -45,12 +59,6 @@
         <p id="resultado"></p>   
         <input type="hidden" id="fechaHora" name="fechaHora">     
     </div>
-
-    <!--<div name="numeroproduccion">
-        <label for="num_produccion">Nº de Producción: </label>
-        <input type="text" id="num_produccion" name="num_produccion">
-    </div>-->
-    
 </body>
     <script src="js/index.js"></script>
 </html>
