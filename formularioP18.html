@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <!--<link href="css/style_Gemini.css" rel="stylesheet" type="text/css">-->
+    <link href="css/style_ChatGPT.css" rel="stylesheet" type="text/css">
     <title>Policloruro</title>
 </head>
 <body>
@@ -17,10 +18,13 @@
                     <br>
                     <input type="radio" id="m215" name="mezclador" value="M215">
                     <label for="m215">M215</label>
-                    <br><br><br>
+                    <br><br>
                     <label for="peso_inicial_mezclador">Peso inicial mezclador:</label>
-                    <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">-->
+                    <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador"> -->                    
                 </fieldset>
+                    <br><br><br>
+                    <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador:</label>
+                    <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
             </div>
 
             <div id="reactores" name="reactores">
@@ -33,10 +37,11 @@
                     <br>
                     <input type="radio" id="r202" name="reactor" value="R202">
                     <label for="r202">R202</label>
-                    <br><br><br>
-                    <label for="peso_inicial_reactor">Peso inicial reactor:</label>
-                    <input type="text" id="peso_inicial_reactor" name="peso_inicial_reactor"> -->
+                    <br><br>                    -->
                 </fieldset>
+                    <br><br><br>
+                    <label for="peso_inicial_reactor" class="input-label">Peso inicial reactor:</label>
+                    <input type="text" id="peso_inicial_reactor" name="peso_inicial_reactor"> 
             </div>
 
             <div id="recetas" name="recetas">
@@ -61,11 +66,8 @@
         </div>
 
         <div id="resultados" name="resultados">
-            <p id="displayProduccion" name="displayProduccion" hidden></p>
+            <p id="displayProduccion" name="displayProduccion"></p>
         </div>
-
-
-
 
     </div>
 </body>
