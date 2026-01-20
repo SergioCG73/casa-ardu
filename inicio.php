@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/style.css" rel="stylesheet" type="text/css">
-    <title>Portada</title>
+    <title>Inicio</title>
 </head>
 <body>
     <div name="botonera">
@@ -15,7 +15,7 @@
         <button id="btnSulfacid" name="btnSulfacid">SulfaCID</button>
     </div>
 
-    <div id="mezcladores">
+    <!--<div id="mezcladores">
         <fieldset><legend>Mezcladores</legend>
             <input type="radio" id="m214" name="mezclador" value="M214">
             <label for="m214">Mezclador M214</label><br>
@@ -58,7 +58,7 @@
         <button id="btnValidar" name="btnValidar">Validar</button>
         <p id="resultado"></p>   
         <input type="hidden" id="fechaHora" name="fechaHora">     
-    </div>
+    </div>-->
 </body>
-    <script src="js/index.js"></script>
+    <script src="js/inicio.js"></script>
 </html>

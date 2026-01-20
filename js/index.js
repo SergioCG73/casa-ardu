@@ -17,7 +17,9 @@ document.addEventListener("DOMContentLoaded", function() {
     div_reactores.style.display="none";
     btnValidar.style.display = "none";    
 
-    btnP18.addEventListener("click",function(){
+    btnP18.addEventListener("click",function(){        
+
+
         if (div_mezcladores.style.display==="none") {
             div_mezcladores.style.display="block";
         }
