@@ -91,6 +91,18 @@ document.addEventListener("DOMContentLoaded", function() {
         this.value = valor;
         console.log("Peso inicial:", valor);
     });
+
+    //Formatea con . de miles los pesos iniciales
+    // Capturar el valor del peso inicial
+    peso_inicial_input.addEventListener("input", function() {
+        // Quitar todo lo que no sea un número
+        let valor = this.value.replace(/\D/g, "");
+        // Formatear con separador de miles
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        // Asignar el valor formateado al input
+        this.value = valor;
+        console.log("Peso inicial:", valor);
+    });
     
     // Acciones validar button
     document.getElementById("btnValidar").addEventListener("click", function() {

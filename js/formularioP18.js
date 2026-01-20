@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", function(){
     const btnRetroceder = document.getElementById("btnRetroceder");
     const displayProduccion = document.getElementById("displayProduccion");
+    const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
+    const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
+
     const producto = "P18"; 
 
     //Obtener la última producción de P18 acabada o en curso
@@ -165,7 +168,46 @@ document.addEventListener("DOMContentLoaded", function(){
         });        
     })    
 
+    //Agregar event listeners a los radio buttons de mezcladores
+        document.addEventListener("change", function(e){
+            if (e.target.name === "mezclador") {
+                console.log("Mezclador seleccionado:", e.target.value);
+                mezcladorSeleccionado = e.target.value;
+            }
+        });
     
+    //Agregar event listeners a los radio buttons de reactores
+        document.addEventListener("change", function(e){
+                if (e.target.name === "reactor") {
+                    console.log("Reactor seleccionado:", e.target.value);
+                    reactorSeleccionado = e.target.value;
+                }
+            });
+
+    //Agregar event listeners a los radio buttons de reactores
+        document.addEventListener("change", function(e){
+                if (e.target.name === "receta") {
+                    console.log("Receta seleccionada:", e.target.value);
+                    recetaSeleccionada = e.target.value;
+                }
+            });    
+
+    // Función para formatear números con separador de miles
+    function formatearNumero(input) {
+        let valor = input.value.replace(/\D/g, ""); // Quitar todo lo que no sea número
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Formatear con puntos
+        input.value = valor;
+        console.log("Valor formateado:", valor);
+    }
+
+    // Seleccionamos los inputs
+    const inputsPesos = [peso_inicial_mezclador, peso_inicial_reactor];
+
+    // Asignamos el mismo listener a ambos
+    inputsPesos.forEach(input => {
+        input.addEventListener("input", () => formatearNumero(input));
+    });
+
 
 
 
