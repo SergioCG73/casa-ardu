@@ -62,8 +62,7 @@ $sql = "SELECT Receta_id, NombreReceta
 
 $stmt = $conexion -> prepare($sql);
 $stmt -> execute();
-$recetas = $stmt -> fetchAll(PDO::FETCH_ASSOC);
-        
+$recetas = $stmt -> fetchAll(PDO::FETCH_ASSOC);       
        
 
 echo json_encode([
