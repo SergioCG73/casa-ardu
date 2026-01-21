@@ -19,8 +19,7 @@ $ultimoNumero = $stmt->fetchColumn(); // devuelve directamente el valor de la pr
 
 
 //Prepara la consulata para obtener la última producción en curso
-
-$sql="SELECT NumeroFabricacion
+$sql="SELECT NumeroFabricacion, FechaTransferenciaMezclador
       FROM fabricaciones_en_curso
       WHERE Producto_id = 'P18'
       ORDER BY NumeroFabricacion DESC
@@ -29,15 +28,19 @@ $sql="SELECT NumeroFabricacion
 $stmt = $conexion->prepare($sql);
 $stmt->execute();
 
-$ultimoNumero_fab_en_curso = $stmt->fetchColumn();
+//$ultimoNumero_fab_en_curso = $stmt->fetchColumn();
+$fila = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$ultimoNumero_fab_en_curso = $fila['NumeroFabricacion'];
+$fechaTransferencia = $fila["FechaTransferenciaMezclador"];
 $ultimoNumero = max($ultimoNumero, $ultimoNumero_fab_en_curso);
+
 
 //Preparar la consulta para obtener los mezcladores vacíos de P18.
 
-$sql = "SELECT Equipo_id, NombreEquipo 
+$sql = "SELECT Equipo_id, NombreEquipo, Estado
         FROM equipos 
-        WHERE Tipo ='Mezclador' AND Estado = 'Vacio' AND ProductoFabricado = 'P18'";
+        WHERE Tipo ='Mezclador' AND ProductoFabricado = 'P18'";
 
 $stmt = $conexion -> prepare($sql);
 $stmt ->execute();
@@ -45,9 +48,9 @@ $mezcladores = $stmt ->fetchAll(PDO::FETCH_ASSOC);
     
 //Preparar consulta para obtener los reactores vacíos de P18.
 
-$sql = "SELECT Equipo_id, NombreEquipo
+$sql = "SELECT Equipo_id, NombreEquipo, ProductoFabricado
         FROM equipos
-        WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
+        WHERE Tipo = 'Reactor' AND Estado = 'Vacio'";
 
 $stmt = $conexion -> prepare($sql);
 $stmt -> execute();
@@ -68,7 +71,8 @@ echo json_encode([
     "ultimoNumero" => $ultimoNumero,
     "mezcladores" => $mezcladores,
     "reactores" => $reactores,
-    "recetas" => $recetas
+    "recetas" => $recetas,
+    "fechaTransferencia" => $fechaTransferencia
 ]);
         
 
