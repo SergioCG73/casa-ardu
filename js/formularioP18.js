@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", function(){
     const displayProduccion = document.getElementById("displayProduccion");
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
+    let mezcladorSeleccionado;
+    let reactorSeleccionado;
+    let recetaSeleccionada;
 
     const producto = "P18"; 
 
@@ -223,14 +226,47 @@ document.addEventListener("DOMContentLoaded", function(){
             String(ahora.getHours()).padStart(2, '0') + ":" +
             String(ahora.getMinutes()).padStart(2, '0') + ":" +
             String(ahora.getSeconds()).padStart(2, '0');
+        
+        // Convertir y limpiar el valor del peso 
+        const pesoMezcladorInt = parseInt( peso_inicial_mezclador.value.replace(/\./g, ""), 10 );
+        const mensaje = document.getElementById("mensaje");              
+        
+        //Validación de que hay seleccionado un Mezclador
+        if (!mezcladorSeleccionado) {
+            alert("Debe seleccionar un Mezclador");
+            return;
+        }
 
-        //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso
-        const pesoMezcladorInt = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
-        console.log("Fecha y Hora Inicio: ", fechaHora);
-        console.log("Mezclador: ", mezcladorSeleccionado);
-        console.log("Reactor: ", reactorSeleccionado);
-        console.log("Receta: ", recetaSeleccionada);
-        console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+        //Validación estricta del peso_inicial_mezclador
+        if (!peso_inicial_mezclador.value.trim() || isNaN(pesoMezcladorInt)) {    
+            alert("Debe ingresar un PESO válido para el mezclador");
+            return; // Detiene el proceso 
+        }
+
+        //Validación de que hay seleccionado un Reactor
+        if (!reactorSeleccionado) {
+            alert("Debe seleccionar un Reactor");
+            return;
+        }
+
+        //Validación de que hay seleccionada una Receta
+        if (!recetaSeleccionada) {
+            alert("Debe seleccionar una Receta");
+            return;
+        }
+
+        
+
+
+
+        
+            //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso        
+            console.log("Fecha y Hora Inicio: ", fechaHora);
+            console.log("Mezclador: ", mezcladorSeleccionado);
+            console.log("Reactor: ", reactorSeleccionado);
+            console.log("Receta: ", recetaSeleccionada);
+            console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+                
 
 
     })
