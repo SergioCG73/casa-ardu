@@ -4,7 +4,7 @@ require_once("miconexion.php");
 
 $numProduccion = $_POST['num_produccion'] ?? '';
 
-// Preparar la consulta
+// Preparar la consulta para obtener la última producción terminada
 $sql = "SELECT NumeroFabricacion 
         FROM p18_terminadas 
         ORDER BY NumeroFabricacion DESC 
@@ -17,18 +17,21 @@ $stmt->execute();
 
 $ultimoNumero = $stmt->fetchColumn(); // devuelve directamente el valor de la primera columna
 
-// Obtenemos el resultado con store_result + bind_result
 
-/*if ($ultimoNumero !== false) {
-    //echo "Última producción registrada: $ultimoNumero";    
-    //$numProduccion = $ultimoNumero + 1;    
-    echo $ultimoNumero;
-    
-} else {
-    //echo "No hay producciones registradas";
-    echo 0;
-}*/
+//Prepara la consulata para obtener la última producción en curso
 
+$sql="SELECT NumeroFabricacion
+      FROM fabricaciones_en_curso
+      WHERE Producto_id = 'P18'
+      ORDER BY NumeroFabricacion DESC
+      LIMIT 1";
+
+$stmt = $conexion->prepare($sql);
+$stmt->execute();
+
+$ultimoNumero_fab_en_curso = $stmt->fetchColumn();
+
+$ultimoNumero = max($ultimoNumero, $ultimoNumero_fab_en_curso);
 
 //Preparar la consulta para obtener los mezcladores vacíos de P18.
 
@@ -39,10 +42,6 @@ $sql = "SELECT Equipo_id, NombreEquipo
 $stmt = $conexion -> prepare($sql);
 $stmt ->execute();
 $mezcladores = $stmt ->fetchAll(PDO::FETCH_ASSOC);
-/*echo json_encode([
-    "ultimoNumero" => $ultimoNumero,
-    "mezcladores" => $mezcladores
-]);*/
     
 //Preparar consulta para obtener los reactores vacíos de P18.
 
