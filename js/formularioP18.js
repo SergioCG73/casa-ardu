@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", function(){
     let reactorSeleccionado;
     let recetaSeleccionada;
 
-    const producto = "P18"; 
+    const producto = "P18";
 
-    //Obtener la última producción de P18 acabada o en curso
+    //Obtener la última producción de P18 acabada o en curso, mezcladores disponibles, reactores dispones y recetas
     console.log("Obteniendo última producción de P18");
     const datos = new FormData();
 
@@ -34,7 +34,149 @@ document.addEventListener("DOMContentLoaded", function(){
 
         //Manejar los mezcladores
         const listaMezcladores = data.mezcladores;
-        console.log("Mezcladores recibidos: ", listaMezcladores);                
+        console.log("Mezcladores recibidos: ", listaMezcladores);
+
+        //Manejar los reactores
+        const listaReactores = data.reactores;
+        console.log("Reactores recibidos: ", listaReactores);
+
+        //Manejar las fabricaciaones en curso
+        const listaFabricacionesCurso = data.fechaTransferencia;
+        console.log("Producciones en curso:", listaFabricacionesCurso);        
+
+        //Manejar INICIO o NO de las producciones de P18
+        
+        
+        const mezcladoresDisponibles = listaMezcladores.filter(r=> r.Estado === "Vacio");
+        const mezcladoresAveriados = listaMezcladores.filter(r => r.Estado === "Averiado");
+        
+        const reactoresDisponibles = listaReactores.length;
+        const reactoresP18Disponibles = listaReactores.filter(r => r.ProductoFabricado === "P18");
+        const reactoresP18Averiados = listaReactores.filter(r => r.Estado === "Averiado");
+        
+        const reactoresSulfatoDisponibles = listaReactores.filter(r => r.ProductoFabricado === "Sulfato");
+        
+        const fechaTransferenciaMezclador = data.fechaTransferencia;
+        
+                
+        let sePuedeFabricarP18 = false;
+        let sePuedeFabricarSulfato = false;
+        const ahora = new Date();
+        const fechaTransferenciaDate = new Date(fechaTransferenciaMezclador);
+        const diferenciaHoras = (ahora - fechaTransferenciaDate) / (1000 * 60 * 60);        
+   
+        /*if ( (reactoresP18Disponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
+             (reactoresP18Disponibles.length === 0 && diferenciaHoras >= 4) ) { 
+              sePuedeFabricarP18 = true; 
+            }
+        
+        if (mezcladoresAveriados.length === 1 && mezcladoresDisponibles.length >= 1 && reactoresP18Disponibles.length === 1){
+            sePuedeFabricarP18 = true; 
+        }
+
+        if (mezcladoresAveriados.length === 1 && mezcladoresDisponibles.length === 0 && reactoresP18Disponibles.length === 1){
+            sePuedeFabricarP18 = false; 
+        }
+
+        if (mezcladoresAveriados.length === 1 && mezcladoresDisponibles.length === 1 && reactoresP18Disponibles.length > 1 && diferenciaHoras > 4){
+            sePuedeFabricarP18 = true; 
+        }*/
+
+        // Regla general
+if (
+  (reactoresP18Disponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
+  (reactoresP18Disponibles.length === 0 && diferenciaHoras >= 4)
+) {
+  sePuedeFabricarP18 = true;
+}
+
+// Casos con mezcladores averiados
+if (
+  mezcladoresAveriados.length === 1 &&
+  mezcladoresDisponibles.length >= 1 &&
+  reactoresP18Disponibles.length === 1
+) {
+  sePuedeFabricarP18 = true;
+}
+
+if (
+  mezcladoresAveriados.length === 1 &&
+  mezcladoresDisponibles.length === 0 &&
+  reactoresP18Disponibles.length === 1
+) {
+  sePuedeFabricarP18 = false;
+}
+
+if (
+  mezcladoresAveriados.length === 1 &&
+  mezcladoresDisponibles.length === 1 &&
+  reactoresP18Disponibles.length > 1 &&
+  diferenciaHoras > 4
+) {
+  sePuedeFabricarP18 = true;
+}
+
+//CONDICIONES CON REACTOR AVERIADO
+
+if (
+  reactoresP18Averiados.length === 1 &&
+  mezcladoresDisponibles.length === 2 &&
+  reactoresP18Disponibles.length === 0
+) {
+  sePuedeFabricarP18 = false;
+
+} else if (
+  reactoresP18Averiados.length === 1 &&
+  mezcladoresDisponibles.length === 2 &&
+  reactoresP18Disponibles.length === 1
+) {
+  sePuedeFabricarP18 = true;
+
+} else if (
+  reactoresP18Averiados.length === 1 &&
+  mezcladoresDisponibles.length === 1
+) {
+  sePuedeFabricarP18 = false;
+}
+
+
+
+
+
+
+
+            console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
+            //console.log("Mezcladores averiados: ", mezcladoresAveriados);
+            console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
+            console.log("Reactores averidados: ", reactoresP18Averiados);
+            //console.log("Reactores Sulfato disponibles: ", reactoresSulfatoDisponibles);            
+            //console.log("Ahora: ", ahora);
+            //console.log("Fecha Transferencia:", fechaTransferenciaMezclador);
+            console.log("Diferencia tiempo:", diferenciaHoras);
+            console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
+            
+
+        return;
+
+        //CONDICIÓN EXTRA¨: Para cuando están los reactores llenos
+
+        if (mezcladoresDisponibles >=1 && reactoresSulfatoDisponibles >=1) {
+            //Solo se permite si NO hay mezcladores en uso
+            const hayMezcladoresEnUso = data.hayMezcladoresEnUso ?? false;
+
+            if (!hayMezcladoresEnUso) {
+                sePuedeFabricarSulfato = true;
+            }
+        }
+        
+        if (!sePuedeFabricarP18) {
+            alert("No se puede iniciar producción de P18: falta reactor P18 o mezclador disponible."); 
+        }        
+        
+        if (!sePuedeFabricarSulfato) {
+            console.log("No se puede fabricar Sulfato porque hay un mezclador en uso.");
+        }
+        
 
         //Contenedor de mezcladores
         const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
@@ -57,11 +199,7 @@ document.addEventListener("DOMContentLoaded", function(){
             label.appendChild(document.createTextNode(mezclador.Equipo_id));
 
             contenedorMezcladores.appendChild(label);
-        });
-
-        //Manejar los reactores
-        const listaReactores = data.reactores;
-        console.log("Reactores recibidos: ", listaReactores);
+        });        
 
         //Contenedor de reactores
         const contenedorReactores = document.querySelector("#reactores fieldset");
@@ -205,10 +343,6 @@ document.addEventListener("DOMContentLoaded", function(){
             alert("Debe ingresar un PESO válido para el reactor");
             return; // Detiene el proceso 
         }
-
-        
-
-
 
         
             //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso        
