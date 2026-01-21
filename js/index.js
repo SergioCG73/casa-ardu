@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("Peso inicial:", valor);
     });
     
-    // Acciones validar button
+    // Acciones del boton VALIDAR
     document.getElementById("btnValidar").addEventListener("click", function() {
         const ahora = new Date();
         //Formato YYYY-MM-DD HH:MM:SS (ideal para MySQL)
