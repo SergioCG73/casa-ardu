@@ -39,26 +39,7 @@ document.addEventListener("DOMContentLoaded", function(){
         //Contenedor de mezcladores
         const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
 
-        //Crear dinámicamente los radios de mezcladores
-
-        /*listaMezcladores.forEach((mezclador, index) => {
-            const id = "mezclador_" + mezclador.Equipo_id;
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = "mezclador";
-            input.id = id;
-            input.value = mezclador.Equipo_id;
-            
-            const label = document.createElement("label");
-            label.htmlFor = id;
-            //label.textContent = mezclador.NombreEquipo;
-            label.textContent = mezclador.Equipo_id;
-
-            contenedorMezcladores.appendChild(input);
-            contenedorMezcladores.appendChild(label);
-            contenedorMezcladores.appendChild(document.createElement("br"));            
-        });*/
-
+        //Crear dinámicamente los radios de mezcladores        
         listaMezcladores.forEach((mezclador) => {
             const id = "mezclador_" + mezclador.Equipo_id;
 
@@ -86,24 +67,6 @@ document.addEventListener("DOMContentLoaded", function(){
         const contenedorReactores = document.querySelector("#reactores fieldset");
 
         //Crear dinámicamente los radios de reactores
-        /*listaReactores.forEach((reactor, index) => {
-            const id = "reactor_" + reactor.Equipo_id;
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = "reactor";
-            input.id = id;
-            input.value = reactor.Equipo_id;
-
-            const label = document.createElement("label");
-            label.htmlFor = id;            
-            label.class="radio-label"; //Nuevo
-            label.textContent = reactor.Equipo_id;
-
-            contenedorReactores.appendChild(input);
-            contenedorReactores.appendChild(label);
-            contenedorReactores.appendChild(document.createElement("br"));
-        });*/
-
         listaReactores.forEach((reactor) => {
             const id = "reactor_" + reactor.Equipo_id;
 
@@ -130,25 +93,7 @@ document.addEventListener("DOMContentLoaded", function(){
         //Contenedor de recetas
         const contenedorRecetas = document.querySelector("#recetas fieldset");
 
-        //Crear dinámicamente los radios de recetas
-        /*listaRecetas.forEach((receta, index) => {
-            const id = "R${index +1}_p18";
-            //const id = receta.Receta_id;
-            const input = document.createElement("input");
-            input.type ="radio";
-            input.name ="receta";
-            input.id = id;
-            input.value = receta.NombreReceta;
-
-            const label = document.createElement("label");
-            label.htmlFor = id;
-            label.class="radio-label";
-            label.textContent = receta.NombreReceta;
-
-            contenedorRecetas.appendChild(input);
-            contenedorRecetas.appendChild(label);
-            contenedorRecetas.appendChild(document.createElement("br"));
-        });*/
+        //Crear dinámicamente los radios de recetas        
         listaRecetas.forEach((receta, index) => {
             const id = `R${index + 1}_p18`; // ahora sí funciona correctamente
 
@@ -229,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function(){
         
         // Convertir y limpiar el valor del peso 
         const pesoMezcladorInt = parseInt( peso_inicial_mezclador.value.replace(/\./g, ""), 10 );
-        const mensaje = document.getElementById("mensaje");              
+        const pesoReactorInt = parseInt( peso_inicial_reactor.value.replace(/\./g, ""), 10 );        
         
         //Validación de que hay seleccionado un Mezclador
         if (!mezcladorSeleccionado) {
@@ -253,6 +198,12 @@ document.addEventListener("DOMContentLoaded", function(){
         if (!recetaSeleccionada) {
             alert("Debe seleccionar una Receta");
             return;
+        }
+
+         //Validación estricta del peso_inicial_mezclador
+        if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
+            alert("Debe ingresar un PESO válido para el reactor");
+            return; // Detiene el proceso 
         }
 
         
