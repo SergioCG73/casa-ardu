@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(){
     const btnRetroceder = document.getElementById("btnRetroceder");
+    const btnIniciarProduccion = document.getElementById("btnIniciarProduccion");
     const displayProduccion = document.getElementById("displayProduccion");
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
@@ -117,10 +118,7 @@ document.addEventListener("DOMContentLoaded", function(){
             label.appendChild(document.createTextNode(reactor.Equipo_id));
 
             contenedorReactores.appendChild(label);
-        });
-
-
-        
+        });        
 
         //Manejar las recetas
         const listaRecetas = data.recetas;
@@ -208,11 +206,32 @@ document.addEventListener("DOMContentLoaded", function(){
         input.addEventListener("input", () => formatearNumero(input));
     });
 
-
-
-
     //Acción para el botón Retroceder
     btnRetroceder.addEventListener("click", function(){
         window.location.href="inicio.php";
+    })
+
+    //Acción para el boton Iniciar
+    btnIniciarProduccion.addEventListener("click", function(){
+        const ahora = new Date();
+
+        //Formato YYYY-MM-DD HH:MM:SS (ideal para MySQL)
+        const fechaHora =
+            ahora.getFullYear() + "-" +
+            String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
+            String(ahora.getDate()).padStart(2, '0') + " " +
+            String(ahora.getHours()).padStart(2, '0') + ":" +
+            String(ahora.getMinutes()).padStart(2, '0') + ":" +
+            String(ahora.getSeconds()).padStart(2, '0');
+
+        //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso
+        const pesoMezcladorInt = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
+        console.log("Fecha y Hora Inicio: ", fechaHora);
+        console.log("Mezclador: ", mezcladorSeleccionado);
+        console.log("Reactor: ", reactorSeleccionado);
+        console.log("Receta: ", recetaSeleccionada);
+        console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+
+
     })
 })
