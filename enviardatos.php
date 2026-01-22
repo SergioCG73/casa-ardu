@@ -9,11 +9,16 @@
     // Recoger los datos enviados por AJAX
 
         require_once("miconexion.php");
-        $fechaHora = $_POST["fechaHora"] ?? '';        
-        $mezclador = $_POST["mezclador"] ?? '';
-        $receta = $_POST["receta"] ?? 0;
+        $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";        
+        $mezclador = $_POST["mezclador"] ?? "";
+        $reactor = $_POST["reactor"] ?? "";
+        $receta = $_POST["receta"] ?? "";
+        $numeroProduccion = $_POST["numeroProduccion"] ?? "";
+        $producto = $_POST["producto"] ?? "";
+
+        /*$receta = $_POST["receta"] ?? 0;
         $numFabricacion = $_POST['numFabricacion'] ?? '';
-        $producto = $_POST['producto'] ?? '';
+        $producto = $_POST['producto'] ?? '';*/
        
        /* $respuesta = [
             "ok" => true,
@@ -26,10 +31,11 @@
     //Validación de datos recibidos
 
     if (
-    empty($fechaHora) ||
+    empty($fechaHoraInicio) ||
     empty($mezclador) ||
+    empty($reactor) ||
     empty($receta) ||
-    empty($numFabricacion) ||
+    empty($numeroProduccion) ||
     empty($producto)
     ) {
     header('Content-Type: application/json');
@@ -41,37 +47,36 @@
     }
 
     try {
-        $insertSQL = "
-        INSERT INTO fabricaciones_en_curso 
-        (FechaInicio, Mezclador, Receta, NumeroFabricacion, Producto_id) 
-        VALUES (:fechaHora, :mezclador, :receta, :numFabricacion, :producto)
-        ";
+        $insertSQL = "INSERT INTO fabricaciones_en_curso
+                      (FechaInicio, Mezclador, Reactor, Receta, NumeroFabricacion, Producto_id)
+                      VALUES (:fechaHoraInicio, :Mezclador, :Reactor, :Receta, :numeroProduccion, :Producto)";
 
-    $insertStmt = $conexion->prepare($insertSQL);
-    $insertStmt->bindParam(':fechaHora', $fechaHora, PDO::PARAM_STR);
-    $insertStmt->bindParam(':mezclador', $mezclador, PDO::PARAM_STR);
-    $insertStmt->bindParam(':receta', $receta, PDO::PARAM_STR);
-    $insertStmt->bindParam(':numFabricacion', $numFabricacion, PDO::PARAM_STR);
-    $insertStmt->bindParam(':producto', $producto, PDO::PARAM_STR);
+        $insertStmt = $conexion->prepare($insertSQL);
+        $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
+        $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
+        $insertStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
+        $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
+        $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
+        $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
 
-    $insertStmt->execute();
+        $insertStmt->execute();
 
-    header('Content-Type: application/json');
-    echo json_encode([
-        'ok' => true,
-        'message' => 'Datos guardados correctamente'
-    ]);
-    exit;
+        header('Content-Type: application/json');
+        echo json_encode([
+            'ok' => true,
+            'message' => 'Datos guardados correctamente'
+        ]);
+        exit;
 
-} catch (PDOException $e) {
+    } catch (PDOException $e) {
 
-    header('Content-Type: application/json');
-    echo json_encode([
-        'ok' => false,
-        'error' => $e->getMessage()
-    ]);
-    exit;
-}
+        header('Content-Type: application/json');
+        echo json_encode([
+            'ok' => false,
+            'error' => $e->getMessage()
+        ]);
+        exit;
+    }
     }      
  
 ?>
