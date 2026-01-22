@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function(){
     let mezcladorSeleccionado;
     let reactorSeleccionado;
     let recetaSeleccionada;
+    let numeroProduccion;
 
     const producto = "P18";    
 
@@ -36,10 +37,10 @@ document.addEventListener("DOMContentLoaded", function(){
             return;
         }
 
-        window.numeroProduccion = ultimoNumero + 1;
+        numeroProduccion = ultimoNumero + 1;
         //let mezcladores;
         displayProduccion.innerHTML = numeroProduccion; //Mostramos el número de producción 
-        console.log("Producción siguiente:", numeroProduccion);
+        //console.log("Producción siguiente:", numeroProduccion);
 
         //Manejar los mezcladores
         const listaMezcladores = data.mezcladores;
@@ -155,15 +156,15 @@ document.addEventListener("DOMContentLoaded", function(){
         }
 
         //console.logs para comprobar las condiciones de las CONDICIONES DE MOSTRAR FORMULARIO P18
-            console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
+            //console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
             //console.log("Mezcladores averiados: ", mezcladoresAveriados);
-            console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
+            //console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
             //console.log("Reactores averidados: ", reactoresP18Averiados);
             //console.log("Reactores Sulfato disponibles: ", reactoresSulfatoDisponibles);            
             //console.log("Ahora: ", ahora);
             //console.log("Fecha Transferencia:", fechaTransferenciaMezclador);
-            console.log("Diferencia tiempo:", diferenciaHoras);
-            console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
+            //console.log("Diferencia tiempo:", diferenciaHoras);
+            //console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
         //return;
         //Contenedor de mezcladores
         const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
@@ -289,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function(){
         const ahora = new Date();
 
         //Formato YYYY-MM-DD HH:MM:SS (ideal para MySQL)
-        const fechaHora =
+        const fechaHoraInicio =
             ahora.getFullYear() + "-" +
             String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
             String(ahora.getDate()).padStart(2, '0') + " " +
@@ -325,18 +326,41 @@ document.addEventListener("DOMContentLoaded", function(){
             return;
         }
 
-         //Validación estricta del peso_inicial_mezclador
-        if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
+        //Validación estricta del peso_inicial_reactor
+        /*if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
             alert("Debe ingresar un PESO válido para el reactor");
             return; // Detiene el proceso 
-        }
+        }*/
 
         
-            //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso        
-            console.log("Fecha y Hora Inicio: ", fechaHora);
-            console.log("Mezclador: ", mezcladorSeleccionado);
-            console.log("Reactor: ", reactorSeleccionado);
-            console.log("Receta: ", recetaSeleccionada);
-            console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+        //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso        
+        console.log("Nº Produccion:", numeroProduccion);
+        console.log("Fecha y Hora Inicio: ", fechaHoraInicio);
+        console.log("Mezclador: ", mezcladorSeleccionado);
+        console.log("Reactor: ", reactorSeleccionado);
+        console.log("Receta: ", recetaSeleccionada);            
+        console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+
+        //Iniciar envio de datos a la tabla fabricaciones_en_curso mediante AJAX
+        //Preparamos los datos para ser enviados por AJAX
+        console.log("Preparando datos para enviarlos por AJAX...");
+        const data = new FormData();
+
+        data.append("fechaHoraInicio", fechaHoraInicio);
+        data.append("mezclador", mezcladorSeleccionado);
+        data.append("reactor", reactorSeleccionado);
+        data.append("receta", recetaSeleccionada);
+        data.append("numeroProduccion", numeroProduccion);
+        data.append("producto", producto);
+
+        fetch("enviardatos.php", {
+            method: "POST",
+            body: data
+        })
+        .then(response => response.json())        
+        .then(json => console.log("Dasos enviados:", json))
+        .catch(error => console.log("Error al enviar los datos: ", error))
+
+
     })
 })
