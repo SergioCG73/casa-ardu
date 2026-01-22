@@ -338,13 +338,5 @@ document.addEventListener("DOMContentLoaded", function(){
             console.log("Reactor: ", reactorSeleccionado);
             console.log("Receta: ", recetaSeleccionada);
             console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
-
     })
-
-        
-    
-
-
-
-
 })
