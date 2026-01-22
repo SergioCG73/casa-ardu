@@ -8,7 +8,16 @@ document.addEventListener("DOMContentLoaded", function(){
     let reactorSeleccionado;
     let recetaSeleccionada;
 
-    const producto = "P18";
+    const producto = "P18";    
+
+    function mostrarModal(mensaje) {
+        document.getElementById("mensajeModal").textContent = mensaje;
+        document.getElementById("miModal").style.display = "flex";
+
+        document.getElementById("btnAceptar").onclick = function () {
+            window.location.href = "inicio.php";
+        };
+    }
 
     //Obtener la última producción de P18 acabada o en curso, mezcladores disponibles, reactores dispones y recetas
     console.log("Obteniendo última producción de P18");
@@ -34,15 +43,15 @@ document.addEventListener("DOMContentLoaded", function(){
 
         //Manejar los mezcladores
         const listaMezcladores = data.mezcladores;
-        console.log("Mezcladores recibidos: ", listaMezcladores);
+        //console.log("Mezcladores recibidos: ", listaMezcladores);
 
         //Manejar los reactores
         const listaReactores = data.reactores;
-        console.log("Reactores recibidos: ", listaReactores);
+        //console.log("Reactores recibidos: ", listaReactores);
 
         //Manejar las fabricaciaones en curso
         const listaFabricacionesCurso = data.fechaTransferencia;
-        console.log("Producciones en curso:", listaFabricacionesCurso);        
+        //console.log("Producciones en curso:", listaFabricacionesCurso);        
 
         //Manejar INICIO o NO de las producciones de P18
         
@@ -64,120 +73,98 @@ document.addEventListener("DOMContentLoaded", function(){
         const ahora = new Date();
         const fechaTransferenciaDate = new Date(fechaTransferenciaMezclador);
         const diferenciaHoras = (ahora - fechaTransferenciaDate) / (1000 * 60 * 60);        
-   
-        /*if ( (reactoresP18Disponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
-             (reactoresP18Disponibles.length === 0 && diferenciaHoras >= 4) ) { 
-              sePuedeFabricarP18 = true; 
-            }
-        
-        if (mezcladoresAveriados.length === 1 && mezcladoresDisponibles.length >= 1 && reactoresP18Disponibles.length === 1){
-            sePuedeFabricarP18 = true; 
+
+        //CONDICIONES PARA MOSTRAR FORMULARIO PRODUCCIONES P18
+        //Regla general
+        if (
+            (reactoresP18Disponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
+            (reactoresP18Disponibles.length === 0 && diferenciaHoras >= 4)
+        ) {
+            sePuedeFabricarP18 = true;
         }
 
-        if (mezcladoresAveriados.length === 1 && mezcladoresDisponibles.length === 0 && reactoresP18Disponibles.length === 1){
-            sePuedeFabricarP18 = false; 
+        // Casos con mezcladores averiados
+        if (
+            mezcladoresAveriados.length === 1 &&  //===1
+            mezcladoresDisponibles.length >= 1 &&
+            reactoresP18Disponibles.length === 1
+        ) {
+            sePuedeFabricarP18 = true;
         }
 
-        if (mezcladoresAveriados.length === 1 && mezcladoresDisponibles.length === 1 && reactoresP18Disponibles.length > 1 && diferenciaHoras > 4){
-            sePuedeFabricarP18 = true; 
-        }*/
+        if (
+            mezcladoresAveriados.length >= 1 && // === 1
+            mezcladoresDisponibles.length === 0 &&
+            reactoresP18Disponibles.length <= 1 && //=== 1
+            diferenciaHoras > 4
+        ) {
+            sePuedeFabricarP18 = false;
+            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
+        }
 
-        // Regla general
-if (
-  (reactoresP18Disponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
-  (reactoresP18Disponibles.length === 0 && diferenciaHoras >= 4)
-) {
-  sePuedeFabricarP18 = true;
-}
+        if (
+            mezcladoresAveriados.length === 1 &&
+            mezcladoresDisponibles.length === 1 &&
+            reactoresP18Disponibles.length > 1 &&
+            diferenciaHoras > 4
+        ) {
+            sePuedeFabricarP18 = true;
+        }
 
-// Casos con mezcladores averiados
-if (
-  mezcladoresAveriados.length === 1 &&
-  mezcladoresDisponibles.length >= 1 &&
-  reactoresP18Disponibles.length === 1
-) {
-  sePuedeFabricarP18 = true;
-}
+        //Reglas con 1 reactor averiado
+        if (
+            reactoresP18Averiados.length === 1 &&
+            mezcladoresDisponibles.length === 2 &&
+            reactoresP18Disponibles.length === 0
+        ) {
+            sePuedeFabricarP18 = false;
+            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
 
-if (
-  mezcladoresAveriados.length === 1 &&
-  mezcladoresDisponibles.length === 0 &&
-  reactoresP18Disponibles.length === 1
-) {
-  sePuedeFabricarP18 = false;
-}
+        } else if (
+            reactoresP18Averiados.length === 1 &&
+            mezcladoresDisponibles.length === 2 &&
+            reactoresP18Disponibles.length === 1
+        ) {
+            sePuedeFabricarP18 = true;
 
-if (
-  mezcladoresAveriados.length === 1 &&
-  mezcladoresDisponibles.length === 1 &&
-  reactoresP18Disponibles.length > 1 &&
-  diferenciaHoras > 4
-) {
-  sePuedeFabricarP18 = true;
-}
-
-//CONDICIONES CON REACTOR AVERIADO
-
-if (
-  reactoresP18Averiados.length === 1 &&
-  mezcladoresDisponibles.length === 2 &&
-  reactoresP18Disponibles.length === 0
-) {
-  sePuedeFabricarP18 = false;
-
-} else if (
-  reactoresP18Averiados.length === 1 &&
-  mezcladoresDisponibles.length === 2 &&
-  reactoresP18Disponibles.length === 1
-) {
-  sePuedeFabricarP18 = true;
-
-} else if (
-  reactoresP18Averiados.length === 1 &&
-  mezcladoresDisponibles.length === 1
-) {
-  sePuedeFabricarP18 = false;
-}
-
-
-
-
-
-
-
-            console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
-            //console.log("Mezcladores averiados: ", mezcladoresAveriados);
-            console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
-            console.log("Reactores averidados: ", reactoresP18Averiados);
-            //console.log("Reactores Sulfato disponibles: ", reactoresSulfatoDisponibles);            
-            //console.log("Ahora: ", ahora);
-            //console.log("Fecha Transferencia:", fechaTransferenciaMezclador);
-            console.log("Diferencia tiempo:", diferenciaHoras);
-            console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
-            
-
-        return;
+        } else if (
+            reactoresP18Averiados.length === 1 &&
+            mezcladoresDisponibles.length === 1
+        ) {
+            sePuedeFabricarP18 = false;
+            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
+        }
 
         //CONDICIÓN EXTRA¨: Para cuando están los reactores llenos
 
-        if (mezcladoresDisponibles >=1 && reactoresSulfatoDisponibles >=1) {
+         if (mezcladoresDisponibles >=1 && reactoresSulfatoDisponibles >=1) {
             //Solo se permite si NO hay mezcladores en uso
             const hayMezcladoresEnUso = data.hayMezcladoresEnUso ?? false;
 
-            if (!hayMezcladoresEnUso) {
+        if (!hayMezcladoresEnUso) {
                 sePuedeFabricarSulfato = true;
             }
         }
         
         if (!sePuedeFabricarP18) {
-            alert("No se puede iniciar producción de P18: falta reactor P18 o mezclador disponible."); 
+            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
         }        
         
         if (!sePuedeFabricarSulfato) {
             console.log("No se puede fabricar Sulfato porque hay un mezclador en uso.");
         }
-        
 
+        //console.logs para comprobar las condiciones de las CONDICIONES DE MOSTRAR FORMULARIO P18
+            console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
+            //console.log("Mezcladores averiados: ", mezcladoresAveriados);
+            console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
+            //console.log("Reactores averidados: ", reactoresP18Averiados);
+            //console.log("Reactores Sulfato disponibles: ", reactoresSulfatoDisponibles);            
+            //console.log("Ahora: ", ahora);
+            //console.log("Fecha Transferencia:", fechaTransferenciaMezclador);
+            console.log("Diferencia tiempo:", diferenciaHoras);
+            console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
+        //return;
         //Contenedor de mezcladores
         const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
 
@@ -351,8 +338,13 @@ if (
             console.log("Reactor: ", reactorSeleccionado);
             console.log("Receta: ", recetaSeleccionada);
             console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
-                
-
 
     })
+
+        
+    
+
+
+
+
 })
