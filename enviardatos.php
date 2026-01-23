@@ -2,10 +2,11 @@
 
 //Este fichero recibe los datos enviados por AJAX desde index.js y los inserta en la tabla fab_en_curso
 
-    ob_clean();
-    header('Content-Type: application/json; charset=utf-8');
-    error_reporting(0);
-    ini_set('display_errors', 0);
+    //Prepara tu script PHP para responder JSON limpio y sin errores visibles.
+    ob_clean(); //Limpia el buffer de salida
+    header('Content-Type: application/json; charset=utf-8'); //Le dice al navegador que la respuesta es un JSON
+    error_reporting(0); //Desactiva la salida de errores PHP
+    ini_set('display_errors', 0); //Oculta los errores en pantalla
 
 // Envio de datos a la tabla fabricaciones_en_curso
     //Verificar si los datos se recibieron desde AJAX    
@@ -79,6 +80,6 @@
         ]);
         exit;
     }
-    }      
+    }
  
 ?>

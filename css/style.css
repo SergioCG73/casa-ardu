@@ -212,3 +212,24 @@ br {
     text-align: center;
     font-family: sans-serif;
 }
+
+/* Modal datos enviados correctamente */
+
+.mi-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;          /* 🔴 IMPORTANTE: oculto por defecto */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.mi-modal-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 250px;
+    text-align: center;
+}
+
