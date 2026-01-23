@@ -325,13 +325,6 @@ document.addEventListener("DOMContentLoaded", function(){
             alert("Debe seleccionar una Receta");
             return;
         }
-
-        //Validación estricta del peso_inicial_reactor
-        /*if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
-            alert("Debe ingresar un PESO válido para el reactor");
-            return; // Detiene el proceso 
-        }*/
-
         
         //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso        
         console.log("Nº Produccion:", numeroProduccion);
@@ -360,7 +353,5 @@ document.addEventListener("DOMContentLoaded", function(){
         .then(response => response.json())        
         .then(json => console.log("Dasos enviados:", json))
         .catch(error => console.log("Error al enviar los datos: ", error))
-
-
     })
 })
