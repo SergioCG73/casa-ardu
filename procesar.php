@@ -33,6 +33,24 @@ $sql = "SELECT NumeroFabricacion, FechaTransferenciaMezclador
 $stmt = $conexion->prepare($sql);
 $stmt->execute();
 $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+// NUEVO SQL // ========================= 24/01/26 17:00
+
+//===================================
+// Todas las producciones en curso
+//===================================
+
+$sql = "SELECT FechaInicio, Mezclador, Reactor,
+               Receta, NumeroFabricacion, Producto_id
+        FROM fabricaciones_en_curso
+        WHERE Producto_id = 'P18'
+        ORDER BY NumeroFabricacion DESC";
+
+
+$stmt = $conexion->prepare($sql);
+$stmt-> execute();
+$producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 if ($fila) {
     $ultimoNumeroCurso = $fila['NumeroFabricacion'];
@@ -109,7 +127,8 @@ echo json_encode([
     "mezcladores" => $mezcladores,
     "reactores" => $reactores,
     "recetas" => $recetas,
-    "fechaTransferencia" => $fechaTransferencia
+    "fechaTransferencia" => $fechaTransferencia,
+    "producciones_en_curso" => $producciones_en_curso
 ], JSON_UNESCAPED_UNICODE);
 
 exit;
