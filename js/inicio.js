@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", function()
                         <th>Mezclador</th>                        
                         <th>Reactor</th>                                                
                         <th>Receta</th>
-                        <th>Editar</th>
-                        <th>Borrar</th>
+                        <th></th>
+                        <th></th>
                     </tr> 
                         `;
             data.producciones_en_curso.forEach(p =>{
@@ -44,10 +44,16 @@ document.addEventListener("DOMContentLoaded", function()
                         <td>${p.Mezclador}</td>                        
                         <td>${p.Reactor}</td>
                         <td>${p.Receta}</td>
-                        <td><button class="btnEditar" 
-                                    data-info='${JSON.stringify(p)}'>EDITAR</button>
+                        <td><img src="images/editar_azul_icon_20x20.png" 
+                                 alt="Editar" 
+                                 class="icono-editar"
+                                 data-info='${JSON.stringify(p)}'>                            
                         </td>
-                        <td>BORRAR</td>
+                        <td><img src="images/basura_rojo_icon_15x20.png" 
+                                 alt="Borrar"
+                                 class="icono-borrar">
+                            </button>                                   
+                        </td>
                         
                     </tr> 
                     `;
@@ -65,20 +71,18 @@ document.addEventListener("DOMContentLoaded", function()
                         })
                     })
 
-
                     div_producciones_en_curso.style.display = "block";
             })
-            
-        
-        });
 
-        
-        
+            document.querySelector('.icono-borrar').addEventListener('click', function() {
+                console.log("Borrar pulsado");
+            });
 
-    
+            document.querySelector('.icono-editar').addEventListener('click', function() {
+                console.log("Editar pulsado");
+                window.location.href = "formularioP18.html";
+            });
 
-
-
-
+            });
     
 });
