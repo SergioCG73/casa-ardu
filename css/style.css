@@ -244,7 +244,7 @@ br {
 .tabla {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .tabla th {
@@ -280,5 +280,14 @@ br {
     border-radius: 4px;    
     text-align: center;
 }
+
+.icono-borrar {
+    cursor: pointer;      /* Para que parezca clicable */
+}
+
+.icono-editar {
+    cursor: pointer;
+}
+
 
 
