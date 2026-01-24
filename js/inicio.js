@@ -1,8 +1,84 @@
 document.addEventListener("DOMContentLoaded", function()
 {
     const btnP18 = document.getElementById("btnP18");   
+    const div_producciones_en_curso = document.getElementById("producciones_en_curso");
+    const tabla = document.getElementById("tabla");
 
+    //Acción boton P18
     btnP18.addEventListener("click", function(){
         window.location.href="formularioP18.html";
-    })   
+    });
+
+    //Cargar producciones en curso
+
+    fetch("procesar.php")
+        .then(response => response.json())
+        .then(data => {
+            if (!data.ok) return;
+
+            //Mostrar el div
+            div_producciones_en_curso.style.display = "block";
+
+            //Construir tabla
+
+            let html = `
+                    <tr>
+                        <th>Producto</th>
+                        <th>Nº Fabricación</th>
+                        <th>Fecha/Hora Inicio</th>
+                        <th>Mezclador</th>                        
+                        <th>Reactor</th>                                                
+                        <th>Receta</th>
+                        <th>Editar</th>
+                        <th>Borrar</th>
+                    </tr> 
+                        `;
+            data.producciones_en_curso.forEach(p =>{
+                html += `                    
+                    <tr>
+                        <td class="${p.Producto_id === 'P18' ? 'p18_destacado' : ''} producto_${p.Producto_id}">
+                            ${p.Producto_id}
+                        </td>
+                        <td>${p.NumeroFabricacion}</td>
+                        <td>${p.FechaInicio}</td>
+                        <td>${p.Mezclador}</td>                        
+                        <td>${p.Reactor}</td>
+                        <td>${p.Receta}</td>
+                        <td><button class="btnEditar" 
+                                    data-info='${JSON.stringify(p)}'>EDITAR</button>
+                        </td>
+                        <td>BORRAR</td>
+                        
+                    </tr> 
+                    `;
+                    tabla.innerHTML = html;
+
+                    document.querySelectorAll(".btnEditar").forEach(btn => {
+                        btn.addEventListener("click", function() {
+                            //Recuperar datos de la fila
+                            const datos = JSON.parse(this.dataset.info);
+                            //Guardarlos en localStorage
+                            localStorage.setItem("editarP18", JSON.stringify(datos));
+
+                            //Redirigir al formulario
+                            window.location.href ="formularioP18.html";
+                        })
+                    })
+
+
+                    div_producciones_en_curso.style.display = "block";
+            })
+            
+        
+        });
+
+        
+        
+
+    
+
+
+
+
+    
 });
