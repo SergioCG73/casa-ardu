@@ -74,14 +74,16 @@ document.addEventListener("DOMContentLoaded", function()
                     div_producciones_en_curso.style.display = "block";
             })
 
+            document.querySelector('.icono-editar').addEventListener('click', function() {
+                console.log("Editar pulsado");
+                window.location.href = "formularioP18.html";
+            });            
+            
             document.querySelector('.icono-borrar').addEventListener('click', function() {
                 console.log("Borrar pulsado");
             });
 
-            document.querySelector('.icono-editar').addEventListener('click', function() {
-                console.log("Editar pulsado");
-                window.location.href = "formularioP18.html";
-            });
+            
 
             });
     
