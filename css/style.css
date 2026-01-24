@@ -233,3 +233,52 @@ br {
     text-align: center;
 }
 
+.producciones_en_curso {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.tabla th {
+    padding: 8px;
+    border-bottom: 3px solid #ccc;
+    text-align: center;
+}
+
+.tabla td {
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla tr:hover {
+    background: #f9f9f9;
+}
+
+.p18_destacado {
+    background-color: #d4a017; 
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;    
+    text-align: center;
+}
+
+.sulfato_destacado {
+    background-color: grey; 
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;    
+    text-align: center;
+}
+
+
