@@ -44,17 +44,17 @@ document.addEventListener("DOMContentLoaded", function()
                         <td>${p.Mezclador}</td>                        
                         <td>${p.Reactor}</td>
                         <td>${p.Receta}</td>
-                        <td><img src="images/editar_azul_icon_20x20.png" 
+                        <td>
+                            <img src="images/editar_azul_icon_20x20.png" 
                                  alt="Editar" 
                                  class="icono-editar"
                                  data-info='${JSON.stringify(p)}'>                            
                         </td>
-                        <td><img src="images/basura_rojo_icon_15x20.png" 
+                        <td>
+                            <img src="images/basura_rojo_icon_15x20.png" 
                                  alt="Borrar"
-                                 class="icono-borrar">
-                            </button>                                   
-                        </td>
-                        
+                                 class="icono-borrar">                            
+                        </td>                        
                     </tr> 
                     `;
                     tabla.innerHTML = html;
