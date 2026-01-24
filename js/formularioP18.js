@@ -11,6 +11,25 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const producto = "P18";    
 
+
+        // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===
+    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));
+
+    if (datosEdicion) {
+        console.log("Modo edición activado:", datosEdicion);
+
+        document.getElementById("producto").value = datosEdicion.Producto_id;
+        document.getElementById("numeroFabricacion").value = datosEdicion.NumeroFabricacion;
+        document.getElementById("fechaInicio").value = datosEdicion.FechaInicio;
+        document.getElementById("mezclador").value = datosEdicion.Mezclador;
+        document.getElementById("reactor").value = datosEdicion.Reactor;
+        document.getElementById("receta").value = datosEdicion.Receta;
+
+        // Si quieres bloquear el número de fabricación:
+        // document.getElementById("numeroFabricacion").readOnly = true;
+    }
+
+
     function mostrarModal(mensaje) {
         const modal = document.getElementById("modal");
         document.getElementById("modalMsg").textContent = mensaje;
