@@ -20,14 +20,7 @@ document.addEventListener("DOMContentLoaded", function(){
     // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
 
     if (datosEdicion && modo === "editar") {        
-        console.log("Modo edición activado:", datosEdicion);
-        //Seleccion de radios dinámicos
-        //document.getElementById("mezclador").value = datosEdicion.Mezclador;
-        //document.getElementById("reactor").value = datosEdicion.Reactor;
-        //document.getElementById("receta").value = datosEdicion.Receta;        
-        //document.getElementById("producto").value = datosEdicion.Producto_id;        
-        //document.getElementById("numeroFabricacion").value = datosEdicion.NumeroFabricacion;
-        //document.getElementById("fechaInicio").value = datosEdicion.FechaInicio;       
+        console.log("Modo edición activado:", datosEdicion);        
 
         // Si quieres bloquear el número de fabricación:
         // document.getElementById("numeroFabricacion").readOnly = true;
@@ -44,13 +37,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Evitar validación de pesos
         peso_inicial_mezclador.required = false;
-        peso_inicial_reactor.required = false;
-
-    // Evitar alertas del botón Iniciar
-        /*btnValidar.onclick = function(e) {
-            e.preventDefault();
-            alert("En modo edición no se inicia producción. Aquí deberías guardar cambios.");
-        };*/
+        peso_inicial_reactor.required = false;   
     }
 
     function mostrarModal(mensaje) {
@@ -126,13 +113,7 @@ document.addEventListener("DOMContentLoaded", function(){
             const diferenciaHoras = (ahora - fechaTransferenciaDate) / (1000 * 60 * 60);        
         } else {
             console.log("No hay fecha de transferencia disponible");
-        }        
-        
-
-        /*console.log("Fecha Transferencia Mezclador: ", fechaTransferenciaMezclador);
-        console.log("Ahora: ", ahora);
-        console.log(diferenciaHoras);
-        return;*/
+        }
 
     //CONDICIONES PARA MOSTRAR FORMULARIO PRODUCCIONES P18 copilot
     // --------------------------------------------------
@@ -229,21 +210,10 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log("No se puede fabricar Sulfato porque hay un mezclador en uso.");
     }
 
-        //console.logs para comprobar las condiciones de las CONDICIONES DE MOSTRAR FORMULARIO P18
-            //console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
-            //console.log("Mezcladores averiados: ", mezcladoresAveriados);
-            //console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
-            //console.log("Reactores averidados: ", reactoresP18Averiados);
-            //console.log("Reactores Sulfato disponibles: ", reactoresSulfatoDisponibles);            
-            //console.log("Ahora: ", ahora);
-            //console.log("Fecha Transferencia:", fechaTransferenciaMezclador);
-            //console.log("Diferencia tiempo:", diferenciaHoras);
-            //console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
-        //return;
-        //Contenedor de mezcladores
+    //Contenedor de mezcladores
         const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
 
-        //Crear dinámicamente los radios de mezcladores        
+    //Crear dinámicamente los radios de mezcladores        
         listaMezcladores.forEach((mezclador) => {
             const id = "mezclador_" + mezclador.Equipo_id;
 
@@ -304,8 +274,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 radioReactor.checked = true;
                 reactorSeleccionado = datosEdicion;
             }
-        }   
-
+        }
 
         //Manejar las recetas
         const listaRecetas = data.recetas;
