@@ -20,7 +20,8 @@
     $reactor = $_POST["reactor"] ?? "";
     $receta = $_POST["receta"] ?? "";
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
-    $producto = $_POST["producto"] ?? "";        
+    $producto = $_POST["producto"] ?? "";
+    $pesoInicialMezclador = $_POST["pesoInicialMezclador"]; //NUEVO
 
     //Validación de datos recibidos
 
@@ -30,7 +31,8 @@
         empty($reactor) ||
         empty($receta) ||
         empty($numeroProduccion) ||
-        empty($producto)
+        empty($producto) ||
+        empty($pesoInicialMezclador) //NUEVO
     ) {
         header('Content-Type: application/json');
         echo json_encode([
@@ -43,27 +45,29 @@
     try {
     //SQL para INSERT datos en fabricaciones_en_curso
         $insertSQL = "INSERT INTO fabricaciones_en_curso
-                      (FechaInicio, Mezclador, Reactor, Receta, NumeroFabricacion, Producto_id)
-                      VALUES (:fechaHoraInicio, :Mezclador, :Reactor, :Receta, :numeroProduccion, :Producto)";
+                      (FechaInicio, Mezclador, PesoInicialMezclador, Reactor, Receta, NumeroFabricacion, Producto_id) 
+                      VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Reactor, :Receta, :numeroProduccion, :Producto)";
 
         $insertStmt = $conexion->prepare($insertSQL);
         $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
         $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
+        $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);//NUEVO
         $insertStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
         $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
         $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
         $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
 
-        $insertStmt->execute();    
+        $insertStmt->execute();
 
     //SQL para UPDATE estados en la tabla equipos
     
         $updateSQL ="UPDATE equipos
                      SET Estado = 'En uso'
-                     WHERE Equipo_id = :Mezclador";
+                     WHERE Equipo_id IN (:Mezclador, :Reactor)";
 
         $updateStmt = $conexion->prepare($updateSQL);
-        $updateStmt-> bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
+        $updateStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
+        $updateStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
 
         $updateStmt->execute();
         
