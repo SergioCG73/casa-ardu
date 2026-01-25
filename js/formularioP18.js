@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(){
-    const btnRetroceder = document.getElementById("btnRetroceder");
-    //const btnIniciarProduccion = document.getElementById("btnIniciarProduccion");
+    const btnRetroceder = document.getElementById("btnRetroceder");    
     const btnValidar = document.getElementById("btnValidar");
     const displayProduccion = document.getElementById("displayProduccion");
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
@@ -10,17 +9,14 @@ document.addEventListener("DOMContentLoaded", function(){
     let recetaSeleccionada;
     let numeroProduccion;
 
-    //const producto = "P18";    
-
-    const modo = localStorage.getItem("modoP18");  // "crear" o "editar"
-    //const datosEditar = localStorage.getItem("editarP18");
+    const producto = localStorage.getItem("producto");
+    const modo = localStorage.getItem("modoP18");  // "crear" o "editar"    
     const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));    
-    
 
     // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
 
     if (datosEdicion && modo === "editar") {        
-        console.log("Modo edición activado:", datosEdicion);        
+        console.log("Modo edición activado:", datosEdicion); return;  
 
         // Si quieres bloquear el número de fabricación:
         // document.getElementById("numeroFabricacion").readOnly = true;
@@ -245,8 +241,7 @@ document.addEventListener("DOMContentLoaded", function(){
         //Contenedor de reactores
         const contenedorReactores = document.querySelector("#reactores fieldset");
 
-        //Crear dinámicamente los radios de reactores
-        //listaReactores.forEach((reactor) => {
+        //Crear dinámicamente los radios de reactores        
         reactoresP18Disponibles.forEach((reactor) => {
             const id = "reactor_" + reactor.Equipo_id;
 
@@ -358,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function(){
         window.location.href="inicio.php";
     })
 
-    //Acción para el boton Iniciar
+    //Acción para el btnValidar
     btnValidar.addEventListener("click", function(e){
 
         if (modo==="editar") {
@@ -418,12 +413,13 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log("Preparando datos para enviarlos por AJAX...");
         const data = new FormData();
 
+        data.append("numeroProduccion", numeroProduccion);
         data.append("fechaHoraInicio", fechaHoraInicio);
         data.append("mezclador", mezcladorSeleccionado);
         data.append("reactor", reactorSeleccionado);
-        data.append("receta", recetaSeleccionada);
-        data.append("numeroProduccion", numeroProduccion);
-        data.append("producto", producto);
+        data.append("receta", recetaSeleccionada);        
+        data.append("pesoInicialMezclador", pesoMezcladorInt); //NUEVO
+        data.append("producto", producto);        
 
         fetch("enviardatos.php", {
             method: "POST",
