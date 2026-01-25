@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(){
     const btnRetroceder = document.getElementById("btnRetroceder");
-    const btnIniciarProduccion = document.getElementById("btnIniciarProduccion");
+    //const btnIniciarProduccion = document.getElementById("btnIniciarProduccion");
+    const btnValidar = document.getElementById("btnValidar");
     const displayProduccion = document.getElementById("displayProduccion");
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
@@ -9,26 +10,48 @@ document.addEventListener("DOMContentLoaded", function(){
     let recetaSeleccionada;
     let numeroProduccion;
 
-    const producto = "P18";    
+    //const producto = "P18";    
 
+    const modo = localStorage.getItem("modoP18");  // "crear" o "editar"
+    //const datosEditar = localStorage.getItem("editarP18");
+    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));    
+    
 
-        // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===
-    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));
+    // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
 
-    if (datosEdicion) {
+    if (datosEdicion && modo === "editar") {        
         console.log("Modo edición activado:", datosEdicion);
-
-        document.getElementById("producto").value = datosEdicion.Producto_id;
-        document.getElementById("numeroFabricacion").value = datosEdicion.NumeroFabricacion;
-        document.getElementById("fechaInicio").value = datosEdicion.FechaInicio;
-        document.getElementById("mezclador").value = datosEdicion.Mezclador;
-        document.getElementById("reactor").value = datosEdicion.Reactor;
-        document.getElementById("receta").value = datosEdicion.Receta;
+        //Seleccion de radios dinámicos
+        //document.getElementById("mezclador").value = datosEdicion.Mezclador;
+        //document.getElementById("reactor").value = datosEdicion.Reactor;
+        //document.getElementById("receta").value = datosEdicion.Receta;        
+        //document.getElementById("producto").value = datosEdicion.Producto_id;        
+        //document.getElementById("numeroFabricacion").value = datosEdicion.NumeroFabricacion;
+        //document.getElementById("fechaInicio").value = datosEdicion.FechaInicio;       
 
         // Si quieres bloquear el número de fabricación:
         // document.getElementById("numeroFabricacion").readOnly = true;
+        desactivarValidaciones();
     }
 
+    function desactivarValidaciones() {
+        console.log("Validaciones desactivadas (modo edición)");
+
+    // Evitar validaciones de selección
+        mezcladorSeleccionado = true;
+        reactorSeleccionado = true;
+        recetaSeleccionada = true;
+
+    // Evitar validación de pesos
+        peso_inicial_mezclador.required = false;
+        peso_inicial_reactor.required = false;
+
+    // Evitar alertas del botón Iniciar
+        /*btnValidar.onclick = function(e) {
+            e.preventDefault();
+            alert("En modo edición no se inicia producción. Aquí deberías guardar cambios.");
+        };*/
+    }
 
     function mostrarModal(mensaje) {
         const modal = document.getElementById("modal");
@@ -81,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function(){
         //console.log("Producciones en curso:", listaFabricacionesCurso);
         
 
-        //Manejar INICIO o NO de las producciones de P18        
+        //Manejar INICIO o NO de las producciones de P18      
         
         const mezcladoresDisponibles = listaMezcladores.filter(r=> r.Estado === "Vacio");
         const mezcladoresAveriados = listaMezcladores.filter(r => r.Estado === "Averiado");
@@ -178,8 +201,7 @@ document.addEventListener("DOMContentLoaded", function(){
         mezcladoresDisponibles.length === 1
     ) {
         sePuedeFabricarP18 = false;
-        mostrarModal("3No es posible iniciar P18: un reactor está averiado y el único mezclador disponible está ocupado.");1
-
+        mostrarModal("3No es posible iniciar P18: un reactor está averiado y el único mezclador disponible está ocupado.");
     }
 
     // --------------------------------------------------
@@ -198,10 +220,10 @@ document.addEventListener("DOMContentLoaded", function(){
     // MENSAJES FINALES
     // --------------------------------------------------
 
-    if (!sePuedeFabricarP18) {
+    if (modo !== "editar" && !sePuedeFabricarP18) {
         mostrarModal("4No es posible iniciar P18 con la configuración actual de equipos.");
-
     }
+
 
     if (!sePuedeFabricarSulfato) {
         console.log("No se puede fabricar Sulfato porque hay un mezclador en uso.");
@@ -239,7 +261,16 @@ document.addEventListener("DOMContentLoaded", function(){
             label.appendChild(document.createTextNode(mezclador.Equipo_id));
 
             contenedorMezcladores.appendChild(label);
-        });        
+        });
+
+        if (modo === "editar" && datosEdicion){ //Marcar y asignar valor
+            console.log ("LLegamos... 1");
+            const radioMezclador = document.querySelector(`input[name="mezclador"][value="${datosEdicion.Mezclador}"]`);
+            if (radioMezclador) {
+                radioMezclador.checked = true;
+                mezcladorSeleccionado = datosEdicion.Mezclador;
+            }
+        }
 
         //Contenedor de reactores
         const contenedorReactores = document.querySelector("#reactores fieldset");
@@ -265,9 +296,20 @@ document.addEventListener("DOMContentLoaded", function(){
             contenedorReactores.appendChild(label);
         });        
 
+        if (modo === "editar" && datosEdicion) {
+            console.log ("LLegamos... 2");
+            const radioReactor = document.querySelector(`input[name="reactor"][value="${datosEdicion.Reactor}"]`);
+
+            if (radioReactor) {
+                radioReactor.checked = true;
+                reactorSeleccionado = datosEdicion;
+            }
+        }   
+
+
         //Manejar las recetas
         const listaRecetas = data.recetas;
-        console.log("Recetas recibidas: ", listaRecetas);
+        //console.log("Recetas recibidas: ", listaRecetas);
 
         //Contenedor de recetas
         const contenedorRecetas = document.querySelector("#recetas fieldset");
@@ -290,8 +332,17 @@ document.addEventListener("DOMContentLoaded", function(){
             label.appendChild(document.createTextNode(receta.NombreReceta));
 
             contenedorRecetas.appendChild(label);
-        });        
-    })    
+        });     
+
+        if (modo === "editar" && datosEdicion) {
+            console.log ("LLegamos... 3");
+            const radioReceta = document.querySelector(`input[name="receta"][value="${datosEdicion.Receta}"]`);
+            if (radioReceta) {
+                radioReceta.checked = true;
+                recetaSeleccionada = datosEdicion.Receta;
+            }
+        }
+    })
 
     //Agregar event listeners a los radio buttons de mezcladores
         document.addEventListener("change", function(e){
@@ -339,7 +390,13 @@ document.addEventListener("DOMContentLoaded", function(){
     })
 
     //Acción para el boton Iniciar
-    btnIniciarProduccion.addEventListener("click", function(){
+    btnValidar.addEventListener("click", function(e){
+
+        if (modo==="editar") {
+            e.preventDefault();
+            alert("En modo edición no se valida ni se inicia producción");
+            return;
+        }
         const ahora = new Date();
 
         //Formato YYYY-MM-DD HH:MM:SS (ideal para MySQL)
