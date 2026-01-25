@@ -1,14 +1,23 @@
 document.addEventListener("DOMContentLoaded", function()
 {
     const btnP18 = document.getElementById("btnP18");   
+    const btnSulfato = document.getElementById("btnSulfato");
     const div_producciones_en_curso = document.getElementById("producciones_en_curso");
     const tabla = document.getElementById("tabla");
 
     btnP18.addEventListener("click", function(){
         localStorage.removeItem("editarP18");
         localStorage.setItem("modoP18", "crear");
+        localStorage.setItem("producto", "p18");
         window.location.href="formularioP18.html";
     });
+
+    btnSulfato.addEventListener("click", function(){
+        localStorage.removeItem("editarSulfato");
+        localStorage.setItem("modoSulfato", "crearSulfato");
+        localStorage.setItem("producto", "sulfato");
+        //window.location.href="formularioP18.html";
+    })
 
 
     //Cargar producciones en curso
@@ -89,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function()
                 window.location.href = "formularioP18.html";
             });
             });
-
             
             document.querySelector('.icono-borrar').addEventListener('click', function() {
                 console.log("Borrar pulsado");
