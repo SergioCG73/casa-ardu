@@ -40,18 +40,24 @@ $fila = $stmt->fetch(PDO::FETCH_ASSOC);
 // Todas las producciones en curso
 //===================================
 
-$sql = "SELECT FechaInicio, Mezclador, Reactor,
+/*$sql = "SELECT FechaInicio, Mezclador, Reactor,
                Receta, NumeroFabricacion, Producto_id
         FROM fabricaciones_en_curso
         WHERE Producto_id = 'P18'
-        ORDER BY NumeroFabricacion DESC";
+        ORDER BY NumeroFabricacion DESC";*/
+
+        $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor,
+                        Receta, NumeroFabricacion, Producto_id
+                FROM fabricaciones_en_curso
+                WHERE Producto_id = 'P18'
+                ORDER BY NumeroFabricacion DESC";
 
 
 $stmt = $conexion->prepare($sql);
 $stmt-> execute();
 $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
+// Manejo de los datos devueltos en $fila
 if ($fila) {
     $ultimoNumeroCurso = $fila['NumeroFabricacion'];
     $fechaTransferencia = $fila['FechaTransferenciaMezclador'];
@@ -99,9 +105,13 @@ $mezcladores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // ===============================
 // Reactores
 // ===============================
-$sql = "SELECT Equipo_id, NombreEquipo, ProductoFabricado
+/*$sql = "SELECT Equipo_id, NombreEquipo, ProductoFabricado, Estado
         FROM equipos
-        WHERE Tipo = 'Reactor' AND Estado = 'Vacio'";
+        WHERE Tipo = 'Reactor' AND Estado = 'Vacio'";*/
+
+$sql = "SELECT Equipo_id, NombreEquipo, ProductoFabricado, Estado
+        FROM equipos
+        WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
 
 $stmt = $conexion->prepare($sql);
 $stmt->execute();
