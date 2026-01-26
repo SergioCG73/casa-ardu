@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function()
     const btnP18 = document.getElementById("btnP18");   
     const btnSulfato = document.getElementById("btnSulfato");
     const div_producciones_en_curso = document.getElementById("producciones_en_curso");
-    const tabla = document.getElementById("tabla");
+    const tabla = document.getElementById("tabla");    
 
     btnP18.addEventListener("click", function(){
         localStorage.removeItem("editarP18");
@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function()
         localStorage.setItem("producto", "sulfato");
         //window.location.href="formularioP18.html";
     })
-
 
     //Cargar producciones en curso
 
