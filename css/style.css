@@ -98,6 +98,8 @@ input[type="text"] {
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     box-sizing: border-box;
+    text-align: end;
+    font-size: 18px;
 }
 
 input[type="text"]:focus {
