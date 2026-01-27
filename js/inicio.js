@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function()
     fetch("procesar.php")
         .then(response => response.json())
         .then(data => {
+            console.log("data: ", data);
             if (!data.ok) return;
 
             //Mostrar el div
@@ -66,23 +67,10 @@ document.addEventListener("DOMContentLoaded", function()
                                  class="icono-borrar">                            
                         </td>                        
                     </tr> 
-                    `;
+                    `;                    
+            })      
                     tabla.innerHTML = html;
-
-                    document.querySelectorAll(".btnEditar").forEach(btn => {
-                        btn.addEventListener("click", function() {
-                            //Recuperar datos de la fila
-                            const datos = JSON.parse(this.dataset.info);
-                            //Guardarlos en localStorage
-                            localStorage.setItem("editarP18", JSON.stringify(datos));
-
-                            //Redirigir al formulario
-                            window.location.href ="formularioP18.html";
-                        })
-                    })
-
                     div_producciones_en_curso.style.display = "block";
-            })           
             
             document.querySelectorAll('.icono-editar').forEach(icono => {
                icono.addEventListener('click', function() {
@@ -98,8 +86,10 @@ document.addEventListener("DOMContentLoaded", function()
             });
             });
             
-            document.querySelector('.icono-borrar').addEventListener('click', function() {
-                console.log("Borrar pulsado");
+            document.querySelectorAll('.icono-borrar').forEach(icono => {
+                icono.addEventListener("click", function() {
+                    console.log("Se ha pulsado borrar");
+                })
+            })
             });
-            });    
-});
+});    
