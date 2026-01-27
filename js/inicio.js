@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function()
     const div_producciones_en_curso = document.getElementById("producciones_en_curso");
     const tabla = document.getElementById("tabla");    
 
+    //Definimos el estado inicial al abrir la página
+    localStorage.setItem("modo", "inicial");
+    const modo = localStorage.getItem("modo");
+    console.log("modo: ", modo);
+
+    //Agregamos el escuchadores a los botones
     btnP18.addEventListener("click", function(){
         localStorage.removeItem("editarP18");
         localStorage.setItem("modoP18", "crear");
@@ -20,57 +26,63 @@ document.addEventListener("DOMContentLoaded", function()
     })
 
     //Cargar producciones en curso
-
-    fetch("procesar.php")
+    fetch("models/leer.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modo })
+        })
         .then(response => response.json())
         .then(data => {
             console.log("data: ", data);
-            if (!data.ok) return;
-
+            if (!data.ok) return;            
+            
             //Mostrar el div
-            div_producciones_en_curso.style.display = "block";
-
+                //div_producciones_en_curso.style.display = "block";
+            
             //Construir tabla
 
             let html = `
-                    <tr>
-                        <th>Producto</th>
-                        <th>Nº Fabricación</th>
-                        <th>Fecha/Hora Inicio</th>
-                        <th>Mezclador</th>                        
-                        <th>Reactor</th>                                                
-                        <th>Receta</th>
-                        <th></th>
-                        <th></th>
-                    </tr> 
-                        `;
+                <tr>
+                    <th>Producto</th>
+                    <th>Nº Fabricación</th>
+                    <th>Fecha/Hora Inicio</th>
+                    <th>Mezclador</th>                        
+                    <th>Reactor</th>                                                
+                    <th>Receta</th>
+                    <th></th>
+                    <th></th>
+                </tr> 
+                `;
+
             data.producciones_en_curso.forEach(p =>{ //Luego se transforma en this.dataset.info
-                html += `                    
-                    <tr>
-                        <td class="${p.Producto_id === 'P18' ? 'p18_destacado' : ''} producto_${p.Producto_id}">
-                            ${p.Producto_id}
-                        </td>
-                        <td>${p.NumeroFabricacion}</td>
-                        <td>${p.FechaInicio}</td>
-                        <td>${p.Mezclador}</td>                        
-                        <td>${p.Reactor}</td>
-                        <td>${p.Receta}</td>
-                        <td>
-                            <img src="images/editar_azul_icon_20x20.png" 
-                                 alt="Editar" 
-                                 class="icono-editar"
-                                 data-info='${JSON.stringify(p)}'>                            
-                        </td>
-                        <td>
-                            <img src="images/basura_rojo_icon_15x20.png" 
-                                 alt="Borrar"
-                                 class="icono-borrar">                            
-                        </td>                        
-                    </tr> 
-                    `;                    
-            })      
-                    tabla.innerHTML = html;
-                    div_producciones_en_curso.style.display = "block";
+            html += `                    
+                <tr>
+                    <td class="${p.Producto_id === 'P18' ? 'p18_destacado' : ''} producto_${p.Producto_id}">
+                               ${p.Producto_id}
+                    </td>
+                    <td>${p.NumeroFabricacion}</td>
+                    <td>${p.FechaInicio}</td>
+                    <td>${p.Mezclador}</td>                        
+                    <td>${p.Reactor}</td>
+                    <td>${p.Receta}</td>
+                    <td>
+                        <img src="images/editar_azul_icon_20x20.png" 
+                             alt="Editar" 
+                             class="icono-editar"
+                             data-info='${JSON.stringify(p)}'>                            
+                    </td>
+                    <td>
+                        <img src="images/basura_rojo_icon_15x20.png" 
+                             alt="Borrar"
+                             class="icono-borrar">                            
+                    </td>                        
+                </tr> 
+                `;                    
+        });
+    
+            tabla.innerHTML = html;
+            //Mostrar el div
+            div_producciones_en_curso.style.display = "block";            
             
             document.querySelectorAll('.icono-editar').forEach(icono => {
                icono.addEventListener('click', function() {
