@@ -112,10 +112,19 @@ function sePuedeFabricarP18(data) {
     const reactoresDisponibles = data.reactoresP18Disponibles ?? [];
     const reactoresAveriados = data.reactoresP18Averiados ?? [];
 
+    console.log ("Mezcladores Disponibles: ", mezcladoresDisponibles);
+    console.log ("Mezcladores Averiados: ", mezcladoresAveriados);
+    console.log ("Reactores Disponibles: ", reactoresDisponibles);
+    console.log ("Reactores Averiados: ", reactoresAveriados);
+    
+
+
     const fecha = data.fecha_transferencia_mezclador;
     const diferenciaHoras = fecha
         ? (new Date() - new Date(fecha.replace(" ", "T"))) / 3600000
         : 0;
+    
+    console.log("Diferencia horas: ", diferenciaHoras);
 
     // Validación mínima
     if (
@@ -138,7 +147,7 @@ function sePuedeFabricarP18(data) {
         (reactoresDisponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
         (reactoresDisponibles.length === 0 && diferenciaHoras >= 4)
     ) {
-        console.log("Regla 1");
+        console.log("Regla general");
         return true;
     }
 
@@ -149,7 +158,7 @@ function sePuedeFabricarP18(data) {
         reactoresDisponibles.length <= 1 &&
         diferenciaHoras > 4
     ) {
-        console.log("Regla 2.1");
+        console.log("Regla averiado 1");
         return false;
     }
 
@@ -159,7 +168,7 @@ function sePuedeFabricarP18(data) {
         reactoresDisponibles.length > 1 &&
         diferenciaHoras > 4
     ) {
-        console.log("Regla 2.2");
+        console.log("Regla averiado 2");
         return true;
     }
 
@@ -168,7 +177,7 @@ function sePuedeFabricarP18(data) {
         mezcladoresDisponibles.length >= 1 &&
         reactoresDisponibles.length === 1
     ) {
-        console.log("Regla 2.3");
+        console.log("averiado 3");
         return true;
     }
 
@@ -197,7 +206,13 @@ function sePuedeFabricarP18(data) {
     ) {
         console.log("Regla 2.6");
         return false;
-    }
+    }        
 
-    return false;
+    //return false;
+
+
+    // 4) Reglas si se está fabricando sulfato
+    
+
+
 }
