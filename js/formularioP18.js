@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", function(){
     let reactorSeleccionado;
     let recetaSeleccionada;
     let numeroProduccion;
-    let pesoInicialMezclador;
+    //let pesoInicialMezclador;    //CUIDADO CON QUITAR ESTO
+    //let pesoInicialReactor;
 
     const producto = localStorage.getItem("producto");
     const modo = localStorage.getItem("modoP18");  // "crear" o "editar"    
@@ -95,13 +96,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
         
         //console.log("data: ", data.producciones_en_curso);
-        const pesoInicialMezclador = data.producciones_en_curso[0].PesoInicialMezclador;         
+        const pesoInicialMezclador = data.producciones_en_curso[0].PesoInicialMezclador;                 
+        const pesoInicialReactor = data.producciones_en_curso[0].PesoInicialReactor;
         //console.log("pesoInicialMezclador: ", pesoInicialMezclador);
 
         //Manejo del número de producción
         displayProduccion.innerHTML = numeroProduccion; //Mostramos el número de producción 
-            //console.log("Producción siguiente:", numeroProduccion);
-                
+            //console.log("Producción siguiente:", numeroProduccion);                
 
         //Manejar los mezcladores
         const listaEquipos = data.equipos;
@@ -112,8 +113,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         //Manejar los reactores
         const reactoresP18 = listaEquipos.filter(equipo => equipo.Tipo === "Reactor" && equipo.ProductoFabricado === "P18");
-            //console.log("Reactores P18: ", reactoresP18);         
-        
+            //console.log("Reactores P18: ", reactoresP18);        
         
         //Manejar las fabricaciones en curso
         const listaFabricacionesCurso = data.producciones_en_curso;
@@ -239,9 +239,12 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }
 
-    // Mostrar los pesos iniciales en formulario        
+    // Mostrar los pesos iniciales del mezclador y del reactor en formulario        
         peso_inicial_mezclador.value = pesoInicialMezclador;       
         formatearNumero(peso_inicial_mezclador);
+        peso_inicial_reactor.value = pesoInicialReactor;
+        formatearNumero(peso_inicial_reactor);        
+        
     })
     
 
