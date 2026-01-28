@@ -6,15 +6,17 @@
     ini_set('display_errors', 0); //Oculta los errores en pantalla
 
     //Comprueba los archivos de directorio actual models/
-    /*
-    echo json_encode([
+    
+    /*echo json_encode([
     "dir_actual" => __DIR__,
     "archivos_en_models" => scandir(__DIR__)
     ]);
     exit;*/
 
-    if ($_SERVER['REQUEST_METHOD'] === "POST"){
+    if ($_SERVER['REQUEST_METHOD'] === "POST"){        
         //Recoger datos enviados por AJAX
+
+        $mezclador = $_POST["mezclador"];
 
         header('Content-Type: application/json');
 
@@ -32,13 +34,17 @@
     
         require_once($rutaConexion);
 
+        $updateSQL = "UPDATE equipos
+                      SET Estado = 'En uso'
+                      WHERE Equipo_id IN (:Mezclador)";         
+
+
         echo json_encode([
             "success" => true,
-            "message" => "ARchivo existe y cargado"
+            "message" => "Archivo existe y cargado",
+            "mezclador" => $mezclador
         ]);
+        exit;
     }
-
-
-
 
 ?>
