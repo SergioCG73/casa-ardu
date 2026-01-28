@@ -1,233 +1,203 @@
-document.addEventListener("DOMContentLoaded", function()
-{
-    //Declaración de constantes y variables
+document.addEventListener("DOMContentLoaded", init);
+
+function init() {
     const btnP18 = document.getElementById("btnP18");
-    btnP18.disabled = true;
     const btnSulfato = document.getElementById("btnSulfato");
-    const div_producciones_en_curso = document.getElementById("producciones_en_curso");
     const tabla = document.getElementById("tabla");
-    let siSePuedeFabricarP18 = false;
+    const divProducciones = document.getElementById("producciones_en_curso");
 
-    //Definimos el estado inicial al abrir la página
+    btnP18.disabled = true;
     localStorage.setItem("modo", "inicial");
-    const modo = localStorage.getItem("modo");
-    console.log("modo: ", modo);
 
-    //Agregamos el escuchadores a los botones
-    btnP18.addEventListener("click", function(){
+    btnP18.addEventListener("click", () => {
         localStorage.removeItem("editarP18");
         localStorage.removeItem("modo");
         localStorage.setItem("modoP18", "crear");
         localStorage.setItem("producto", "p18");
-        window.location.href="formularioP18.html";        
+        window.location.href = "formularioP18.html";
     });
 
-    btnSulfato.addEventListener("click", function(){
+    btnSulfato.addEventListener("click", () => {
         localStorage.removeItem("editarSulfato");
         localStorage.setItem("modoSulfato", "crearSulfato");
         localStorage.setItem("producto", "sulfato");
-        //window.location.href="formularioP18.html";
-    })    
+    });
 
-    //Cargar producciones en curso
+    cargarProducciones(tabla, divProducciones, btnP18);
+}
+
+/* ============================================================
+   CARGAR DATOS DESDE PHP
+   ============================================================ */
+function cargarProducciones(tabla, divProducciones, btnP18) {
     fetch("models/leer.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("data: ", data);
-            const mezcladoresDisponiblesP18 = data.mezcladoresP18Disponibles ?? [];
-            const mezcladoresAveriadosP18 = data.mezcladoresP18Averiados ?? [];
-            const reactoresDisponiblesP18 = data.reactoresP18Disponibles ?? [];
-            const reactoresAveriadosP18 = data.reactoresP18Averiados ?? [];
-            const fechaTransferenciaMezclador = data.fecha_transferencia_mezclador ?? null; 
-            let diferenciaHoras = "";
+        body: JSON.stringify({ modo: "inicial" })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.ok) return;
 
-            const ahora = new Date();            
-        
-            if (fechaTransferenciaMezclador) {
-                const fechaTransferenciaDate = new Date(fechaTransferenciaMezclador.replace(" ", "T"));
-                diferenciaHoras = (ahora - fechaTransferenciaDate) / (1000 * 60 * 60);        
-            } else {
-                console.log("No hay fecha de transferencia disponible");
-            }
-            
-            /*console.log ("Mezcladores Disponibles: ", mezcladoresDisponiblesP18); 
-            console.log("Mezcladores Averiados P18", mezcladoresAveriadosP18);
-            console.log ("Reactores Disponibles P18: ", reactoresDisponiblesP18);  
-            console.log ("Reactores Averiados P18: ", reactoresAveriadosP18);         
-            console.log("Fecha Transferencia Mezclador: ", fechaTransferenciaMezclador);            
-            console.log("Diferencia horas:", diferenciaHoras); */
+        tabla.innerHTML = generarEncabezado() + construirTabla(data);
+        activarEventosTabla(tabla);
 
-            if (!data.ok) return;
-
-            //Construir tabla
-            let html = `
-                <tr>
-                    <th>Producto</th>
-                    <th>Nº Fabricación</th>
-                    <th>Fecha/Hora Inicio</th>
-                    <th>Mezclador</th>                        
-                    <th>Reactor</th>                                                
-                    <th>Receta</th>
-                    <th></th>
-                    <th></th>
-                </tr> 
-                `;
-
-            html += construirTabla(data);
-            tabla.innerHTML = html;
-            
-            if (sePuedeFabricarP18()) {
-                btnP18.disabled = false;
-            }                        
-
-            //console.log(sePuedeFabricarP18());
-
-
-        function construirTabla(data) {
-
-            let html = "";
-
-            data.producciones_en_curso.forEach(p => { 
-                html += `                    
-                    <tr>
-                        <td class="${p.Producto_id === 'P18' ? 'p18_destacado' : ''} producto_${p.Producto_id}">
-                                ${p.Producto_id}
-                        </td>
-                        <td>${p.NumeroFabricacion}</td>
-                        <td>${p.FechaInicio}</td>
-                        <td>${p.Mezclador}</td>                        
-                        <td>${p.Reactor}</td>
-                        <td>${p.Receta}</td>
-                        <td>
-                            <img src="images/editar_azul_icon_20x20.png" 
-                                alt="Editar" 
-                                class="icono-editar"
-                                data-info='${JSON.stringify(p)}'>                            
-                        </td>
-                        <td>
-                            <img src="images/basura_rojo_icon_15x20.png" 
-                                alt="Borrar"
-                                class="icono-borrar">                            
-                        </td>                        
-                    </tr>`;
-            });
-            return html;
+        if (sePuedeFabricarP18(data)) {
+            btnP18.disabled = false;
         }
 
-    function sePuedeFabricarP18() {
-        let siSePuedeFabricarP18 = false;
+        divProducciones.style.display = "block";
+    })
+    .catch(err => console.error("Error cargando producciones:", err));
+}
 
-    // Validación mínima para evitar errores
-        if (
-            !reactoresDisponiblesP18 ||
-            !mezcladoresDisponiblesP18 ||
-            !mezcladoresAveriadosP18 ||
-            !reactoresAveriadosP18 ||
-            typeof diferenciaHoras === "undefined"
-        ) {
-            console.warn("Faltan variables necesarias para evaluar P18");
-            return false;
+/* ============================================================
+   TABLA
+   ============================================================ */
+function generarEncabezado() {
+    return `
+        <tr>
+            <th>Producto</th>
+            <th>Nº Fabricación</th>
+            <th>Fecha/Hora Inicio</th>
+            <th>Mezclador</th>
+            <th>Reactor</th>
+            <th>Receta</th>
+            <th></th>
+            <th></th>
+        </tr>`;
+}
+
+function construirTabla(data) {
+    return data.producciones_en_curso.map(p => `
+        <tr>
+            <td class="${p.Producto_id === 'P18' ? 'p18_destacado' : ''} producto_${p.Producto_id}">
+                ${p.Producto_id}
+            </td>
+            <td>${p.NumeroFabricacion}</td>
+            <td>${p.FechaInicio}</td>
+            <td>${p.Mezclador}</td>
+            <td>${p.Reactor}</td>
+            <td>${p.Receta}</td>
+            <td><img src="images/editar_azul_icon_20x20.png" class="icono-editar" data-info='${JSON.stringify(p)}'></td>
+            <td><img src="images/basura_rojo_icon_15x20.png" class="icono-borrar"></td>
+        </tr>
+    `).join("");
+}
+
+/* ============================================================
+   EVENTOS DE LA TABLA (DELEGACIÓN)
+   ============================================================ */
+function activarEventosTabla(tabla) {
+    tabla.addEventListener("click", e => {
+        if (e.target.classList.contains("icono-editar")) {
+            const datos = JSON.parse(e.target.dataset.info);
+            localStorage.setItem("editarP18", JSON.stringify(datos));
+            localStorage.setItem("modoP18", "editar");
+            window.location.href = "formularioP18.html";
         }
 
-        if (mezcladoresDisponiblesP18.length === 0) {
-            console.log("No hay mezcladores disponibles → NO se puede fabricar P18");
-            return false;
+        if (e.target.classList.contains("icono-borrar")) {
+            console.log("Se ha pulsado borrar");
         }
+    });
+}
 
-    // 1) Regla general
-        if (
-            (reactoresDisponiblesP18.length >= 1 && mezcladoresDisponiblesP18.length > 1) ||
-            (reactoresDisponiblesP18.length === 0 && diferenciaHoras >= 4)
-        ) {
-            console.log("Regla 1");
-            return true;
-        }
+/* ============================================================
+   LÓGICA DE NEGOCIO: ¿SE PUEDE FABRICAR P18?
+   ============================================================ */
+function sePuedeFabricarP18(data) {
+    const mezcladoresDisponibles = data.mezcladoresP18Disponibles ?? [];
+    const mezcladoresAveriados = data.mezcladoresP18Averiados ?? [];
+    const reactoresDisponibles = data.reactoresP18Disponibles ?? [];
+    const reactoresAveriados = data.reactoresP18Averiados ?? [];
 
-    // 2) Casos con mezcladores averiados
-        if (        
-            mezcladoresAveriadosP18.length === 1 &&
-            mezcladoresDisponiblesP18.length === 0 &&
-            reactoresDisponiblesP18.length <= 1 &&
-            diferenciaHoras > 4
-        ) {
-            console.log("Regla 2.1");
-            return false;        
+    const fecha = data.fecha_transferencia_mezclador;
+    const diferenciaHoras = fecha
+        ? (new Date() - new Date(fecha.replace(" ", "T"))) / 3600000
+        : 0;
 
-        } else if (
-            mezcladoresAveriadosP18.length === 1 &&
-            mezcladoresDisponiblesP18.length === 1 &&
-            reactoresDisponiblesP18.length > 1 &&
-            diferenciaHoras > 4
-        ) {
-            console.log("Regla 2.2");
-            return true;
-
-        } else if (
-            mezcladoresAveriadosP18.length === 1 &&
-            mezcladoresDisponiblesP18.length >= 1 &&
-            reactoresDisponiblesP18.length === 1
-        ) {
-            console.log("Regla 2.3");
-            return true;
-        }
-
-    // 3) Reglas con 1 reactor averiado
-        if (
-            reactoresAveriadosP18.length === 1 &&
-            mezcladoresDisponiblesP18.length === 2 &&
-            reactoresDisponiblesP18.length === 0
-        ) {
-            console.log("Regla 2.4");
-            return false;
-
-        } else if (
-            reactoresAveriadosP18.length === 1 &&
-            mezcladoresDisponiblesP18.length === 2 &&
-            reactoresDisponiblesP18.length === 1
-        ) {
-            console.log("Regla 2.5");
-            return true;
-
-        } else if (
-            reactoresAveriadosP18.length === 1 &&
-            mezcladoresDisponiblesP18.length === 1
-        ) {
-            console.log("Regla 2.6");
-            return false;
-        }
-
-        return siSePuedeFabricarP18;
+    // Validación mínima
+    if (
+        !reactoresDisponibles ||
+        !mezcladoresDisponibles ||
+        !mezcladoresAveriados ||
+        !reactoresAveriados
+    ) {
+        console.warn("Faltan variables necesarias para evaluar P18");
+        return false;
     }
 
-        if (siSePuedeFabricarP18 === true) {
-            btnP18.disabled = false;
-        }            
-            tabla.innerHTML = html;
-            //Mostrar el div
-            div_producciones_en_curso.style.display = "block";            
-            
-            document.querySelectorAll('.icono-editar').forEach(icono => {
-               icono.addEventListener('click', function() {
-                const datos = JSON.parse(this.dataset.info);
+    if (mezcladoresDisponibles.length === 0) {
+        console.log("No hay mezcladores disponibles → NO se puede fabricar P18");
+        return false;
+    }
 
-                // Guardar datos para editar
-                localStorage.setItem("editarP18", JSON.stringify(datos));
+    // 1) Regla general
+    if (
+        (reactoresDisponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
+        (reactoresDisponibles.length === 0 && diferenciaHoras >= 4)
+    ) {
+        console.log("Regla 1");
+        return true;
+    }
 
-                // Indicar modo edición
-                localStorage.setItem("modoP18", "editar");
+    // 2) Casos con mezcladores averiados
+    if (
+        mezcladoresAveriados.length === 1 &&
+        mezcladoresDisponibles.length === 0 &&
+        reactoresDisponibles.length <= 1 &&
+        diferenciaHoras > 4
+    ) {
+        console.log("Regla 2.1");
+        return false;
+    }
 
-                window.location.href = "formularioP18.html";
-            });
-            });
-            
-            document.querySelectorAll('.icono-borrar').forEach(icono => {
-                icono.addEventListener("click", function() {
-                    console.log("Se ha pulsado borrar");
-                })
-            })
-            });
-});
+    if (
+        mezcladoresAveriados.length === 1 &&
+        mezcladoresDisponibles.length === 1 &&
+        reactoresDisponibles.length > 1 &&
+        diferenciaHoras > 4
+    ) {
+        console.log("Regla 2.2");
+        return true;
+    }
+
+    if (
+        mezcladoresAveriados.length === 1 &&
+        mezcladoresDisponibles.length >= 1 &&
+        reactoresDisponibles.length === 1
+    ) {
+        console.log("Regla 2.3");
+        return true;
+    }
+
+    // 3) Reglas con 1 reactor averiado
+    if (
+        reactoresAveriados.length === 1 &&
+        mezcladoresDisponibles.length === 2 &&
+        reactoresDisponibles.length === 0
+    ) {
+        console.log("Regla 2.4");
+        return false;
+    }
+
+    if (
+        reactoresAveriados.length === 1 &&
+        mezcladoresDisponibles.length === 2 &&
+        reactoresDisponibles.length === 1
+    ) {
+        console.log("Regla 2.5");
+        return true;
+    }
+
+    if (
+        reactoresAveriados.length === 1 &&
+        mezcladoresDisponibles.length === 1
+    ) {
+        console.log("Regla 2.6");
+        return false;
+    }
+
+    return false;
+}
