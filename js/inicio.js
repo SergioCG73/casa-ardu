@@ -36,8 +36,8 @@ function cargarProducciones(tabla, divProducciones, btnP18) {
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {
-        if (!data.ok) return;
+    .then(data => {        
+        if (!data.ok) return;        
 
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);
@@ -92,7 +92,7 @@ function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         if (e.target.classList.contains("icono-editar")) {
             const datos = JSON.parse(e.target.dataset.info);
-            localStorage.setItem("editarP18", JSON.stringify(datos));
+            localStorage.setItem("editarP18", JSON.stringify(datos)); //Guarda en el localStorage el objeto en formato JSON con el nombrfe editarP18
             localStorage.setItem("modoP18", "editar");
             window.location.href = "formularioP18.html";
         }
@@ -116,8 +116,6 @@ function sePuedeFabricarP18(data) {
     console.log ("Mezcladores Averiados: ", mezcladoresAveriados);
     console.log ("Reactores Disponibles: ", reactoresDisponibles);
     console.log ("Reactores Averiados: ", reactoresAveriados);
-    
-
 
     const fecha = data.fecha_transferencia_mezclador;
     const diferenciaHoras = fecha
