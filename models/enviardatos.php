@@ -17,7 +17,7 @@
     exit;*/
 
 
-    header('Content-Type: application/json');
+    /*header('Content-Type: application/json');
 
     // Ruta al archivo
     $rutaConexion = __DIR__ . "/miconexion.php";
@@ -35,8 +35,8 @@
 
         echo json_encode([
             "success" => true,
-            "message" => "ARchivo existe y cargado"
-        ]);
+            "message" => "Archivo existe y cargado"
+        ]);*/
     
 
 
@@ -46,14 +46,22 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {        
     // Recoger los datos enviados por AJAX
 
-    //require_once("miconexion.php");
+    require_once("miconexion.php");
+
     $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";        
     $mezclador = $_POST["mezclador"] ?? "";
     $reactor = $_POST["reactor"] ?? "";
     $receta = $_POST["receta"] ?? "";
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
     $producto = $_POST["producto"] ?? "";
-    $pesoInicialMezclador = $_POST["pesoInicialMezclador"]; //NUEVO
+    $pesoInicialMezclador = $_POST["pesoInicialMezclador"];
+    $pesoInicialReactor = $_POST["pesoInicialReactor"];
+
+    /*echo json_encode ([
+        "PesoInicialReactor" => $pesoInicialReactor
+    ]);
+    exit;*/
+
 
     //Validación de datos recibidos
 
@@ -64,7 +72,9 @@
         empty($receta) ||
         empty($numeroProduccion) ||
         empty($producto) ||
-        empty($pesoInicialMezclador) //NUEVO
+        empty($pesoInicialMezclador) ||
+        empty($pesoInicialReactor)    
+
     ) {
         header('Content-Type: application/json');
         echo json_encode([
@@ -77,14 +87,15 @@
     try {
     //SQL para INSERT datos en fabricaciones_en_curso
         $insertSQL = "INSERT INTO fabricaciones_en_curso
-                      (FechaInicio, Mezclador, PesoInicialMezclador, Reactor, Receta, NumeroFabricacion, Producto_id) 
-                      VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Reactor, :Receta, :numeroProduccion, :Producto)";
+                      (FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, Receta, NumeroFabricacion, Producto_id) 
+                      VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Reactor, :PesoInicialReactor, :Receta, :numeroProduccion, :Producto)";
 
         $insertStmt = $conexion->prepare($insertSQL);
         $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
         $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
-        $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);//NUEVO
+        $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);
         $insertStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
+        $insertStmt->bindParam(":PesoInicialReactor", $pesoInicialReactor, PDO::PARAM_INT);
         $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
         $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
         $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
@@ -105,7 +116,9 @@
         
         echo json_encode([
             "ok" => true,
-            "message" => "Datos guardados correctamente"
+            "message" => "Datos guardados correctamente",
+            "ProduccionInicialReactor" => $pesoInicialReactor
+            
         ]);
         exit;
 
