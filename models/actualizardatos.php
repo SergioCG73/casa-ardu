@@ -1,50 +1,102 @@
 <?php
-    //Prepara tu script PHP para responder JSON limpio y sin errores visibles.
-    ob_clean(); //Limpia el buffer de salida
-    header('Content-Type: application/json; charset=utf-8'); //Le dice al navegador que la respuesta es un JSON
-    error_reporting(0); //Desactiva la salida de errores PHP
-    ini_set('display_errors', 0); //Oculta los errores en pantalla
+//ob_clean();
+header('Content-Type: application/json; charset=utf-8');
 
-    //Comprueba los archivos de directorio actual models/
-    
-    /*echo json_encode([
-    "dir_actual" => __DIR__,
-    "archivos_en_models" => scandir(__DIR__)
-    ]);
-    exit;*/
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-    if ($_SERVER['REQUEST_METHOD'] === "POST"){        
-        //Recoger datos enviados por AJAX
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["ok" => false, "error" => "Método no permitido"]);
+    exit;
+}
 
-        $mezclador = $_POST["mezclador"];
+require_once __DIR__ . "/miconexion.php";
 
-        header('Content-Type: application/json');
+$pdo = $conexion;
 
-        // Ruta al archivo
-        $rutaConexion = __DIR__ . "/miconexion.php";
+// =========================
+// 1. Recoger datos del POST
+// =========================
+$numeroProduccion   = $_POST["numeroProduccion"] ?? null;
+$mezcladorNuevo     = $_POST["mezclador"] ?? null;
+$reactorNuevo       = $_POST["reactor"] ?? null;
+$receta             = $_POST["receta"] ?? null;
+$pesoM              = $_POST["pesoInicialMezclador"] ?? null;
+$pesoR              = $_POST["pesoInicialReactor"] ?? null;
+$producto           = $_POST["producto"] ?? null;
 
-        if (!file_exists($rutaConexion)) {
-                echo json_encode([
-                "success" => false,
-                "error" => "Archivo de conexión no encontrado",
-                "detalle" => $rutaConexion
-        ]);
-        exit;
-        }
-    
-        require_once($rutaConexion);
+if (!$numeroProduccion) {
+    echo json_encode(["ok" => false, "error" => "Falta numeroProduccion"]);
+    exit;
+}
 
-        $updateSQL = "UPDATE equipos
-                      SET Estado = 'En uso'
-                      WHERE Equipo_id IN (:Mezclador)";         
+// ===========================
+// 2. Obtener equipos actuales
+// ===========================
+$sqlOld = $pdo->prepare("
+    SELECT Mezclador, Reactor
+    FROM fabricaciones_en_curso
+    WHERE NumeroFabricacion = :num
+");
+$sqlOld->execute([":num" => $numeroProduccion]);
+$old = $sqlOld->fetch(PDO::FETCH_ASSOC);
 
+if (!$old) {
+    echo json_encode(["ok" => false, "error" => "Producción no encontrada"]);
+    exit;
+}
 
-        echo json_encode([
-            "success" => true,
-            "message" => "Archivo existe y cargado",
-            "mezclador" => $mezclador
-        ]);
-        exit;
-    }
+$mezcladorAnterior = $old["Mezclador"];
+$reactorAnterior   = $old["Reactor"];
 
+// =============================
+// 3. Liberar equipos anteriores
+// =============================
+$sqlFree = $pdo->prepare("
+    UPDATE equipos SET Estado = 'Vacio'
+    WHERE Equipo_id = :m OR Equipo_id = :r");
+$sqlFree->execute([
+    ":m" => $mezcladorAnterior,
+    ":r" => $reactorAnterior
+]);
+
+// ====================================
+// 4. Marcar nuevos equipos como En uso
+// ====================================
+$sqlUse = $pdo->prepare("
+    UPDATE equipos SET Estado = 'En uso'
+    WHERE Equipo_id = :m OR Equipo_id = :r
+");
+$sqlUse->execute([
+    ":m" => $mezcladorNuevo,
+    ":r" => $reactorNuevo
+]);
+
+// ===========================
+// 5. Actualizar la producción
+// ===========================
+$sqlUpdate = $pdo->prepare("
+    UPDATE fabricaciones_en_curso
+    SET Mezclador = :m,
+        Reactor = :r,
+        Receta = :receta,
+        PesoInicialMezclador = :pm,
+        PesoInicialReactor = :pr
+    WHERE NumeroFabricacion = :num
+");
+
+$sqlUpdate->execute([
+    ":m"    => $mezcladorNuevo,
+    ":r"    => $reactorNuevo,
+    ":receta" => $receta,
+    ":pm"   => $pesoM,
+    ":pr"   => $pesoR,
+    ":num"  => $numeroProduccion
+]);
+
+echo json_encode([
+    "ok" => true,
+    "message" => "Producción actualizada correctamente"    
+]);
+exit;
 ?>
