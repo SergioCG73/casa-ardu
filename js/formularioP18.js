@@ -7,26 +7,33 @@ document.addEventListener("DOMContentLoaded", function(){
     let mezcladorSeleccionado;
     let reactorSeleccionado;
     let recetaSeleccionada;
-    let numeroProduccion;
-    //let pesoInicialMezclador;    //CUIDADO CON QUITAR ESTO
-    //let pesoInicialReactor;
+    let numeroProduccion;    
 
     const producto = localStorage.getItem("producto");
     const modo = localStorage.getItem("modoP18");  // "crear" o "editar"    
-    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));
-    
+
+    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));   //EL ITEM editarP18 vienes de inicio.js        
+
     /*console.log("producto: ", producto);
     console.log("modo: ", modo);
     console.log("datosEdicion: ", datosEdicion);*/
 
-
     // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
 
-    if (datosEdicion && modo === "editar") {        
+    if (datosEdicion && modo === "editar") {  
+        console.log ("Estamos en modo edición....")      ;
         //console.log("Modo edición activado:", datosEdicion); //return;  
 
         // Si quieres bloquear el número de fabricación:
         // document.getElementById("numeroFabricacion").readOnly = true;
+
+        // Rellenar pesos en modo edición
+        peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+        formatearNumero(peso_inicial_mezclador);
+
+        peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
+        formatearNumero(peso_inicial_reactor);
+        
         desactivarValidaciones();
     }
 
@@ -64,14 +71,14 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
     if(modo === "crear" && producto === "p18") {
-        //console.log ("Crear P18");
+        //console.log ("modo y producto: ", modo, producto); return;
     }
 
     // Obtener la última producción de P18 acabada o en curso, mezcladores disponibles, reactores dispones, recetas, pesos
     //console.log("Obteniendo última producción de P18");
     const datos = new FormData();
 
-    fetch("models/test.php", {
+    fetch("models/crear.php", {
         method: "POST",
         body: datos
     })
@@ -86,27 +93,28 @@ document.addEventListener("DOMContentLoaded", function(){
             return;            
         }
         
-        numeroProduccion = ultimoNumero + 1; 
-        //console.log("numeroProduccion: ", numeroProduccion); 
+        numeroProduccion = ultimoNumero + 1;         
+        //console.log("numeroProduccion: ", numeroProduccion); return;        
 
         if (data.producciones_en_curso.length === 0) {
-            //console.log("Sin datos en la tabla fabricaciones_en_curso");
-            return;
+            console.log("Sin datos en la tabla fabricaciones_en_curso");            
+            //return;
         } 
-
+        else {
+            //console.log("data: ", data.producciones_en_curso); return;
+            const pesoInicialMezclador = data.producciones_en_curso[0].PesoInicialMezclador;                 
+            const pesoInicialReactor = data.producciones_en_curso[0].PesoInicialReactor;
+            //console.log("pesoInicialMezclador: ", pesoInicialMezclador); return;
+        }
         
-        //console.log("data: ", data.producciones_en_curso);
-        const pesoInicialMezclador = data.producciones_en_curso[0].PesoInicialMezclador;                 
-        const pesoInicialReactor = data.producciones_en_curso[0].PesoInicialReactor;
-        //console.log("pesoInicialMezclador: ", pesoInicialMezclador);
-
+        
         //Manejo del número de producción
         displayProduccion.innerHTML = numeroProduccion; //Mostramos el número de producción 
-            //console.log("Producción siguiente:", numeroProduccion);                
+           //console.log("Producción siguiente:", numeroProduccion); return;
 
         //Manejar los mezcladores
         const listaEquipos = data.equipos;
-        //console.log("Equipos: ", listaEquipos);               
+            //console.log("Equipos: ", listaEquipos); return;
 
         const mezcladoresP18 = listaEquipos.filter(equipo => equipo.Tipo === "Mezclador" && equipo.ProductoFabricado === "P18");
             //console.log("Mezcladores P18: ", mezcladoresP18);             
@@ -158,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function(){
             label.appendChild(document.createTextNode(mezclador.Equipo_id));
 
             contenedorMezcladores.appendChild(label);
-        });
+        });        
         
 
         if (modo === "editar" && datosEdicion){ //Marcar y asignar valor            
@@ -167,7 +175,10 @@ document.addEventListener("DOMContentLoaded", function(){
                 radioMezclador.checked = true;
                 mezcladorSeleccionado = datosEdicion.Mezclador;
             }
-        }        
+        }  
+        
+        //========================================
+
 
         //Contenedor de reactores
         const contenedorReactores = document.querySelector("#reactores fieldset");        
@@ -198,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
             if (radioReactor) {
                 radioReactor.checked = true;
-                reactorSeleccionado = datosEdicion;
+                reactorSeleccionado = datosEdicion.Reactor;
             }
         }
 
@@ -208,8 +219,7 @@ document.addEventListener("DOMContentLoaded", function(){
             //console.log("Recetas P18: ", recetasP18); 
 
         //Contenedor de recetas
-        const contenedorRecetas = document.querySelector("#recetas fieldset");
-        
+        const contenedorRecetas = document.querySelector("#recetas fieldset");        
 
         //Crear dinámicamente los radios de recetas        
         recetasP18.forEach((receta, index) => {
@@ -239,12 +249,15 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }
 
-    // Mostrar los pesos iniciales del mezclador y del reactor en formulario        
+    // Mostrar los pesos iniciales del mezclador y del reactor en formulario       
+    
+        let pesoInicialMezclador = "";
+        let pesoInicialReactor = "";
         peso_inicial_mezclador.value = pesoInicialMezclador;       
         formatearNumero(peso_inicial_mezclador);
         peso_inicial_reactor.value = pesoInicialReactor;
+        //console.log(peso_inicial_reactor.value); return;
         formatearNumero(peso_inicial_reactor);        
-        
     })
     
 
@@ -300,14 +313,17 @@ document.addEventListener("DOMContentLoaded", function(){
             e.preventDefault();
             //alert("En modo edición no se valida ni se inicia producción"); return;
 
+            const pesoMezcladorEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
+            const pesoReactorEditado = parseInt(peso_inicial_reactor.value.replace(/\./g, ""), 10);
+
             const data = new FormData();
 
             data.append("numeroProduccion", numeroProduccion);
             data.append("mezclador", mezcladorSeleccionado);            
-            //console.log("Valor mezclador: ", mezcladorSeleccionado); return;
             data.append("reactor", reactorSeleccionado);            
             data.append("receta", recetaSeleccionada);    
-            data.append("pesoInicialMezclador", pesoInicialMezclador); //NUEVO
+            data.append("pesoInicialMezclador", pesoMezcladorEditado); 
+            data.append("pesoInicialReactor", pesoReactorEditado)
             data.append("producto", producto);            
 
             fetch("models/actualizardatos.php", {
@@ -316,7 +332,10 @@ document.addEventListener("DOMContentLoaded", function(){
             })
             .then(response => response.json())
             .then(json => {
-                console.log("datos enviados a actualizardatos.php:", json)             
+                console.log("datos enviados a actualizardatos.php:", json);
+                if (json.ok) mostrarModal("Producción actualizada correctamente");
+                else alert ("Error: ", json.error);
+
             })
             .catch(error => {
                 console.log("ERROR", error);
@@ -352,6 +371,12 @@ document.addEventListener("DOMContentLoaded", function(){
             return; // Detiene el proceso 
         }
 
+        //Validación estricta del peso_inicial_reactor
+        if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
+            alert("Debe ingresar un PESO válido para el reactor");
+            return; // Detiene el proceso 
+        }
+
         //Validación de que hay seleccionado un Reactor
         if (!reactorSeleccionado) {
             alert("Debe seleccionar un Reactor");
@@ -371,10 +396,11 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log("Reactor: ", reactorSeleccionado);
         console.log("Receta: ", recetaSeleccionada);            
         console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+        console.log("Peso Inicial Reactor: ", pesoReactorInt);
 
         //Iniciar envio de datos a la tabla fabricaciones_en_curso mediante AJAX
         //Preparamos los datos para ser enviados por AJAX
-        console.log("Preparando datos para enviarlos por AJAX...");
+        console.log("Preparando datos para enviarlos por AJAX...");        
         const data = new FormData();
 
         data.append("numeroProduccion", numeroProduccion);
@@ -382,16 +408,17 @@ document.addEventListener("DOMContentLoaded", function(){
         data.append("mezclador", mezcladorSeleccionado);
         data.append("reactor", reactorSeleccionado);
         data.append("receta", recetaSeleccionada);        
-        data.append("pesoInicialMezclador", pesoMezcladorInt); //NUEVO
+        data.append("pesoInicialMezclador", pesoMezcladorInt);
+        data.append("pesoInicialReactor", pesoReactorInt);        
         data.append("producto", producto);                
 
-        fetch("enviardatos.php", {
+        fetch("models/enviardatos.php", {
             method: "POST",
             body: data
         })
         .then(response => response.json())        
         .then(json => {
-            console.log("Dasos enviados:", json);
+            console.log("Datos enviados:", json);
          
             if(json.ok) {
                 console.log("json.ok")
