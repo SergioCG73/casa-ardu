@@ -13,7 +13,7 @@ $modo = $data["modo"] ?? null;
 if ($modo === "inicial") {
 
     // 1) Producciones en curso
-    $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor,
+    $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, 
                    Receta, NumeroFabricacion, Producto_id
             FROM fabricaciones_en_curso
             WHERE Producto_id = 'P18'
