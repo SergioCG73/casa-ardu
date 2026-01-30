@@ -6,7 +6,7 @@ function init() {
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
 
-    btnP18.disabled = true;
+    //btnP18.disabled = true;
     localStorage.setItem("modo", "inicial");
 
     btnP18.addEventListener("click", () => {
@@ -29,7 +29,7 @@ function init() {
 /* ============================================================
    CARGAR DATOS DESDE PHP
    ============================================================ */
-function cargarProducciones(tabla, divProducciones, btnP18) {
+function cargarProducciones(tabla, divProducciones, /*btnP18*/) {
     fetch("models/leer.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,9 +42,9 @@ function cargarProducciones(tabla, divProducciones, btnP18) {
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);
 
-        if (sePuedeFabricarP18(data)) {
+        /*if (sePuedeFabricarP18(data)) {
             btnP18.disabled = false;
-        }
+        }*/
 
         divProducciones.style.display = "block";
     })
@@ -106,7 +106,7 @@ function activarEventosTabla(tabla) {
 /* ============================================================
    LÓGICA DE NEGOCIO: ¿SE PUEDE FABRICAR P18?
    ============================================================ */
-function sePuedeFabricarP18(data) {
+/*function sePuedeFabricarP18(data) {
     const mezcladoresDisponibles = data.mezcladoresP18Disponibles ?? [];
     const mezcladoresAveriados = data.mezcladoresP18Averiados ?? [];
     const reactoresDisponibles = data.reactoresP18Disponibles ?? [];
@@ -147,8 +147,8 @@ function sePuedeFabricarP18(data) {
     ) {
         console.log("Regla general");
         return true;
-    }
 
+    }
     // 2) Casos con mezcladores averiados
     if (
         mezcladoresAveriados.length === 1 &&
@@ -210,7 +210,5 @@ function sePuedeFabricarP18(data) {
 
 
     // 4) Reglas si se está fabricando sulfato
-    
 
-
-}
+}*/    

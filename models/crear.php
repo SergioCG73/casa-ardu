@@ -20,7 +20,7 @@ require_once("miconexion.php");
     $sql = "SELECT * FROM fabricaciones_en_curso";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();    
-    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);    
 
 //3 Lista de mezcladores
         $sql = "SELECT * FROM equipos";
@@ -51,8 +51,6 @@ require_once("miconexion.php");
             "equipos" => $lista_de_equipos,
             "recetas" => $litas_de_recetas
         ]);
-
     }
-
      
 exit;

@@ -26,7 +26,8 @@ $pesoR              = $_POST["pesoInicialReactor"] ?? null;
 $producto           = $_POST["producto"] ?? null;
 
 if (!$numeroProduccion) {
-    echo json_encode(["ok" => false, "error" => "Falta numeroProduccion"]);
+    echo json_encode(["ok" => false,
+                      "error" => "Falta numeroProduccion"]);
     exit;
 }
 

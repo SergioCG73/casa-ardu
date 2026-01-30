@@ -12,16 +12,12 @@ document.addEventListener("DOMContentLoaded", function(){
     const producto = localStorage.getItem("producto");
     const modo = localStorage.getItem("modoP18");  // "crear" o "editar"    
 
-    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));   //EL ITEM editarP18 vienes de inicio.js        
-
-    /*console.log("producto: ", producto);
-    console.log("modo: ", modo);
-    console.log("datosEdicion: ", datosEdicion);*/
+    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));   //EL ITEM editarP18 vienes de inicio.js
 
     // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
 
     if (datosEdicion && modo === "editar") {  
-        console.log ("Estamos en modo edición....")      ;
+        console.log ("Estamos en modo edición....");        
         //console.log("Modo edición activado:", datosEdicion); //return;  
 
         // Si quieres bloquear el número de fabricación:
@@ -29,13 +25,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
         // Rellenar pesos en modo edición
         peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
-        formatearNumero(peso_inicial_mezclador);
+        formatearNumero(peso_inicial_mezclador);        
 
         peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
-        formatearNumero(peso_inicial_reactor);
+        formatearNumero(peso_inicial_reactor);        
         
         desactivarValidaciones();
-    }
+    }    
+    
 
     //Función desactivarValidaciones()
     function desactivarValidaciones() {
@@ -71,13 +68,14 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
     if(modo === "crear" && producto === "p18") {
-        //console.log ("modo y producto: ", modo, producto); return;
-    }
+        console.log ("modo y producto: ", modo, producto);
+    }    
 
     // Obtener la última producción de P18 acabada o en curso, mezcladores disponibles, reactores dispones, recetas, pesos
     //console.log("Obteniendo última producción de P18");
     const datos = new FormData();
 
+    
     fetch("models/crear.php", {
         method: "POST",
         body: datos
@@ -86,31 +84,29 @@ document.addEventListener("DOMContentLoaded", function(){
     .then (data => {        
         if (!data.ok) return;
         
-        const ultimoNumero = parseInt(data.ultimoNumero, 10); //Convertir el data a número entero        
+        let ultimoNumero = parseInt(data.ultimoNumero, 10); //Convertir el data a número entero
+        const ultimaFabricacionEnCurso = Math.max(...data.producciones_en_curso.map(item => parseInt(item.NumeroFabricacion, 10)));
+        ultimoNumero = Math.max(ultimoNumero, ultimaFabricacionEnCurso);        
 
         if (isNaN(ultimoNumero)) {
             console.error("Respuesta inválida del servidor:", data);
-            return;            
+            //return;            
         }
         
-        numeroProduccion = ultimoNumero + 1;         
-        //console.log("numeroProduccion: ", numeroProduccion); return;        
+        numeroProduccion = ultimoNumero + 1;        
 
         if (data.producciones_en_curso.length === 0) {
             console.log("Sin datos en la tabla fabricaciones_en_curso");            
-            //return;
         } 
-        else {
-            //console.log("data: ", data.producciones_en_curso); return;
+        else {            
             const pesoInicialMezclador = data.producciones_en_curso[0].PesoInicialMezclador;                 
-            const pesoInicialReactor = data.producciones_en_curso[0].PesoInicialReactor;
-            //console.log("pesoInicialMezclador: ", pesoInicialMezclador); return;
-        }
-        
+            const pesoInicialReactor = data.producciones_en_curso[0].PesoInicialReactor;            
+            
+        }        
         
         //Manejo del número de producción
         displayProduccion.innerHTML = numeroProduccion; //Mostramos el número de producción 
-           //console.log("Producción siguiente:", numeroProduccion); return;
+           //console.log("numeroProducción:", numeroProduccion); return;
 
         //Manejar los mezcladores
         const listaEquipos = data.equipos;
@@ -169,16 +165,16 @@ document.addEventListener("DOMContentLoaded", function(){
         });        
         
 
-        if (modo === "editar" && datosEdicion){ //Marcar y asignar valor            
+        if (modo === "editar" && datosEdicion){ //Marcar y asignar valor
+            console.log("Editando voy: ", datosEdicion);
+            fabricacionEditada = datosEdicion.NumeroFabricacion;
+            displayProduccion.innerHTML = fabricacionEditada; 
             const radioMezclador = document.querySelector(`input[name="mezclador"][value="${datosEdicion.Mezclador}"]`);
             if (radioMezclador) {
                 radioMezclador.checked = true;
                 mezcladorSeleccionado = datosEdicion.Mezclador;
             }
-        }  
-        
-        //========================================
-
+        }
 
         //Contenedor de reactores
         const contenedorReactores = document.querySelector("#reactores fieldset");        
@@ -248,16 +244,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 recetaSeleccionada = datosEdicion.Receta;
             }
         }
-
-    // Mostrar los pesos iniciales del mezclador y del reactor en formulario       
-    
-        let pesoInicialMezclador = "";
-        let pesoInicialReactor = "";
-        peso_inicial_mezclador.value = pesoInicialMezclador;       
-        formatearNumero(peso_inicial_mezclador);
-        peso_inicial_reactor.value = pesoInicialReactor;
-        //console.log(peso_inicial_reactor.value); return;
-        formatearNumero(peso_inicial_reactor);        
     })
     
 
@@ -290,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function(){
         let valor = input.value.replace(/\D/g, ""); // Quitar todo lo que no sea número
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Formatear con puntos
         input.value = valor;
-        input.value = valor + " Kg";
+        input.value = valor //+ " Kg";
         //console.log("Valor formateado:", valor);
     }
 
@@ -318,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
             const data = new FormData();
 
-            data.append("numeroProduccion", numeroProduccion);
+            data.append("numeroProduccion", fabricacionEditada);
             data.append("mezclador", mezcladorSeleccionado);            
             data.append("reactor", reactorSeleccionado);            
             data.append("receta", recetaSeleccionada);    

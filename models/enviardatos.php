@@ -54,14 +54,9 @@
     $receta = $_POST["receta"] ?? "";
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
     $producto = $_POST["producto"] ?? "";
+    $producto = ucfirst(($producto));
     $pesoInicialMezclador = $_POST["pesoInicialMezclador"];
-    $pesoInicialReactor = $_POST["pesoInicialReactor"];
-
-    /*echo json_encode ([
-        "PesoInicialReactor" => $pesoInicialReactor
-    ]);
-    exit;*/
-
+    $pesoInicialReactor = $_POST["pesoInicialReactor"];    
 
     //Validación de datos recibidos
 
