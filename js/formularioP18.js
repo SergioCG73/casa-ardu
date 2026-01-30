@@ -1,176 +1,151 @@
 document.addEventListener("DOMContentLoaded", function(){
-    const btnRetroceder = document.getElementById("btnRetroceder");
-    const btnIniciarProduccion = document.getElementById("btnIniciarProduccion");
+    const btnRetroceder = document.getElementById("btnRetroceder");    
+    const btnValidar = document.getElementById("btnValidar");
     const displayProduccion = document.getElementById("displayProduccion");
-    const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
+    const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");    
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     let mezcladorSeleccionado;
     let reactorSeleccionado;
     let recetaSeleccionada;
-    let numeroProduccion;
+    let numeroProduccion;    
 
-    const producto = "P18";    
+    const producto = localStorage.getItem("producto");
+    const modo = localStorage.getItem("modoP18");  // "crear" o "editar"    
 
-    function mostrarModal(mensaje) {
-        document.getElementById("mensajeModal").textContent = mensaje;
-        document.getElementById("miModal").style.display = "flex";
+    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));   //EL ITEM editarP18 vienes de inicio.js
 
-        document.getElementById("btnAceptar").onclick = function () {
-            window.location.href = "inicio.php";
-        };
+    // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
+
+    if (datosEdicion && modo === "editar") {  
+        console.log ("Estamos en modo edición....");        
+        //console.log("Modo edición activado:", datosEdicion); //return;  
+
+        // Si quieres bloquear el número de fabricación:
+        // document.getElementById("numeroFabricacion").readOnly = true;
+
+        // Rellenar pesos en modo edición
+        peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+        formatearNumero(peso_inicial_mezclador);        
+
+        peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
+        formatearNumero(peso_inicial_reactor);        
+        
+        desactivarValidaciones();
+    }    
+    
+
+    //Función desactivarValidaciones()
+    function desactivarValidaciones() {
+        //console.log("Validaciones desactivadas (modo edición)");
+
+    // Evitar validaciones de selección
+        mezcladorSeleccionado = true;
+        reactorSeleccionado = true;
+        recetaSeleccionada = true;
+
+    // Evitar validación de pesos
+        peso_inicial_mezclador.required = false;
+        peso_inicial_reactor.required = false;   
     }
 
-    //Obtener la última producción de P18 acabada o en curso, mezcladores disponibles, reactores dispones y recetas
-    console.log("Obteniendo última producción de P18");
+    // Función mostrarModal
+    function mostrarModal(mensaje) {
+        const modal = document.getElementById("modal");
+        document.getElementById("modalMsg").textContent = mensaje;
+        modal.hidden = false;
+        modal.style.display = "flex";
+    }
+
+    // Función cerrarModal    
+    function cerrarModal() {
+        const modal = document.getElementById("modal");
+        modal.hidden = true;
+        modal.style.display = "none";
+        window.location.href = "inicio.php";
+    } 
+
+    // Escuchador para el btnAceptar
+    document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
+
+    if(modo === "crear" && producto === "p18") {
+        console.log ("modo y producto: ", modo, producto);
+    }    
+
+    // Obtener la última producción de P18 acabada o en curso, mezcladores disponibles, reactores dispones, recetas, pesos
+    //console.log("Obteniendo última producción de P18");
     const datos = new FormData();
 
-    fetch("procesar.php", {
+    
+    fetch("models/crear.php", {
         method: "POST",
         body: datos
     })
     .then (response => response.json())
-    .then (data => {
-        const ultimoNumero = parseInt(data.ultimoNumero, 10); //Convertir el data a número entero
+    .then (data => {        
+        if (!data.ok) return;
+        
+        let ultimoNumero = parseInt(data.ultimoNumero, 10); //Convertir el data a número entero
+        const ultimaFabricacionEnCurso = Math.max(...data.producciones_en_curso.map(item => parseInt(item.NumeroFabricacion, 10)));
+        ultimoNumero = Math.max(ultimoNumero, ultimaFabricacionEnCurso);        
 
         if (isNaN(ultimoNumero)) {
             console.error("Respuesta inválida del servidor:", data);
-            return;
-        }
-
-        numeroProduccion = ultimoNumero + 1;
-        //let mezcladores;
-        displayProduccion.innerHTML = numeroProduccion; //Mostramos el número de producción 
-        //console.log("Producción siguiente:", numeroProduccion);
-
-        //Manejar los mezcladores
-        const listaMezcladores = data.mezcladores;
-        //console.log("Mezcladores recibidos: ", listaMezcladores);
-
-        //Manejar los reactores
-        const listaReactores = data.reactores;
-        //console.log("Reactores recibidos: ", listaReactores);
-
-        //Manejar las fabricaciaones en curso
-        const listaFabricacionesCurso = data.fechaTransferencia;
-        //console.log("Producciones en curso:", listaFabricacionesCurso);        
-
-        //Manejar INICIO o NO de las producciones de P18
-        
-        
-        const mezcladoresDisponibles = listaMezcladores.filter(r=> r.Estado === "Vacio");
-        const mezcladoresAveriados = listaMezcladores.filter(r => r.Estado === "Averiado");
-        
-        const reactoresDisponibles = listaReactores.length;
-        const reactoresP18Disponibles = listaReactores.filter(r => r.ProductoFabricado === "P18");
-        const reactoresP18Averiados = listaReactores.filter(r => r.Estado === "Averiado");
-        
-        const reactoresSulfatoDisponibles = listaReactores.filter(r => r.ProductoFabricado === "Sulfato");
-        
-        const fechaTransferenciaMezclador = data.fechaTransferencia;
-        
-                
-        let sePuedeFabricarP18 = false;
-        let sePuedeFabricarSulfato = false;
-        const ahora = new Date();
-        const fechaTransferenciaDate = new Date(fechaTransferenciaMezclador);
-        const diferenciaHoras = (ahora - fechaTransferenciaDate) / (1000 * 60 * 60);        
-
-        //CONDICIONES PARA MOSTRAR FORMULARIO PRODUCCIONES P18
-        //Regla general
-        if (
-            (reactoresP18Disponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
-            (reactoresP18Disponibles.length === 0 && diferenciaHoras >= 4)
-        ) {
-            sePuedeFabricarP18 = true;
-        }
-
-        // Casos con mezcladores averiados
-        if (
-            mezcladoresAveriados.length === 1 &&  //===1
-            mezcladoresDisponibles.length >= 1 &&
-            reactoresP18Disponibles.length === 1
-        ) {
-            sePuedeFabricarP18 = true;
-        }
-
-        if (
-            mezcladoresAveriados.length >= 1 && // === 1
-            mezcladoresDisponibles.length === 0 &&
-            reactoresP18Disponibles.length <= 1 && //=== 1
-            diferenciaHoras > 4
-        ) {
-            sePuedeFabricarP18 = false;
-            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
-        }
-
-        if (
-            mezcladoresAveriados.length === 1 &&
-            mezcladoresDisponibles.length === 1 &&
-            reactoresP18Disponibles.length > 1 &&
-            diferenciaHoras > 4
-        ) {
-            sePuedeFabricarP18 = true;
-        }
-
-        //Reglas con 1 reactor averiado
-        if (
-            reactoresP18Averiados.length === 1 &&
-            mezcladoresDisponibles.length === 2 &&
-            reactoresP18Disponibles.length === 0
-        ) {
-            sePuedeFabricarP18 = false;
-            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
-
-        } else if (
-            reactoresP18Averiados.length === 1 &&
-            mezcladoresDisponibles.length === 2 &&
-            reactoresP18Disponibles.length === 1
-        ) {
-            sePuedeFabricarP18 = true;
-
-        } else if (
-            reactoresP18Averiados.length === 1 &&
-            mezcladoresDisponibles.length === 1
-        ) {
-            sePuedeFabricarP18 = false;
-            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
-        }
-
-        //CONDICIÓN EXTRA¨: Para cuando están los reactores llenos
-
-         if (mezcladoresDisponibles >=1 && reactoresSulfatoDisponibles >=1) {
-            //Solo se permite si NO hay mezcladores en uso
-            const hayMezcladoresEnUso = data.hayMezcladoresEnUso ?? false;
-
-        if (!hayMezcladoresEnUso) {
-                sePuedeFabricarSulfato = true;
-            }
+            //return;            
         }
         
-        if (!sePuedeFabricarP18) {
-            mostrarModal("Hay un mezclador averiado y el otro está en un proceso");
+        numeroProduccion = ultimoNumero + 1;        
+
+        if (data.producciones_en_curso.length === 0) {
+            console.log("Sin datos en la tabla fabricaciones_en_curso");            
+        } 
+        else {            
+            const pesoInicialMezclador = data.producciones_en_curso[0].PesoInicialMezclador;                 
+            const pesoInicialReactor = data.producciones_en_curso[0].PesoInicialReactor;            
+            
         }        
         
-        if (!sePuedeFabricarSulfato) {
-            console.log("No se puede fabricar Sulfato porque hay un mezclador en uso.");
-        }
+        //Manejo del número de producción
+        displayProduccion.innerHTML = numeroProduccion; //Mostramos el número de producción 
+           //console.log("numeroProducción:", numeroProduccion); return;
 
-        //console.logs para comprobar las condiciones de las CONDICIONES DE MOSTRAR FORMULARIO P18
-            //console.log("Mezcladores disponibles:" , mezcladoresDisponibles);            
-            //console.log("Mezcladores averiados: ", mezcladoresAveriados);
-            //console.log("Reactores P18 disponibles: ", reactoresP18Disponibles);
-            //console.log("Reactores averidados: ", reactoresP18Averiados);
-            //console.log("Reactores Sulfato disponibles: ", reactoresSulfatoDisponibles);            
-            //console.log("Ahora: ", ahora);
-            //console.log("Fecha Transferencia:", fechaTransferenciaMezclador);
-            //console.log("Diferencia tiempo:", diferenciaHoras);
-            //console.log("Se puede fabricar P18: ", sePuedeFabricarP18);
-        //return;
-        //Contenedor de mezcladores
-        const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
+        //Manejar los mezcladores
+        const listaEquipos = data.equipos;
+            //console.log("Equipos: ", listaEquipos); return;
 
-        //Crear dinámicamente los radios de mezcladores        
-        listaMezcladores.forEach((mezclador) => {
+        const mezcladoresP18 = listaEquipos.filter(equipo => equipo.Tipo === "Mezclador" && equipo.ProductoFabricado === "P18");
+            //console.log("Mezcladores P18: ", mezcladoresP18);             
+
+        //Manejar los reactores
+        const reactoresP18 = listaEquipos.filter(equipo => equipo.Tipo === "Reactor" && equipo.ProductoFabricado === "P18");
+            //console.log("Reactores P18: ", reactoresP18);        
+        
+        //Manejar las fabricaciones en curso
+        const listaFabricacionesCurso = data.producciones_en_curso;
+            //console.log("Producciones en curso:", listaFabricacionesCurso);
+    
+    
+    // --------------------------------------------------
+    // MENSAJES FINALES
+    // --------------------------------------------------
+
+    /*if (modo !== "editar" && !sePuedeFabricarP18) {
+        mostrarModal("4No es posible iniciar P18 con la configuración actual de equipos.");
+    }
+
+
+    if (!sePuedeFabricarSulfato) {
+        console.log("No se puede fabricar Sulfato porque hay un mezclador en uso.");
+    }*/
+
+    // ----------------------------------------------------------------------------------
+    // Mostrar en pantalla los valores recogidos en la consulta
+    // ----------------------------------------------------------------------------------
+
+    //Contenedor de mezcladores
+        const contenedorMezcladores = document.querySelector("#mezcladores fieldset");        
+
+    //Crear dinámicamente los radios de mezcladores        
+        mezcladoresP18.forEach((mezclador) => {
             const id = "mezclador_" + mezclador.Equipo_id;
 
             const label = document.createElement("label");
@@ -188,12 +163,25 @@ document.addEventListener("DOMContentLoaded", function(){
 
             contenedorMezcladores.appendChild(label);
         });        
+        
+
+        if (modo === "editar" && datosEdicion){ //Marcar y asignar valor
+            console.log("Editando voy: ", datosEdicion);
+            fabricacionEditada = datosEdicion.NumeroFabricacion;
+            displayProduccion.innerHTML = fabricacionEditada; 
+            const radioMezclador = document.querySelector(`input[name="mezclador"][value="${datosEdicion.Mezclador}"]`);
+            if (radioMezclador) {
+                radioMezclador.checked = true;
+                mezcladorSeleccionado = datosEdicion.Mezclador;
+            }
+        }
 
         //Contenedor de reactores
-        const contenedorReactores = document.querySelector("#reactores fieldset");
+        const contenedorReactores = document.querySelector("#reactores fieldset");        
 
-        //Crear dinámicamente los radios de reactores
-        listaReactores.forEach((reactor) => {
+        //Crear dinámicamente los radios de reactores                
+        //reactoresP18Disponibles.forEach((reactor) => {            
+        reactoresP18.forEach((reactor) => {
             const id = "reactor_" + reactor.Equipo_id;
 
             const label = document.createElement("label");
@@ -212,15 +200,25 @@ document.addEventListener("DOMContentLoaded", function(){
             contenedorReactores.appendChild(label);
         });        
 
+        if (modo === "editar" && datosEdicion) {            
+            const radioReactor = document.querySelector(`input[name="reactor"][value="${datosEdicion.Reactor}"]`);
+
+            if (radioReactor) {
+                radioReactor.checked = true;
+                reactorSeleccionado = datosEdicion.Reactor;
+            }
+        }
+
         //Manejar las recetas
-        const listaRecetas = data.recetas;
-        console.log("Recetas recibidas: ", listaRecetas);
+        const listaRecetas = data.recetas;            
+        const recetasP18 = listaRecetas.filter(recetas => recetas.ProductoFabricado === "P18");
+            //console.log("Recetas P18: ", recetasP18); 
 
         //Contenedor de recetas
-        const contenedorRecetas = document.querySelector("#recetas fieldset");
+        const contenedorRecetas = document.querySelector("#recetas fieldset");        
 
         //Crear dinámicamente los radios de recetas        
-        listaRecetas.forEach((receta, index) => {
+        recetasP18.forEach((receta, index) => {
             const id = `R${index + 1}_p18`; // ahora sí funciona correctamente
 
             const label = document.createElement("label");
@@ -237,8 +235,17 @@ document.addEventListener("DOMContentLoaded", function(){
             label.appendChild(document.createTextNode(receta.NombreReceta));
 
             contenedorRecetas.appendChild(label);
-        });        
-    })    
+        });     
+
+        if (modo === "editar" && datosEdicion) {            
+            const radioReceta = document.querySelector(`input[name="receta"][value="${datosEdicion.Receta}"]`);
+            if (radioReceta) {
+                radioReceta.checked = true;
+                recetaSeleccionada = datosEdicion.Receta;
+            }
+        }
+    })
+    
 
     //Agregar event listeners a los radio buttons de mezcladores
         document.addEventListener("change", function(e){
@@ -269,11 +276,12 @@ document.addEventListener("DOMContentLoaded", function(){
         let valor = input.value.replace(/\D/g, ""); // Quitar todo lo que no sea número
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Formatear con puntos
         input.value = valor;
-        console.log("Valor formateado:", valor);
+        input.value = valor //+ " Kg";
+        //console.log("Valor formateado:", valor);
     }
 
     // Seleccionamos los inputs
-    const inputsPesos = [peso_inicial_mezclador, peso_inicial_reactor];
+    const inputsPesos = [peso_inicial_mezclador, peso_inicial_reactor];    
 
     // Asignamos el mismo listener a ambos
     inputsPesos.forEach(input => {
@@ -285,8 +293,43 @@ document.addEventListener("DOMContentLoaded", function(){
         window.location.href="inicio.php";
     })
 
-    //Acción para el boton Iniciar
-    btnIniciarProduccion.addEventListener("click", function(){
+    //Acción para el btnValidar
+    btnValidar.addEventListener("click", function(e){        
+        if (modo === "editar") {             
+            e.preventDefault();
+            //alert("En modo edición no se valida ni se inicia producción"); return;
+
+            const pesoMezcladorEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
+            const pesoReactorEditado = parseInt(peso_inicial_reactor.value.replace(/\./g, ""), 10);
+
+            const data = new FormData();
+
+            data.append("numeroProduccion", fabricacionEditada);
+            data.append("mezclador", mezcladorSeleccionado);            
+            data.append("reactor", reactorSeleccionado);            
+            data.append("receta", recetaSeleccionada);    
+            data.append("pesoInicialMezclador", pesoMezcladorEditado); 
+            data.append("pesoInicialReactor", pesoReactorEditado)
+            data.append("producto", producto);            
+
+            fetch("models/actualizardatos.php", {
+                method: "POST",
+                body: data
+            })
+            .then(response => response.json())
+            .then(json => {
+                console.log("datos enviados a actualizardatos.php:", json);
+                if (json.ok) mostrarModal("Producción actualizada correctamente");
+                else alert ("Error: ", json.error);
+
+            })
+            .catch(error => {
+                console.log("ERROR", error);
+            });
+
+            return; 
+        }
+
         const ahora = new Date();
 
         //Formato YYYY-MM-DD HH:MM:SS (ideal para MySQL)
@@ -314,6 +357,12 @@ document.addEventListener("DOMContentLoaded", function(){
             return; // Detiene el proceso 
         }
 
+        //Validación estricta del peso_inicial_reactor
+        if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
+            alert("Debe ingresar un PESO válido para el reactor");
+            return; // Detiene el proceso 
+        }
+
         //Validación de que hay seleccionado un Reactor
         if (!reactorSeleccionado) {
             alert("Debe seleccionar un Reactor");
@@ -325,13 +374,6 @@ document.addEventListener("DOMContentLoaded", function(){
             alert("Debe seleccionar una Receta");
             return;
         }
-
-        //Validación estricta del peso_inicial_reactor
-        /*if (!peso_inicial_reactor.value.trim() || isNaN(pesoReactorInt)) {    
-            alert("Debe ingresar un PESO válido para el reactor");
-            return; // Detiene el proceso 
-        }*/
-
         
         //Mostrar en la consola los datos a enviar a la tabla produccion_en_curso        
         console.log("Nº Produccion:", numeroProduccion);
@@ -340,27 +382,39 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log("Reactor: ", reactorSeleccionado);
         console.log("Receta: ", recetaSeleccionada);            
         console.log("Peso Inicial Mezclador: ", pesoMezcladorInt);
+        console.log("Peso Inicial Reactor: ", pesoReactorInt);
 
         //Iniciar envio de datos a la tabla fabricaciones_en_curso mediante AJAX
         //Preparamos los datos para ser enviados por AJAX
-        console.log("Preparando datos para enviarlos por AJAX...");
+        console.log("Preparando datos para enviarlos por AJAX...");        
         const data = new FormData();
 
+        data.append("numeroProduccion", numeroProduccion);
         data.append("fechaHoraInicio", fechaHoraInicio);
         data.append("mezclador", mezcladorSeleccionado);
         data.append("reactor", reactorSeleccionado);
-        data.append("receta", recetaSeleccionada);
-        data.append("numeroProduccion", numeroProduccion);
-        data.append("producto", producto);
+        data.append("receta", recetaSeleccionada);        
+        data.append("pesoInicialMezclador", pesoMezcladorInt);
+        data.append("pesoInicialReactor", pesoReactorInt);        
+        data.append("producto", producto);                
 
-        fetch("enviardatos.php", {
+        fetch("models/enviardatos.php", {
             method: "POST",
             body: data
         })
         .then(response => response.json())        
-        .then(json => console.log("Dasos enviados:", json))
-        .catch(error => console.log("Error al enviar los datos: ", error))
-
-
+        .then(json => {
+            console.log("Datos enviados:", json);
+         
+            if(json.ok) {
+                console.log("json.ok")
+                //Mostrar modal
+                mostrarModal(json.message);
+                
+            } else {
+                alert("Error: " + (json.error || "Error desconocido"));
+            }
+        })            
+        .catch(error => console.log("Error al enviar los datos: ", error));
     })
 })

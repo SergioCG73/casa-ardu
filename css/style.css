@@ -98,6 +98,8 @@ input[type="text"] {
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     box-sizing: border-box;
+    text-align: end;
+    font-size: 18px;
 }
 
 input[type="text"]:focus {
@@ -212,3 +214,82 @@ br {
     text-align: center;
     font-family: sans-serif;
 }
+
+/* Modal datos enviados correctamente */
+
+.mi-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;          /* 🔴 IMPORTANTE: oculto por defecto */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.mi-modal-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 250px;
+    text-align: center;
+}
+
+.producciones_en_curso {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.tabla th {
+    padding: 8px;
+    border-bottom: 3px solid #ccc;
+    text-align: center;
+}
+
+.tabla td {
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla tr:hover {
+    background: #f9f9f9;
+}
+
+.p18_destacado {
+    background-color: #d4a017; 
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;    
+    text-align: center;
+}
+
+.sulfato_destacado {
+    background-color: grey; 
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;    
+    text-align: center;
+}
+
+.icono-borrar {
+    cursor: pointer;      /* Para que parezca clicable */
+}
+
+.icono-editar {
+    cursor: pointer;
+}
+
+
+

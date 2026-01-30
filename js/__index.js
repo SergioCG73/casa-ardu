@@ -57,9 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }   
 
                 window.numeroProduccion = ultimoNumero + 1;
-                displayProduccion.innerHTML = numeroProduccion;
-                //console.log("Número de producción siguiente:", numeroProduccion);
-                //document.getElementById("numeroproduccion").innerHTML = numeroProduccion;                
+                displayProduccion.innerHTML = numeroProduccion;                
             })
             .catch(error => {
                 console.error(error);
@@ -117,14 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
             String(ahora.getSeconds()).padStart(2, '0');
 
         //Mostrar en pantalla
-        document.getElementById("resultado").innerText = "Validado el: " + fechaHora;
-
-        //Guardar para el envío posterior
-        /*document.getElementById("fechaHora").value = fechaHora;
-        console.log(fechaHora);
-        console.log(mezcladorSeleccionado);
-        console.log(recetaSeleccionada);   
-        console.log("Nº Produccion:", numeroProduccion);*/
+        document.getElementById("resultado").innerText = "Validado el: " + fechaHora;        
 
          //Enviar datos a la tabla fab_en_curso mediante AJAX
             // Preparar los datos para enviar por AJAX
@@ -134,11 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
             data.append("mezclador", mezcladorSeleccionado);
             data.append("receta", recetaSeleccionada);
             data.append("numFabricacion", numeroProduccion);
-            data.append("producto", window.producto);
-            /*console.log("Fecha y Hora:", fechaHora);
-            console.log("Mezclador:", mezcladorSeleccionado);
-            console.log("Receta:", recetaSeleccionada);
-            console.log("Número de Producción:", numeroProduccion);*/
+            data.append("producto", window.producto);            
 
             // Realizar la solicitud AJAX
             fetch('enviardatos.php', {

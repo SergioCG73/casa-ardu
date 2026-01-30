@@ -2,79 +2,50 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<link href="css/style_Gemini.css" rel="stylesheet" type="text/css">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <title>Policloruro</title>
 </head>
 <body>
-    <div id="contenedor" name="contenedor">
+    <div id="contenedor" class="contenedor">
         <h1 id="titulo-formulario">Policloruro</h1>
         <div id="formulario" name="formulario">
             <div id="mezcladores" name="mezcladores">
-                <fieldset><legend>Mezcladores</legend>
-                <!--    <input type="radio" id="m214" name="mezclador" value="M214">
-                    <label for="m214">M214</label>
-                    <br>
-                    <input type="radio" id="m215" name="mezclador" value="M215">
-                    <label for="m215">M215</label>
-                    <br><br>
-                    <label for="peso_inicial_mezclador">Peso inicial mezclador:</label>
-                    <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador"> -->                    
-                </fieldset>
+                <fieldset><legend>Mezcladores</legend></fieldset>
                     <br><br><br>
-                    <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador:</label>
+                    <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador (Kg):</label>
                     <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
             </div>
 
-            <div id="reactores" name="reactores">
-                <fieldset><legend>Reactores</legend>
-                   <!-- <input type="radio" id="r200" name="reactor" value="R200">
-                    <label for="r200">R200</label>
-                    <br>
-                    <input type="radio" id="r201" name="reactor" value="R201">
-                    <label for="r201">R201</label>
-                    <br>
-                    <input type="radio" id="r202" name="reactor" value="R202">
-                    <label for="r202">R202</label>
-                    <br><br>                    -->
-                </fieldset>
+            <div id="reactores" class="reactores">
+                <fieldset><legend>Reactores</legend></fieldset>
                     <br><br><br>
-                    <label for="peso_inicial_reactor" class="input-label">Peso inicial reactor:</label>
+                    <label for="peso_inicial_reactor" class="input-label">Peso inicial reactor (Kg):</label>
                     <input type="text" id="peso_inicial_reactor" name="peso_inicial_reactor"> 
             </div>
 
-            <div id="recetas" name="recetas">
-                <fieldset><legend>Recetas</legend>
-                    <!--<input type="radio" id="receta1" name="receta" value="Receta 1">
-                    <label for="receta1">Receta 1</label>
-                    <br>
-                    <input type="radio" id="receta2" name="receta" value="Receta 2">
-                    <label for="receta2">Receta 2</label>
-                    <br>
-                    <input type="radio" id="receta3" name="receta" value="Receta 3">
-                    <label for="receta3">Receta 3</label>
-                    <br>
-                    <input type="radio" id="receta4" name="receta" value="Receta 4">
-                    <label for="receta4">Receta 4</label>                    -->
-                </fieldset>
+            <div id="recetas" class="recetas">
+                <fieldset><legend>Recetas</legend></fieldset>
             </div>
 
-            <div id="botonera" name="botonera">
-                <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>
-                <button id="btnIniciarProduccion" name="btnIniciarProduccion">Iniciar</button>
+            <div id="botonera" class="botonera">
+                <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
+                <button id="btnValidar" name="btnValidar">Validar</button>
             </div>
         </div>
 
-        <div id="resultados" name="resultados">
+        <div id="resultados" class="resultados">
             <p id="displayProduccion" name="displayProduccion"></p>
         </div>
-
-        <div id="miModal" class="modal">
-        <div class="modal-contenido">
-            <p id="mensajeModal"></p>
-            <button id="btnAceptar">Aceptar</button>
+        
+        <div id="modal" class="mi-modal" hidden>
+            <div class="mi-modal-contenido">
+                <p id="modalMsg"></p>
+                <button id="btnAceptar" class="mi-boton">Aceptar</button>
+            </div>
         </div>
+</div>
+
     </div>    
     </div>
 </body>

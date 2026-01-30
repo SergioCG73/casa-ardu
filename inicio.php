@@ -14,13 +14,14 @@
         <button id="btnHB10" name="btnHB10">HB 10</button>
         <button id="btnSulfacid" name="btnSulfacid">SulfaCID</button>
     </div>
-<!--
-    <div id="miModal" class="modal">
-        <div class="modal-contenido">
-            <p id="mensajeModal"></p>
-            <button id="btnAceptar">Aceptar</button>
-        </div>
-    </div>    -->
+
+    <div id="producciones_en_curso" name="producciones_en_curso" class="producciones_en_curso"  style="display:none">
+        <table id="tabla" name ="tabla" class="tabla">            
+
+        </table>
+
+    </div>
+
 </body>
     <script src="js/inicio.js"></script>
 </html>
