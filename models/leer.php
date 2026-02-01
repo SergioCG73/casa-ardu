@@ -7,11 +7,11 @@ ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
-$data = json_decode(file_get_contents("php://input"), true);
+$data = json_decode(file_get_contents("php://input"), true); //Convierte el string en un array asociativo
 $modo = $data["modo"] ?? null;
+$producto = $data["producto"] ?? null;
 
 if ($modo === "inicial") {
-
     // 1) Producciones en curso
     $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, 
                    Receta, NumeroFabricacion, Producto_id
@@ -71,18 +71,9 @@ if ($modo === "inicial") {
     } else {
         $fechaTransferencia = date('Y-m-d H:i:s');
         $fechaTransferencia = null;
-    }
+    }    
 
-    // 7) Última producción terminada
-   /* $sql = "SELECT NumeroFabricacion 
-            FROM p18_terminadas 
-            ORDER BY NumeroFabricacion DESC 
-            LIMIT 1";
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute();
-    $ultimoNumero = $stmt->fetchColumn() ?? 0;    */
-
-    // 8) Respuesta según haya o no producciones
+    // 7) Respuesta según haya o no producciones
     if (count($producciones_en_curso) === 0) {
 
         //Si no hay producciones en curso

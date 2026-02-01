@@ -6,15 +6,19 @@ function init() {
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
 
-    //btnP18.disabled = true;
+    //localStorage.clear();
     localStorage.setItem("modo", "inicial");
+    console.log("localStorage: ", localStorage);
 
     btnP18.addEventListener("click", () => {
         localStorage.removeItem("editarP18");
         localStorage.removeItem("modo");
         localStorage.setItem("modoP18", "crear");
-        localStorage.setItem("producto", "p18");
-        window.location.href = "formularioP18.html";
+        localStorage.setItem("producto", "p18");        
+        // Opción recomendada
+        window.location.href = "formulariopP18.html";
+
+        
     });
 
     btnSulfato.addEventListener("click", () => {
@@ -29,7 +33,7 @@ function init() {
 /* ============================================================
    CARGAR DATOS DESDE PHP
    ============================================================ */
-function cargarProducciones(tabla, divProducciones, /*btnP18*/) {
+function cargarProducciones(tabla, divProducciones) {
     fetch("models/leer.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,11 +44,7 @@ function cargarProducciones(tabla, divProducciones, /*btnP18*/) {
         if (!data.ok) return;        
 
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
-        activarEventosTabla(tabla);
-
-        /*if (sePuedeFabricarP18(data)) {
-            btnP18.disabled = false;
-        }*/
+        activarEventosTabla(tabla);        
 
         divProducciones.style.display = "block";
     })
@@ -102,113 +102,3 @@ function activarEventosTabla(tabla) {
         }
     });
 }
-
-/* ============================================================
-   LÓGICA DE NEGOCIO: ¿SE PUEDE FABRICAR P18?
-   ============================================================ */
-/*function sePuedeFabricarP18(data) {
-    const mezcladoresDisponibles = data.mezcladoresP18Disponibles ?? [];
-    const mezcladoresAveriados = data.mezcladoresP18Averiados ?? [];
-    const reactoresDisponibles = data.reactoresP18Disponibles ?? [];
-    const reactoresAveriados = data.reactoresP18Averiados ?? [];
-
-    console.log ("Mezcladores Disponibles: ", mezcladoresDisponibles);
-    console.log ("Mezcladores Averiados: ", mezcladoresAveriados);
-    console.log ("Reactores Disponibles: ", reactoresDisponibles);
-    console.log ("Reactores Averiados: ", reactoresAveriados);
-
-    const fecha = data.fecha_transferencia_mezclador;
-    const diferenciaHoras = fecha
-        ? (new Date() - new Date(fecha.replace(" ", "T"))) / 3600000
-        : 0;
-    
-    console.log("Diferencia horas: ", diferenciaHoras);
-
-    // Validación mínima
-    if (
-        !reactoresDisponibles ||
-        !mezcladoresDisponibles ||
-        !mezcladoresAveriados ||
-        !reactoresAveriados
-    ) {
-        console.warn("Faltan variables necesarias para evaluar P18");
-        return false;
-    }
-
-    if (mezcladoresDisponibles.length === 0) {
-        console.log("No hay mezcladores disponibles → NO se puede fabricar P18");
-        return false;
-    }
-
-    // 1) Regla general
-    if (
-        (reactoresDisponibles.length >= 1 && mezcladoresDisponibles.length > 1) ||
-        (reactoresDisponibles.length === 0 && diferenciaHoras >= 4)
-    ) {
-        console.log("Regla general");
-        return true;
-
-    }
-    // 2) Casos con mezcladores averiados
-    if (
-        mezcladoresAveriados.length === 1 &&
-        mezcladoresDisponibles.length === 0 &&
-        reactoresDisponibles.length <= 1 &&
-        diferenciaHoras > 4
-    ) {
-        console.log("Regla averiado 1");
-        return false;
-    }
-
-    if (
-        mezcladoresAveriados.length === 1 &&
-        mezcladoresDisponibles.length === 1 &&
-        reactoresDisponibles.length > 1 &&
-        diferenciaHoras > 4
-    ) {
-        console.log("Regla averiado 2");
-        return true;
-    }
-
-    if (
-        mezcladoresAveriados.length === 1 &&
-        mezcladoresDisponibles.length >= 1 &&
-        reactoresDisponibles.length === 1
-    ) {
-        console.log("averiado 3");
-        return true;
-    }
-
-    // 3) Reglas con 1 reactor averiado
-    if (
-        reactoresAveriados.length === 1 &&
-        mezcladoresDisponibles.length === 2 &&
-        reactoresDisponibles.length === 0
-    ) {
-        console.log("Regla 2.4");
-        return false;
-    }
-
-    if (
-        reactoresAveriados.length === 1 &&
-        mezcladoresDisponibles.length === 2 &&
-        reactoresDisponibles.length === 1
-    ) {
-        console.log("Regla 2.5");
-        return true;
-    }
-
-    if (
-        reactoresAveriados.length === 1 &&
-        mezcladoresDisponibles.length === 1
-    ) {
-        console.log("Regla 2.6");
-        return false;
-    }        
-
-    //return false;
-
-
-    // 4) Reglas si se está fabricando sulfato
-
-}*/    

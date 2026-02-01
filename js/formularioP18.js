@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", function(){
     const producto = localStorage.getItem("producto");
     const modo = localStorage.getItem("modoP18");  // "crear" o "editar"    
 
-    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));   //EL ITEM editarP18 vienes de inicio.js
+    console.log("localStorage: ", localStorage);
+
+    const datosEdicion = JSON.parse(localStorage.getItem("editarP18"));   //EL ITEM editarP18 vienes de inicio.js    
 
     // === CARGAR DATOS SI VENIMOS DESDE EDITAR ===    
 
