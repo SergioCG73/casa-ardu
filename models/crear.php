@@ -7,20 +7,33 @@ ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
+$producto = $_POST["producto"] ?? null;
+
+if ($producto === "p18") {
+    $tabla = "p18_terminadas";
+}
+
+if ($producto === "sulfato") {
+    $tabla = "sulfato_terminadas";
+    $producto = "sulfato";
+}
+
 // 1) Última producción terminada
     $sql = "SELECT NumeroFabricacion 
-            FROM p18_terminadas 
+            FROM $tabla
             ORDER BY NumeroFabricacion DESC 
             LIMIT 1";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $ultimoNumero = $stmt->fetchColumn() ?? 0;    
+    $ultimoNumero = $stmt->fetchColumn() ?? 0;
+
 
 // 2) Producciones en curso
-    $sql = "SELECT * FROM fabricaciones_en_curso";
+    $sql = "SELECT * FROM fabricaciones_en_curso WHERE Producto_id = :prod";
     $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(":prod", $producto);
     $stmt->execute();    
-    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);    
+    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 //3 Lista de mezcladores
         $sql = "SELECT * FROM equipos";

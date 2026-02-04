@@ -16,7 +16,7 @@ if ($modo === "inicial") {
     $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, 
                    Receta, NumeroFabricacion, Producto_id
             FROM fabricaciones_en_curso
-            WHERE Producto_id = 'P18'
+            /*WHERE Producto_id = 'P18'*/
             ORDER BY NumeroFabricacion DESC";
 
     $stmt = $conexion->prepare($sql);

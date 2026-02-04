@@ -54,7 +54,13 @@
     $receta = $_POST["receta"] ?? "";
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
     $producto = $_POST["producto"] ?? "";
-    $producto = ucfirst(($producto));
+
+    if ($producto === "sulfato") {
+        $producto = "Sulfato";
+    }
+    
+
+    //$producto = ucfirst(($producto));
     $pesoInicialMezclador = $_POST["pesoInicialMezclador"];
     $pesoInicialReactor = $_POST["pesoInicialReactor"];    
 

@@ -11,20 +11,19 @@ function init() {
     console.log("localStorage: ", localStorage);
 
     btnP18.addEventListener("click", () => {
-        localStorage.removeItem("editarP18");
-        localStorage.removeItem("modo");
-        localStorage.setItem("modoP18", "crear");
-        localStorage.setItem("producto", "p18");        
-        // Opción recomendada
-        window.location.href = "formulariopP18.html";
-
-        
+        localStorage.removeItem("editarP18");        
+        localStorage.removeItem("modoP18");
+        localStorage.setItem("modo", "crear");
+        localStorage.setItem("producto", "p18");                
+        window.location.href = "formularioP18.html";
     });
 
     btnSulfato.addEventListener("click", () => {
         localStorage.removeItem("editarSulfato");
-        localStorage.setItem("modoSulfato", "crearSulfato");
+        localStorage.removeItem("modoSulfato");
+        localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "sulfato");
+        window.location.href = "formularioP18.html";
     });
 
     cargarProducciones(tabla, divProducciones, btnP18);
@@ -69,9 +68,19 @@ function generarEncabezado() {
 }
 
 function construirTabla(data) {
-    return data.producciones_en_curso.map(p => `
+    return data.producciones_en_curso.map(p => {
+        //Determinamos la clase según el Producto_id
+        let claseEspecial = "";
+        if (p.Producto_id == 'P18') {
+            claseEspecial = "p18_destacado";
+        }
+        else if (p.Producto_id === "Sulfato") {
+            claseEspecial = "sulfato_destacado";
+        }
+
+        return `
         <tr>
-            <td class="${p.Producto_id === 'P18' ? 'p18_destacado' : ''} producto_${p.Producto_id}">
+            <td class="${claseEspecial} producto_${p.Producto_id}">
                 ${p.Producto_id}
             </td>
             <td>${p.NumeroFabricacion}</td>
@@ -82,8 +91,10 @@ function construirTabla(data) {
             <td><img src="images/editar_azul_icon_20x20.png" class="icono-editar" data-info='${JSON.stringify(p)}'></td>
             <td><img src="images/basura_rojo_icon_15x20.png" class="icono-borrar"></td>
         </tr>
-    `).join("");
+    `;
+    }).join("");
 }
+
 
 /* ============================================================
    EVENTOS DE LA TABLA (DELEGACIÓN)
