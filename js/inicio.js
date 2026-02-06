@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", init);
 function init() {
     const btnP18 = document.getElementById("btnP18");
     const btnSulfato = document.getElementById("btnSulfato");
+    const btnFerrico = document.getElementById("btnFerrico");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
 
@@ -15,7 +16,8 @@ function init() {
         localStorage.removeItem("modoP18");
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "p18");                
-        window.location.href = "formularioP18.html";
+        //window.location.href = "formularioP18.html";
+        window.location.href = "formulario.html";
     });
 
     btnSulfato.addEventListener("click", () => {
@@ -23,8 +25,17 @@ function init() {
         localStorage.removeItem("modoSulfato");
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "sulfato");
-        window.location.href = "formularioP18.html";
+        //window.location.href = "formularioP18.html";
+        window.location.href = "formulario.html";
     });
+
+    btnFerrico.addEventListener("click", () => {
+        localStorage.removeItem("editarFerrico"); //ATENTO AL RESULTADO DE HACER ESTO
+        localStorage.removeItem("modoFerrico");
+        localStorage.setItem("modo", "crear");
+        localStorage.setItem("producto", "ferrico");
+        window.location.href = "formulario.html";
+    })
 
     cargarProducciones(tabla, divProducciones, btnP18);
 }
@@ -71,11 +82,14 @@ function construirTabla(data) {
     return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id
         let claseEspecial = "";
-        if (p.Producto_id == 'P18') {
+        if (p.Producto_id === 'P18') {
             claseEspecial = "p18_destacado";
         }
         else if (p.Producto_id === "Sulfato") {
             claseEspecial = "sulfato_destacado";
+        }
+        else if (p.Producto_id === "Ferrico") {
+            claseEspecial = "ferrico_destacado";
         }
 
         return `
@@ -99,17 +113,36 @@ function construirTabla(data) {
 /* ============================================================
    EVENTOS DE LA TABLA (DELEGACIÓN)
    ============================================================ */
-function activarEventosTabla(tabla) {
+/*function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         if (e.target.classList.contains("icono-editar")) {
             const datos = JSON.parse(e.target.dataset.info);
-            localStorage.setItem("editarP18", JSON.stringify(datos)); //Guarda en el localStorage el objeto en formato JSON con el nombrfe editarP18
-            localStorage.setItem("modoP18", "editar");
-            window.location.href = "formularioP18.html";
+            localStorage.setItem("editar", JSON.stringify(datos)); //Guarda en el localStorage el objeto en formato JSON con el nombrfe editarP18
+            localStorage.setItem("modo", "editar");            
+            window.location.href = "formulario.html";
         }
 
         if (e.target.classList.contains("icono-borrar")) {
             console.log("Se ha pulsado borrar");
         }
     });
+}*/
+
+function activarEventosTabla(tabla) {
+    tabla.addEventListener("click", e => {
+        const iconoEditar = e.target.closest(".icono-editar");
+        if (iconoEditar) {
+            const datos = JSON.parse(iconoEditar.dataset.info);
+            localStorage.setItem("datosEditables", JSON.stringify(datos));            
+            localStorage.setItem("modo", "editar");            
+            window.location.href = "formulario.html";
+            return;
+        }
+
+        const iconoBorrar = e.target.closest(".icono-borrar");
+        if (iconoBorrar) {
+            console.log("Se ha pulsado borrar");
+        }
+    });
 }
+
