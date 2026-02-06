@@ -9,11 +9,12 @@ require_once("miconexion.php");
 
 $producto = $_POST["producto"] ?? null;
 
-if ($producto === "p18") {
+
+if ($producto === "P18") {
     $tabla = "p18_terminadas";
 }
 
-if ($producto === "sulfato") {
+if ($producto === "Sulfato") {
     $tabla = "sulfato_terminadas";
     $producto = "sulfato";
 }
