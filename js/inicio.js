@@ -7,25 +7,24 @@ function init() {
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
 
-    //localStorage.clear();
+    //console.log("localStorage 1: ", localStorage);
+    localStorage.clear();
     localStorage.setItem("modo", "inicial");
-    console.log("localStorage: ", localStorage);
+    //console.log("localStorage 2:", localStorage);
 
     btnP18.addEventListener("click", () => {
-        localStorage.removeItem("editarP18");        
-        localStorage.removeItem("modoP18");
+        //localStorage.removeItem("editarP18");        
+        //localStorage.removeItem("modoP18");
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "p18");                
-        //window.location.href = "formularioP18.html";
+        localStorage.setItem("producto", "P18");        
         window.location.href = "formulario.html";
     });
 
     btnSulfato.addEventListener("click", () => {
-        localStorage.removeItem("editarSulfato");
-        localStorage.removeItem("modoSulfato");
+        //localStorage.removeItem("editarSulfato");
+        //localStorage.removeItem("modoSulfato");
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "sulfato");
-        //window.location.href = "formularioP18.html";
+        localStorage.setItem("producto", "Sulfato");        
         window.location.href = "formulario.html";
     });
 
@@ -33,7 +32,7 @@ function init() {
         localStorage.removeItem("editarFerrico"); //ATENTO AL RESULTADO DE HACER ESTO
         localStorage.removeItem("modoFerrico");
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "ferrico");
+        localStorage.setItem("producto", "Ferrico");
         window.location.href = "formulario.html";
     })
 
@@ -51,7 +50,7 @@ function cargarProducciones(tabla, divProducciones) {
     })
     .then(response => response.json())
     .then(data => {        
-        if (!data.ok) return;        
+        if (!data.ok) return;
 
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
@@ -78,14 +77,14 @@ function generarEncabezado() {
         </tr>`;
 }
 
-function construirTabla(data) {
-    return data.producciones_en_curso.map(p => {
+function construirTabla(data) {                
+        return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id
         let claseEspecial = "";
-        if (p.Producto_id === 'P18') {
+        if (p.Producto_id === 'P18') {            
             claseEspecial = "p18_destacado";
         }
-        else if (p.Producto_id === "Sulfato") {
+        else if (p.Producto_id === "Sulfato") {            
             claseEspecial = "sulfato_destacado";
         }
         else if (p.Producto_id === "Ferrico") {
@@ -109,30 +108,11 @@ function construirTabla(data) {
     }).join("");
 }
 
-
-/* ============================================================
-   EVENTOS DE LA TABLA (DELEGACIÓN)
-   ============================================================ */
-/*function activarEventosTabla(tabla) {
-    tabla.addEventListener("click", e => {
-        if (e.target.classList.contains("icono-editar")) {
-            const datos = JSON.parse(e.target.dataset.info);
-            localStorage.setItem("editar", JSON.stringify(datos)); //Guarda en el localStorage el objeto en formato JSON con el nombrfe editarP18
-            localStorage.setItem("modo", "editar");            
-            window.location.href = "formulario.html";
-        }
-
-        if (e.target.classList.contains("icono-borrar")) {
-            console.log("Se ha pulsado borrar");
-        }
-    });
-}*/
-
 function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         const iconoEditar = e.target.closest(".icono-editar");
         if (iconoEditar) {
-            const datos = JSON.parse(iconoEditar.dataset.info);
+            const datos = JSON.parse(iconoEditar.dataset.info);            
             localStorage.setItem("datosEditables", JSON.stringify(datos));            
             localStorage.setItem("modo", "editar");            
             window.location.href = "formulario.html";
