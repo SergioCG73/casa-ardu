@@ -144,10 +144,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Estamos en modo crear"); 
         const datos = new FormData();
 
-        datos.append("producto", producto); 
-        datos.append("modo", modo);                
+        datos.append("producto", producto);         
+        datos.append("modo", modo);       
+        
 
-        fetch("/HTML/app/models/read.php", {
+        //fetch("/HTML/app/models/read.php", {
+        fetch("/HTML/app/models/leer.php", {
             method: "POST",
             body: datos
         })
@@ -197,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
             generarRadioRecetas(tipoReceta, contenedorRecetas, modo, datosEdicion);
             
         })
-        .catch(error => console.log("Error en fetch read.php:", error));
+        .catch(error => console.log("Error en fetch leer.php:", error));
     } 
 
     document.addEventListener("change", function(e){  //LIstener modo CREAR
@@ -233,7 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
         datos.append("producto", producto);
         datos.append("modo", "editar");
 
-        fetch("/HTML/app/models/read.php", {
+        //fetch("/HTML/app/models/read.php", {
+        fetch("/HTML/app/models/leer.php", {
             method: "POST",
             body: datos
         })
