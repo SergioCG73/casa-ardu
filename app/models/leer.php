@@ -22,7 +22,11 @@ function datosReadPHP($conexion, $producto) {
     } elseif ($producto === "Sulfato") {
         $tabla = "sulfato_terminadas";
         $producto = "sulfato";
-    } else {
+    } elseif ($producto === "Ferrico") {
+        $tabla = "ferrico_terminadas";        
+        $producto = "ferrico";        
+    } 
+    else {
         return ["ok" => false, "error" => "Producto no válido"];
     }
 

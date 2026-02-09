@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     const btnRetroceder = document.getElementById("btnRetroceder");    
     const btnValidar = document.getElementById("btnValidar");
     const displayProduccion = document.getElementById("displayProduccion");
     const divMezcladores = document.getElementById("mezcladores");
+    const divReactores = document.getElementById("reactores");    
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");    
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
 
@@ -129,15 +129,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 }
 
-    
-    
-
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);    
 
     if (modo === "crear" && producto === "Sulfato") {                   
-        divMezcladores.style.display = "none";
+        divMezcladores.style.display = "none";        
         const tituloFormulario = document.getElementById("titulo-formulario");
         tituloFormulario.innerHTML = "Sulfato";
+    }
+
+    if (modo === "crear" && producto === "Ferrico") {                   
+        divReactores.style.display = "none";
+        const tituloFormulario = document.getElementById("titulo-formulario");
+        tituloFormulario.innerHTML = "Férrico";
     }
 
     if (modo === "crear") {
@@ -145,8 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const datos = new FormData();
 
         datos.append("producto", producto);         
-        datos.append("modo", modo);       
-        
+        datos.append("modo", modo);
 
         //fetch("/HTML/app/models/read.php", {
         fetch("/HTML/app/models/leer.php", {
@@ -159,8 +161,15 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- NUMERO DE PRODUCCION ---- //
             if (modo === "crear") {
                 let ultimoNumero = parseInt(data.ultimoNumero, 10); 
-                const ultimaFabricacionEnCurso = Math.max( ...data.producciones_en_curso.map(item => parseInt(item.NumeroFabricacion, 10)) ); ultimoNumero = Math.max(ultimoNumero, ultimaFabricacionEnCurso); numeroProduccion = isNaN(ultimoNumero) ? 1 : ultimoNumero + 1; displayProduccion.innerHTML = numeroProduccion; 
+                const ultimaFabricacionEnCurso = Math.max( ...data.producciones_en_curso.map(item => parseInt(item.NumeroFabricacion, 10)) ); ultimoNumero = Math.max(ultimoNumero, ultimaFabricacionEnCurso); numeroProduccion = isNaN(ultimoNumero) ? 1 : ultimoNumero + 1; displayProduccion.innerHTML = numeroProduccion;                 
             }
+
+
+            //AQUÍ ME QUEDO
+            console.log("Modo, producto, ultimaFab:", modo, producto, ultimaFabricacionEnCurso); return;
+            
+
+
             // --- GENERAR MEZCLADORES --- //
 
             const listaEquipos = data.lista_de_equipos;
