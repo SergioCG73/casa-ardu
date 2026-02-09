@@ -12,14 +12,15 @@ function init() {
     btnP18.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "P18");        
-        window.location.href = "index.php?c=Formulario&a=mostrar";
+        //window.location.href = "index.php?c=Formulario&a=mostrar";
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
 
     });
 
     btnSulfato.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Sulfato");        
-        window.location.href = "index.php?c=Formulario&a=mostrar";
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
     });
 
     btnFerrico.addEventListener("click", () => {
@@ -27,7 +28,7 @@ function init() {
         localStorage.removeItem("modoFerrico");
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
-        window.location.href = "index.php?c=Formulario&a=mostrar";
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
     })
 
     cargarProducciones(tabla, divProducciones, btnP18);
@@ -95,8 +96,8 @@ function construirTabla(data) {
             <td>${p.Mezclador}</td>
             <td>${p.Reactor}</td>
             <td>${p.Receta}</td>
-            <td><img src="../images/editar_azul_icon_20x20.png" class="icono-editar" data-info='${JSON.stringify(p)}'></td>
-            <td><img src="../images/basura_rojo_icon_15x20.png" class="icono-borrar"></td>
+            <td><img src="/HTML/public/images/editar_azul_icon_20x20.png" class="icono-editar" data-info='${JSON.stringify(p)}'></td>
+            <td><img src="/HTML/public/images/basura_rojo_icon_15x20.png" class="icono-borrar" data-info='${JSON.stringify(p)}'></td>
         </tr>
     `;
     }).join("");
@@ -106,7 +107,7 @@ function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         const iconoEditar = e.target.closest(".icono-editar");
         if (iconoEditar) {
-            const datos = JSON.parse(iconoEditar.dataset.info);            
+            const datos = JSON.parse(iconoEditar.dataset.info); 
             localStorage.setItem("datosEditables", JSON.stringify(datos));            
             localStorage.setItem("modo", "editar");            
             window.location.href = "/HTML/app/views/formulario.php";
@@ -115,7 +116,25 @@ function activarEventosTabla(tabla) {
 
         const iconoBorrar = e.target.closest(".icono-borrar");
         if (iconoBorrar) {
-            console.log("Se ha pulsado borrar");
+            const datos = JSON.parse(iconoBorrar.dataset.info);
+            localStorage.setItem("datosBorrables", JSON.stringify(datos));
+            localStorage.setItem("modo", "borrar");            
+            console.log("Se ha pulsado borrar"); 
+
+            fetch("/HTML/app/models/borrardatos.php", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(datos)
+            })
+            .then(response => response.json())
+            .then(json => {
+                if(json.ok) {
+                    alert("Producción eliminada correctamente");
+                    window.location.href = "/HTML/app/views/home.php";
+                } else alert("ERROR: " + json.error);
+            })         
+            
+            .catch(error => console.log("ERROR", error));                
         }
     });
 }
