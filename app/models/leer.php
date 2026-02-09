@@ -7,11 +7,83 @@ ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
-$data = json_decode(file_get_contents("php://input"), true); //Convierte el string en un array asociativo
-$modo = $data["modo"] ?? null;
-$producto = $data["producto"] ?? null;
+// Entrada combinada: JSON o POST
+$input = json_decode(file_get_contents("php://input"), true);
+$modo = $input["modo"] ?? $_POST["modo"] ?? null;
+$producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
+/* ============================================================
+   FUNCIÓN AUXILIAR → devuelve lo que antes daba read.php
+   ============================================================ */
+function datosReadPHP($conexion, $producto) {
+
+    if ($producto === "P18") {
+        $tabla = "p18_terminadas";
+    } elseif ($producto === "Sulfato") {
+        $tabla = "sulfato_terminadas";
+        $producto = "sulfato";
+    } else {
+        return ["ok" => false, "error" => "Producto no válido"];
+    }
+
+    // 1) Última producción terminada
+    $sql = "SELECT NumeroFabricacion 
+            FROM $tabla
+            ORDER BY NumeroFabricacion DESC 
+            LIMIT 1";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+    $ultimoNumero = $stmt->fetchColumn() ?? 0;
+
+    // 2) Producciones en curso
+    $sql = "SELECT * FROM fabricaciones_en_curso WHERE Producto_id = :prod";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(":prod", $producto);
+    $stmt->execute();
+    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 3) Lista de equipos
+    $sql = "SELECT * FROM equipos";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+    $lista_de_equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 4) Lista de recetas
+    $sql = "SELECT * FROM recetas";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+    $lista_de_recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return [
+        "ok" => true,
+        "ultimoNumero" => $ultimoNumero,
+        "producciones_en_curso" => $producciones_en_curso,
+        "lista_de_equipos" => $lista_de_equipos,
+        "lista_de_recetas" => $lista_de_recetas
+    ];
+}
+
+/* ============================================================
+   MODO: crear  → debe comportarse como read.php
+   ============================================================ */
+if ($modo === "crear") {
+    echo json_encode(datosReadPHP($conexion, $producto));
+    exit;
+}
+
+/* ============================================================
+   MODO: editar → también debe comportarse como read.php
+   ============================================================ */
+if ($modo === "editar") {
+    echo json_encode(datosReadPHP($conexion, $producto));
+    exit;
+}
+
+/* ============================================================
+   MODO: inicial  (contenido original de leer.php)
+   ============================================================ */
 if ($modo === "inicial") {
+
     // 1) Producciones en curso
     $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, 
                    Receta, NumeroFabricacion, Producto_id
@@ -21,11 +93,6 @@ if ($modo === "inicial") {
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-echo json_encode([
-    "ok" => true,
-    "producciones_en_curso" => $producciones_en_curso
-]); exit;
 
     // 2) Mezcladores disponibles
     $sql = "SELECT Equipo_id, NombreEquipo, Estado
@@ -59,7 +126,7 @@ echo json_encode([
     $stmt->execute();
     $reactoresAveriadosP18 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 6) Fecha transferencia SIEMPRE
+    // 6) Fecha transferencia
     $sqlSelect = "SELECT FechaTransferenciaMezclador
                   FROM fabricaciones_en_curso
                   WHERE Producto_id = 'P18'
@@ -70,48 +137,28 @@ echo json_encode([
     $stmt->execute();
     $fila = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($fila && !empty($fila['FechaTransferenciaMezclador'])) {
-        $fechaTransferencia = date('Y-m-d H:i:s', strtotime($fila['FechaTransferenciaMezclador']));
-    } else {
-        $fechaTransferencia = date('Y-m-d H:i:s');
-        $fechaTransferencia = null;
-    }    
+    $fechaTransferencia = $fila && !empty($fila['FechaTransferenciaMezclador'])
+        ? date('Y-m-d H:i:s', strtotime($fila['FechaTransferenciaMezclador']))
+        : null;
 
-    // 7) Respuesta según haya o no producciones
-    if (count($producciones_en_curso) === 0) {
-
-        //Si no hay producciones en curso
-        echo json_encode([
-            "ok" => true,
-            "producciones_en_curso" => [],            
-            "mezcladoresP18Disponibles" => $mezcladoresDisponiblesP18,
-            "mezcladoresP18Averiados" => $mezcladoresAveriadosP18,
-            "reactoresP18Disponibles" => $reactoresDisponiblesP18,
-            "reactoresP18Averiados" => $reactoresAveriadosP18,
-            "fecha_transferencia_mezclador" => $fechaTransferencia
-        ]);
-        exit;
-    }
-    //Si hay producciones en curso
     echo json_encode([
         "ok" => true,
-        "producciones_en_curso" => $producciones_en_curso,        
+        "producciones_en_curso" => $producciones_en_curso,
         "mezcladoresP18Disponibles" => $mezcladoresDisponiblesP18,
-        "reactoresP18Disponibles" => $reactoresDisponiblesP18,
         "mezcladoresP18Averiados" => $mezcladoresAveriadosP18,
+        "reactoresP18Disponibles" => $reactoresDisponiblesP18,
         "reactoresP18Averiados" => $reactoresAveriadosP18,
         "fecha_transferencia_mezclador" => $fechaTransferencia
     ]);
     exit;
 }
 
-
-
-
-
-
-
-
-
-
+/* ============================================================
+   MODO NO RECONOCIDO
+   ============================================================ */
+echo json_encode([
+    "ok" => false,
+    "error" => "Modo no reconocido"
+]);
+exit;
 
