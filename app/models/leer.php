@@ -37,7 +37,8 @@ function datosReadPHP($conexion, $producto) {
             LIMIT 1";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $ultimoNumero = $stmt->fetchColumn() ?? 0;
+    $ultimoNumero = $stmt->fetchColumn() ?? 0;    
+
 
     // 2) Producciones en curso
     $sql = "SELECT * FROM fabricaciones_en_curso WHERE Producto_id = :prod";
