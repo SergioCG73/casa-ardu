@@ -12,8 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let recetaSeleccionada;
     let numeroProduccion;   
     let tipoReceta;
-    let contenedorRecetas;
-     
+    let contenedorRecetas;     
 
     let modo = localStorage.getItem("modo");    
     let datosEdicion;    
@@ -21,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modo === "crear") {        
         producto = localStorage.getItem("producto");        
         displayProduccion.innerHTML = "...";
-    }
+    }    
 
     function desactivarValidaciones() {
         peso_inicial_mezclador.required = false;
@@ -126,22 +125,21 @@ document.addEventListener("DOMContentLoaded", () => {
         label.appendChild(document.createTextNode(receta.NombreReceta));
 
         contenedorRecetas.appendChild(label);
-    });
-}
+    });}
 
-    document.getElementById("btnAceptar").addEventListener("click", cerrarModal);    
+    document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
-    if (modo === "crear" && producto === "Sulfato") {                   
+    /*if (modo === "crear" && producto === "Sulfato") {                   
         divMezcladores.style.display = "none";        
         const tituloFormulario = document.getElementById("titulo-formulario");
         tituloFormulario.innerHTML = "Sulfato";
-    }
+    }*/
 
-    if (modo === "crear" && producto === "Ferrico") {                   
+    /*if (modo === "crear" && producto === "Ferrico") {                   
         divReactores.style.display = "none";
         const tituloFormulario = document.getElementById("titulo-formulario");
         tituloFormulario.innerHTML = "Férrico";
-    }
+    }*/
 
     if (modo === "crear") {
         console.log("Estamos en modo crear"); 
@@ -162,13 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (modo === "crear") {
                 let ultimoNumero = parseInt(data.ultimoNumero, 10); 
                 const ultimaFabricacionEnCurso = Math.max( ...data.producciones_en_curso.map(item => parseInt(item.NumeroFabricacion, 10)) ); ultimoNumero = Math.max(ultimoNumero, ultimaFabricacionEnCurso); numeroProduccion = isNaN(ultimoNumero) ? 1 : ultimoNumero + 1; displayProduccion.innerHTML = numeroProduccion;                 
-            }
-
-
-            //AQUÍ ME QUEDO
-            console.log("Modo, producto, ultimaFab:", modo, producto, ultimaFabricacionEnCurso); return;
-            
-
+            }            
 
             // --- GENERAR MEZCLADORES --- //
 
@@ -317,9 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mezcladorSeleccionado = document.querySelector("input[name='mezclador']:checked")?.value;
         reactorSeleccionado = document.querySelector("input[name='reactor']:checked")?.value;
         recetaSeleccionada = document.querySelector("input[name='receta']:checked")?.value;    
-    }
-    
-       
+    }  
 
     if (datosEdicion && modo === "editar") {  
         console.log("Estamos en modo edición....");
