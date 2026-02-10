@@ -11,8 +11,7 @@ function init() {
     
     btnP18.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "P18");        
-        //window.location.href = "index.php?c=Formulario&a=mostrar";
+        localStorage.setItem("producto", "P18");
         window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
 
     });
@@ -20,7 +19,7 @@ function init() {
     btnSulfato.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Sulfato");        
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=sulfato";
     });
 
     btnFerrico.addEventListener("click", () => {
@@ -28,7 +27,7 @@ function init() {
         localStorage.removeItem("modoFerrico");
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=ferrico";
     })
 
     cargarProducciones(tabla, divProducciones, btnP18);
