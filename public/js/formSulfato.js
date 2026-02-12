@@ -122,7 +122,13 @@ if (modo ==="crear") {
     })
         .then(response => response.json())
         .then(data => {
-            console.log("data:", data);            
+            console.log("data:", data);
+
+    if (data.equipos.length > 0 && data.equipos[0].Estado === "En uso") {
+        alert("No se puede fabricar Sulfato R202 ocupado");
+        window.location.href = "/HTML/public/index.php";
+    }
+            
 
             peso_inicial_reactor.addEventListener("input", ()=> formatearNumero(peso_inicial_reactor));
 
@@ -173,27 +179,25 @@ if (modo ==="crear") {
                 // ==== FETCH PARA HACER EL INSERT EN LA TABLA fabricaciones_en_curso ====
 
                 const datosEnviar = new FormData();
-                datosEnviar.append("numeroProduccion", numeroProduccion);
-                datosEnviar.append("producto", producto);
+                datosEnviar.append("numeroProduccion", numeroProduccion);                
                 datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
                 datosEnviar.append("reactor", reactorSeleccionado);
                 datosEnviar.append("receta", recetaSeleccionada);                
-                datosEnviar.append("pesoInicialReactor", peso_inicial_reactor);
+                datosEnviar.append("pesoInicialReactor", pesoLimpio);
 
-                /*console.log("numeroProduccion", numeroProduccion);
-                console.log("producto: ", producto);
+                /*console.log("numeroProduccion", numeroProduccion);                
                 console.log("fechaHoraInicio:", fechaHoraInicio);
                 console.log("reactorSeleccionado", reactorSeleccionado);
                 console.log("recetaSeleccionada", recetaSeleccionada); 
                 console.log("peso_inicial_reactor: ", pesoLimpio); return;*/
 
-                fetch("/HTML/app/models/enviardatos.php", {
+                fetch("/HTML/app/models/insertarSulfato.php", {
                     method: "POST",
                     body: datosEnviar
                 })
                 .then(response => response.json())
                 .then(json => {
-                      if (json.ok) /*mostrarModal(json.message);*/ alert("datos guardados")
+                      if (json.ok) /*mostrarModal(json.message);*/ console.log(json)
                       else alert("Error: " + (json.error || "Error desconocido"));
                 })                    
             });

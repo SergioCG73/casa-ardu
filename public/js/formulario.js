@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const divReactores = document.getElementById("reactores");    
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");    
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
+    const peso_final_reactor = document.getElementById("peso_final_reactor");    
+
+    peso_final_reactor.disabled = true;    
 
     let mezcladorSeleccionado;
     let reactorSeleccionado;
@@ -24,7 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function desactivarValidaciones() {
         peso_inicial_mezclador.required = false;
-        peso_inicial_reactor.required = false;   
+        peso_inicial_reactor.required = false;
+        peso_final_reactor.required = false;   
     }
 
     function mostrarModal(mensaje) {
@@ -211,10 +215,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href="/HTML/public/index.php";
     });
 
-    if (modo === "editar") {
+    if (modo === "editar") {        
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
         producto = datosEdicion.Producto_id;
-        numeroProduccion = datosEdicion.NumeroFabricacion;
+        numeroProduccion = datosEdicion.NumeroFabricacion;        
 
         displayProduccion.innerHTML = numeroProduccion;        
 
@@ -304,7 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
         formatearNumero(peso_inicial_mezclador);        
 
         peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
-        formatearNumero(peso_inicial_reactor);        
+        formatearNumero(peso_inicial_reactor);    
+        
+        peso_final_reactor.disabled = false;
         
         //desactivarValidaciones();
     } 
@@ -317,6 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const pesoMezcladorEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
             const pesoReactorEditado = parseInt(peso_inicial_reactor.value.replace(/\./g, ""), 10);
+            const pesoFinalReactorEditado = parseInt(peso_final_reactor.value.replace(/\./g,""), 10);            
 
             const data = new FormData();
             data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
@@ -325,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data.append("receta", recetaSeleccionada);
             data.append("pesoInicialMezclador", pesoMezcladorEditado);
             data.append("pesoInicialReactor", pesoReactorEditado);
+            data.append("pesoFinalReactor", pesoFinalReactorEditado);
             data.append("producto", producto);            
 
             fetch("../../app/models/actualizardatos.php", { 

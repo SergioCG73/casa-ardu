@@ -49,9 +49,9 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
     $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;
 
-    //3) Obtener los mezcladores del producto
+    //3) Obtener los equipos del producto a fabricar
 
-    $sqlSelect = "SELECT Equipo_id FROM equipos
+    $sqlSelect = "SELECT Equipo_id, Estado FROM equipos
                   WHERE ProductoFabricado = :producto";
 
     $stmt = $conexion->prepare($sqlSelect);

@@ -117,7 +117,7 @@
 
 
     //SQL para UPDATE estados en la tabla equipos
-/*    
+    
         $updateSQL ="UPDATE equipos
                      SET Estado = 'En uso'
                      WHERE Equipo_id IN (:Mezclador, :Reactor)";
@@ -127,7 +127,7 @@
         $updateStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
 
         $updateStmt->execute();
-*/        
+        
         echo json_encode([
             "ok" => true,
             "message" => "Datos guardados correctamente",

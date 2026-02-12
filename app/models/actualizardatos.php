@@ -23,6 +23,7 @@ $reactorNuevo       = $_POST["reactor"] ?? null;
 $receta             = $_POST["receta"] ?? null;
 $pesoM              = $_POST["pesoInicialMezclador"] ?? null;
 $pesoR              = $_POST["pesoInicialReactor"] ?? null;
+$pesoRF             = $_POST["pesoFinalReactor"] ?? null;
 $producto           = $_POST["producto"] ?? null;
 
 if (!$numeroProduccion) {
