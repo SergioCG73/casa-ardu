@@ -9,7 +9,6 @@ if (!file_exists($controllerFile)) {
     die("No existe el controlador: $controllerFile");
 }
 
-
 require_once $controllerFile;
 
 $controllerClass = $c . 'Controller';
@@ -25,5 +24,3 @@ if (!method_exists($controller, $a)) {
 }
 
 $controller->$a(); //Al entrar en la app llama a index()
-
-
