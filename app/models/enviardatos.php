@@ -49,7 +49,7 @@
     require_once("miconexion.php");
 
     $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";        
-    $mezclador = $_POST["mezclador"] ?? "";
+    $mezclador = $_POST["mezclador"] ?? "---";
     $reactor = $_POST["reactor"] ?? "";
     $receta = $_POST["receta"] ?? "";
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
@@ -57,15 +57,26 @@
 
     if ($producto === "sulfato") {
         $producto = "Sulfato";
-    }
-    
+    }    
 
     //$producto = ucfirst(($producto));
-    $pesoInicialMezclador = $_POST["pesoInicialMezclador"];
-    $pesoInicialReactor = $_POST["pesoInicialReactor"];    
+    $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "---";
+    $pesoInicialReactor = $_POST["pesoInicialReactor"] ?? "---";    
 
-    //Validación de datos recibidos
 
+    echo json_encode([
+        "fechaHoraInicio: " => $fechaHoraInicio,
+        "mezclador: " => $mezclador,
+        "reactor: " => $reactor,
+        "receta: " => $receta,
+        "numeroProduccion: " => $numeroProduccion,
+        "producto: " => $producto
+
+    ]); exit;
+
+
+
+    //Validación de datos recibidos    
     if (
         empty($fechaHoraInicio) ||
         empty($mezclador) ||
@@ -103,8 +114,10 @@
 
         $insertStmt->execute();
 
+
+
     //SQL para UPDATE estados en la tabla equipos
-    
+/*    
         $updateSQL ="UPDATE equipos
                      SET Estado = 'En uso'
                      WHERE Equipo_id IN (:Mezclador, :Reactor)";
@@ -114,12 +127,11 @@
         $updateStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
 
         $updateStmt->execute();
-        
+*/        
         echo json_encode([
             "ok" => true,
             "message" => "Datos guardados correctamente",
-            "ProduccionInicialReactor" => $pesoInicialReactor
-            
+            "ProduccionInicialReactor" => $pesoInicialReactor            
         ]);
         exit;
 

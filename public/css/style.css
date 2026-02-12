@@ -125,8 +125,23 @@ input[type="text"]:focus {
 }
 
 #btnRetroceder:hover {
-    background-color: #1e293b;
+    background-color: #1f6f6d
 }
+
+#btnValidar {
+    background-color: #334155;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#btnValidar:hover {
+    background-color: #1f6f6d
+}
+
 
 /* Estilos para el botón Iniciar */
 #btnIniciarProduccion {

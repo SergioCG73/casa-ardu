@@ -127,19 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         contenedorRecetas.appendChild(label);
     });}
 
-    document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
-
-    /*if (modo === "crear" && producto === "Sulfato") {                   
-        divMezcladores.style.display = "none";        
-        const tituloFormulario = document.getElementById("titulo-formulario");
-        tituloFormulario.innerHTML = "Sulfato";
-    }*/
-
-    /*if (modo === "crear" && producto === "Ferrico") {                   
-        divReactores.style.display = "none";
-        const tituloFormulario = document.getElementById("titulo-formulario");
-        tituloFormulario.innerHTML = "Férrico";
-    }*/
+    document.getElementById("btnAceptar").addEventListener("click", cerrarModal);    
 
     if (modo === "crear") {
         console.log("Estamos en modo crear"); 
@@ -147,8 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         datos.append("producto", producto);         
         datos.append("modo", modo);
-
-        //fetch("/HTML/app/models/read.php", {
+        
         fetch("/HTML/app/models/leer.php", {
             method: "POST",
             body: datos
@@ -186,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const contenedorReactores = document.querySelector("#reactores fieldset");
             let tipoReactor = producto === "P18" ? reactoresP18 : reactoresSulfato;
 
-            generarRadiosReactores(tipoReactor, contenedorReactores, modo, datosEdicion);            
+            generarRadiosReactores(tipoReactor, contenedorReactores, modo, datosEdicion);
 
             // --- GENERAR RECETAS --- //
 
@@ -220,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         input.addEventListener("input", () => formatearNumero(input));
     });
 
-    btnRetroceder.addEventListener("click", function(){
+    btnRetroceder.addEventListener("click", function(){        
         window.location.href="/HTML/public/index.php";
     });
 
@@ -236,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
         datos.append("producto", producto);
         datos.append("modo", "editar");
 
-        //fetch("/HTML/app/models/read.php", {
         fetch("/HTML/app/models/leer.php", {
             method: "POST",
             body: datos

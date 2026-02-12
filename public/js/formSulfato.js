@@ -7,9 +7,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
     
     let reactorSeleccionado;
     let recetaSeleccionada;
-    let numeroProduccion;   
-    let tipoReceta;
-    let contenedorRecetas;     
+    let numeroProduccion;
+    let fechaHoraInicio;
 
     let modo = localStorage.getItem("modo");    
     let producto = localStorage.getItem("producto");
@@ -37,8 +36,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
-function generarRadiosReactores(tipoReactor, contenedorReactores, modo, datosEdicion) {
-    tipoReactor.forEach(reactor => {
+function generarRadiosReactores(listaEquipos, contenedorReactores, modo, datosEdicion) {
+    listaEquipos.forEach(reactor => {
         const id = "reactor_" + reactor.Equipo_id;
 
         const label = document.createElement("label");
@@ -65,8 +64,8 @@ function generarRadiosReactores(tipoReactor, contenedorReactores, modo, datosEdi
     });
 }
 
-function generarRadioRecetas(tipoReceta, contenedorRecetas, modo, datosEdicion) {
-    tipoReceta.forEach((receta, index) => {
+function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
+    listaRecetas.forEach((receta, index) => {
         const id = `R${index + 1}_p18`;
 
         const label = document.createElement("label");
@@ -92,13 +91,25 @@ function generarRadioRecetas(tipoReceta, contenedorRecetas, modo, datosEdicion) 
         contenedorRecetas.appendChild(label);
     });
 }
-// ===== FIN ZONA DE FUNCIONES ======
+
+function formatearNumero(input) {
+        let valor = input.value.replace(/\D/g, "");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        input.value = valor;
+}
+
+// ===== FIN ZONA DE FUNCIONES ====== 
+
+// ==== FUNCIONALIDAD DEL BOTON RETROCEDER====
+
+btnRetroceder.addEventListener("click", ()=> {
+    window.location.href = "/HTML/public/";
+})
 
 // ==== INICIO LÓGICA DE modo === "crear" ====
 
 if (modo ==="crear") {
-    console.log("Estamos en modo creación");
-    
+    console.log("Estamos en modo creación");    
 
     const datos = new FormData();
 
@@ -111,10 +122,88 @@ if (modo ==="crear") {
     })
         .then(response => response.json())
         .then(data => {
-            console.log("data:", data);
-        })
+            console.log("data:", data);            
+
+            peso_inicial_reactor.addEventListener("input", ()=> formatearNumero(peso_inicial_reactor));
+
+            numeroProduccion = data.siguienteFabricacion;
+            displayProduccion.innerHTML = numeroProduccion;
+            
+            //==== CREAR RADIOS REACTORES ====
+            const listaEquipos = data.equipos;
+            const contenedorReactores = document.querySelector("#reactores fieldset");
+            generarRadiosReactores(listaEquipos, contenedorReactores, modo, datosEdicion);
+
+            //==== CREAR RADIOS RECETAS ====
+            const listaRecetas = data.recetas;
+            const contenedorRecetas = document.querySelector("#recetas fieldset");            
+            generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion);
+
+            document.addEventListener("change", function(e){
+                if (e.target.name === "reactor") reactorSeleccionado = e.target.value;
+                if (e.target.name === "receta") recetaSeleccionada = e.target.value;    
+            })
+
+            btnValidar.addEventListener("click", ()=> {
+                const ahora = new Date();
+                fechaHoraInicio = ahora.toLocaleString();                
+
+                const reactorMarcado = document.querySelector("input[name='reactor']:checked");
+                if (reactorMarcado) {
+                    reactorSeleccionado = reactorMarcado.value;
+                }
+
+                if (!reactorSeleccionado) {
+                    alert("Por favor, selecciona un reactor");
+                    return;
+                }
+
+                const recetaMarcada = document.querySelector("input[name='receta']:checked");
+                if (recetaMarcada) {
+                    recetaSeleccionada = recetaMarcada.value;
+                }
+
+                if (!recetaSeleccionada) {
+                    alert("Por favor, selecciona una receta");
+                    return;
+                }                
+
+                const pesoLimpio = peso_inicial_reactor.value.replace(/\./g, "");
+
+                // ==== FETCH PARA HACER EL INSERT EN LA TABLA fabricaciones_en_curso ====
+
+                const datosEnviar = new FormData();
+                datosEnviar.append("numeroProduccion", numeroProduccion);
+                datosEnviar.append("producto", producto);
+                datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
+                datosEnviar.append("reactor", reactorSeleccionado);
+                datosEnviar.append("receta", recetaSeleccionada);                
+                datosEnviar.append("pesoInicialReactor", peso_inicial_reactor);
+
+                /*console.log("numeroProduccion", numeroProduccion);
+                console.log("producto: ", producto);
+                console.log("fechaHoraInicio:", fechaHoraInicio);
+                console.log("reactorSeleccionado", reactorSeleccionado);
+                console.log("recetaSeleccionada", recetaSeleccionada); 
+                console.log("peso_inicial_reactor: ", pesoLimpio); return;*/
+
+                fetch("/HTML/app/models/enviardatos.php", {
+                    method: "POST",
+                    body: datosEnviar
+                })
+                .then(response => response.json())
+                .then(json => {
+                      if (json.ok) /*mostrarModal(json.message);*/ alert("datos guardados")
+                      else alert("Error: " + (json.error || "Error desconocido"));
+                })                    
+            });
+        })        
         .catch(error => console.log("ERROR", error));
 }
+
+
+
+
 
 
 
