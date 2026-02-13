@@ -68,6 +68,7 @@ function generarEncabezado() {
             <th>Receta</th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>`;
 }
 
@@ -97,6 +98,7 @@ function construirTabla(data) {
             <td>${p.Receta}</td>
             <td><img src="/HTML/public/images/editar_azul_icon_20x20.png" class="icono-editar" data-info='${JSON.stringify(p)}'></td>
             <td><img src="/HTML/public/images/basura_rojo_icon_15x20.png" class="icono-borrar" data-info='${JSON.stringify(p)}'></td>
+            <td><img src="/HTML/public/images/flecha_amarilla_icon_15x20.png" class="icono-transferir" data-info='${JSON.stringify(p)}'></td>
         </tr>
     `;
     }).join("");
@@ -106,10 +108,16 @@ function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         const iconoEditar = e.target.closest(".icono-editar");
         if (iconoEditar) {
-            const datos = JSON.parse(iconoEditar.dataset.info); 
+            const datos = JSON.parse(iconoEditar.dataset.info);             
             localStorage.setItem("datosEditables", JSON.stringify(datos));            
-            localStorage.setItem("modo", "editar");            
-            window.location.href = "/HTML/app/views/formulario.php";
+            localStorage.setItem("modo", "editar");
+            if (datos.Producto_id === "Sulfato") {
+                console.log("A formulario");
+                window.location.href = "/HTML/app/views/formSulfato.php";
+            } else {
+                window.location.href = "/HTML/app/views/formulario.php";
+            }
+            
             return;
         }
 
