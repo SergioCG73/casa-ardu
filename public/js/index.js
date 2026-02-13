@@ -125,8 +125,7 @@ function activarEventosTabla(tabla) {
         if (iconoBorrar) {
             const datos = JSON.parse(iconoBorrar.dataset.info);
             localStorage.setItem("datosBorrables", JSON.stringify(datos));
-            localStorage.setItem("modo", "borrar");            
-            console.log("Se ha pulsado borrar"); 
+            localStorage.setItem("modo", "borrar");
 
             fetch("/HTML/app/models/borrardatos.php", {
                 method: "POST",
@@ -142,6 +141,14 @@ function activarEventosTabla(tabla) {
             })         
             
             .catch(error => console.log("ERROR", error));                
+        }
+
+        const iconoTransferir = e.target.closest(".icono-transferir");
+        if (iconoTransferir) {
+            const datos = JSON.parse(iconoTransferir.dataset.info);
+            localStorage.setItem("datosTransferencia", JSON.stringify(datos));
+            localStorage.setItem("modo", "transferir");
+            console.log("Se ha pulsado transferir");
         }
     });
 }

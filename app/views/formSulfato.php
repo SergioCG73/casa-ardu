@@ -15,6 +15,9 @@
                     <br><br><br>
                     <label for="peso_inicial_reactor" class="input-label">Peso inicial reactor (Kg):</label>
                     <input type="text" id="peso_inicial_reactor" name="peso_inicial_reactor"> 
+                    <br><br><br>
+                    <label for="peso_final_reactor" class="input-label">Peso final reactor (Kg):</label>
+                    <input type="text" id="peso_final_reactor" name="peso_final_reactor"> 
             </div>
 
             <div id="recetas" class="recetas">
@@ -23,7 +26,9 @@
 
             <div id="botonera" class="botonera">
                 <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnValidar" name="btnValidar">Validar</button>
+                <button id="btnValidar" name="btnValidar">Crear</button>
+                <button id="btnTransferir" name="btnTransferir">Transferir</button>
+
             </div>
         </div>
 

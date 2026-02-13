@@ -91,7 +91,7 @@ if ($modo === "inicial") {
 
     // 1) Producciones en curso
     $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, 
-                   Receta, NumeroFabricacion, Producto_id
+                   PesoFinalReactor, Receta, NumeroFabricacion, Producto_id
             FROM fabricaciones_en_curso            
             ORDER BY NumeroFabricacion DESC";
 

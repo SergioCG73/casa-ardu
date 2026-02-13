@@ -33,7 +33,8 @@
 
             <div id="botonera" class="botonera">
                 <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnValidar" name="btnValidar">Validar</button>
+                <button id="btnValidar" name="btnValidar">Crear</button>
+                <button id="btnTransferir" name="btnTransferir">Transferir</button>
             </div>
         </div>
 

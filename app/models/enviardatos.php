@@ -3,7 +3,7 @@
 //Este fichero recibe los datos enviados por AJAX desde index.js y los inserta en la tabla fab_en_curso
 
     //Prepara tu script PHP para responder JSON limpio y sin errores visibles.
-    ob_clean(); //Limpia el buffer de salida
+    //ob_clean(); //Limpia el buffer de salida
     header('Content-Type: application/json; charset=utf-8'); //Le dice al navegador que la respuesta es un JSON
     error_reporting(0); //Desactiva la salida de errores PHP
     ini_set('display_errors', 0); //Oculta los errores en pantalla
@@ -54,6 +54,7 @@
     $receta = $_POST["receta"] ?? "";
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
     $producto = $_POST["producto"] ?? "";
+    $modo = $_POST["modo"] ?? "";
 
     if ($producto === "sulfato") {
         $producto = "Sulfato";
@@ -61,20 +62,7 @@
 
     //$producto = ucfirst(($producto));
     $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "---";
-    $pesoInicialReactor = $_POST["pesoInicialReactor"] ?? "---";    
-
-
-    echo json_encode([
-        "fechaHoraInicio: " => $fechaHoraInicio,
-        "mezclador: " => $mezclador,
-        "reactor: " => $reactor,
-        "receta: " => $receta,
-        "numeroProduccion: " => $numeroProduccion,
-        "producto: " => $producto
-
-    ]); exit;
-
-
+    $pesoInicialReactor = $_POST["pesoInicialReactor"] ?? "---";
 
     //Validación de datos recibidos    
     if (
@@ -118,7 +106,7 @@
 
     //SQL para UPDATE estados en la tabla equipos
     
-        $updateSQL ="UPDATE equipos
+    /*    $updateSQL ="UPDATE equipos
                      SET Estado = 'En uso'
                      WHERE Equipo_id IN (:Mezclador, :Reactor)";
 
@@ -126,7 +114,7 @@
         $updateStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
         $updateStmt->bindParam(":Reactor", $reactor, PDO::PARAM_STR);
 
-        $updateStmt->execute();
+        $updateStmt->execute();*/
         
         echo json_encode([
             "ok" => true,

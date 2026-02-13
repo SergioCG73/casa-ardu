@@ -3,7 +3,7 @@
 //Este fichero recibe los datos enviados por AJAX desde index.js y los inserta en la tabla fab_en_curso
 
     //Prepara tu script PHP para responder JSON limpio y sin errores visibles.
-    ob_clean(); //Limpia el buffer de salida
+    //ob_clean(); //Limpia el buffer de salida
     header('Content-Type: application/json; charset=utf-8'); //Le dice al navegador que la respuesta es un JSON
     error_reporting(0); //Desactiva la salida de errores PHP
     ini_set('display_errors', 0); //Oculta los errores en pantalla
@@ -49,8 +49,9 @@
     require_once("miconexion.php");
 
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
-    $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
-    $fechaHoraInicio = date("Y-m-d H:i:s", strtotime($_POST["fechaHoraInicio"]));
+    $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";    
+
+    //$fechaHoraInicio = date("Y-m-d H:i:s", strtotime($_POST["fechaHoraInicio"]));
     $reactor = $_POST["reactor"] ?? "";
     $pesoInicialReactor = $_POST["pesoInicialReactor"] ?? "";    
     $receta = $_POST["receta"] ?? "";    
