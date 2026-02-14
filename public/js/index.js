@@ -148,7 +148,8 @@ function activarEventosTabla(tabla) {
             const datos = JSON.parse(iconoTransferir.dataset.info);
             localStorage.setItem("datosTransferencia", JSON.stringify(datos));
             localStorage.setItem("modo", "transferir");
-            console.log("Se ha pulsado transferir");
+            console.log("Se ha pulsado transferir"); 
+            window.location.href = "/HTML/app/views/formSulfato.php";
         }
     });
 }

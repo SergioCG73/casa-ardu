@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", ()=> {
+
     const btnRetroceder = document.getElementById("btnRetroceder");    
     const btnCrear = document.getElementById("btnValidar");
     const btnTransferir = document.getElementById("btnTransferir");
     const displayProduccion = document.getElementById("displayProduccion");    
     const divReactores = document.getElementById("reactores");        
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
-    const peso_final_reactor = document.getElementById("peso_final_reactor");    
+    const peso_final_reactor = document.getElementById("peso_final_reactor");
 
     let reactorSeleccionado;
     let recetaSeleccionada;
@@ -14,11 +15,11 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
     let modo = localStorage.getItem("modo");    
     let producto = localStorage.getItem("producto");
-    let datosEdicion;
+    let datosEdicion;        
 
-    console.log("modo", modo); return;
+    btnTransferir.style.display = "none";
 
-// ===== INICIO ZONA DE FUNCIONES ======
+    // ===== INICIO ZONA DE FUNCIONES ======
 
     function desactivarValidaciones() {        
         peso_inicial_reactor.required = false;   
@@ -301,12 +302,44 @@ if (modo ==="crear") {
                     .catch(error => console.log("ERROR", error));
                     return;                    
                 })
+            }
+
+            
 
                 if (modo === "transferir") {
-                    console.log("Transfiriendo...");
+                    console.log("Estamos en modo transferir...");
+                    btnCrear.style.display = "none";
+                    btnTransferir.style.display = "block";
+                    console.log("modo", modo);
+
+                    datos = new FormData();
+
+                    datos.append("modo", modo);
+                    datos.append("producto", producto);
+
+                    fetch("/HTML/app/models/leerdatos.php", {
+                       method: "POST",        
+                       body: datos
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("data:", data);
+                    // === Nº FABRICACION
+                    const numeroProduccion = data.siguienteFabricacion;
+                    displayProduccion.innerHTML = numeroProduccion;
+
+                    //==== CREAR RADIOS REACTORES ====
+                    const listaEquipos = data.equipos;                
+                    const contenedorReactores = document.querySelector("#reactores fieldset");                
+                    generarRadiosReactores(listaEquipos, contenedorReactores, modo, datosEdicion);
+                    
+                }); 
+
+
+
+                    
+
+                    //const pesoLimpio = peso_final_reactor.value.replace(/\./g, "");
+                    console.log("pesoLimpio: ", producto); return;
                 }
-
-
-
-            }
 })
