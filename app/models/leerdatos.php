@@ -51,7 +51,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
     //3) Obtener los equipos del producto a fabricar
 
-    $sqlSelect = "SELECT Equipo_id, Estado FROM equipos
+    $sqlSelect = "SELECT Equipo_id, Estado, Tipo FROM equipos
                   WHERE ProductoFabricado = :producto";
 
     $stmt = $conexion->prepare($sqlSelect);
