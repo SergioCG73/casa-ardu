@@ -1,6 +1,6 @@
 <?php
 
-//Este fichero recibe los datos enviados por AJAX desde index.js y los inserta en la tabla fab_en_curso
+//Este fichero recibe los datos enviados por AJAX desde formSulfato.js y los inserta en la tabla fab_en_curso
 
     //Prepara tu script PHP para responder JSON limpio y sin errores visibles.
     //ob_clean(); //Limpia el buffer de salida
