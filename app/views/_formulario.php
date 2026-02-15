@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <link href="/HTML/public/css/style.css" rel="stylesheet" type="text/css">
-    <title >Formulario1</title>
+    <title >Formulario a suprimir</title>
 </head>
 <body>
     <div id="contenedor" class="contenedor">
