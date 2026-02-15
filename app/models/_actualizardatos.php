@@ -34,90 +34,9 @@ if (!$numeroProduccion) {
     exit;
 }
 
-if ($modo === "transferir") {
-    
-// ========================
-// 9. Cálculo de la semana 
-// ========================
-
-$semana = (int)(new DateTime($fechaHoraInicio))->format("W");
-
-// ========================
-// 10. Cálculo de la duración 
-// ========================
-
-$inicio = new DateTime($fechaHoraInicio);
-$final  = new DateTime($fechaHoraFinal);
-
-$segundosTotales = $final->getTimestamp() - $inicio->getTimestamp();
-
-// ==============================
-// 11. Tiempo de paro del reactor
-// =============================
-
-$numeroPrevio = $numeroProduccion - 1;
-
-$sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
-                            FROM sulfato_terminadas
-                            WHERE NumeroFabricacion = :num");
-$sqlStoped->execute(['num' => $numeroPrevio]);
-$Stoped = $sqlStoped->fetchColumn();
-
-if ($Stoped && isset($Stoped)) {
-    $HoraPrevia = new DateTime($Stoped);
-} else {
-    $HoraPrevia = null; // no hay producción anterior
+if ($pesoRF = "NaN") {
+    $pesoRF = NULL;
 }
-
-// Calcular segundos desde la producción anterior
-if ($HoraPrevia) {
-    $inicio = new DateTime($fechaHoraInicio);
-    $segundosDesdePrevio = $inicio->getTimestamp() - $HoraPrevia->getTimestamp();
-} else {
-    $segundosDesdePrevio = null;
-}
-
-$sqlInsert = $pdo->prepare("
-    INSERT INTO sulfato_terminadas (
-        Hora_Inicio, 
-        Hora_Finalizacion, 
-        Receta,
-        Semana, 
-        NumeroFabricacion, 
-        Peso_Inicial, 
-        Peso_Final, 
-        Duracion, 
-        Reactor, 
-        Tiempo_Parado        
-    ) VALUES (
-        :horainicio, 
-        :horafinalizacion, 
-        :receta,
-        :semana, 
-        :numerofabricacion, 
-        :pesoinicial, 
-        :pesofinal, 
-        :duracion, 
-        :reactor, 
-        :tiempoparado        
-    )
-");
-
-// Ejecutar con los valores
-/*$sqlInsert->execute([
-    ':horainicio'       => $fechaHoraInicio,
-    ':horafinalizacion' => $fechaHoraFinal,
-    ':receta'           => $receta,
-    ':semana'           => $semana,
-    ':numerofabricacion'=> $numeroProduccion,
-    ':pesoinicial'      => $pesoR,         // Peso inicial del reactor
-    ':pesofinal'        => $pesoRF,        // Peso final del reactor
-    ':duracion'         => $segundosTotales,
-    ':reactor'          => $reactorNuevo,
-    ':tiempoparado'     => $segundosDesdePrevio    
-]);*/
-} else {
-
 
 // =============================
 // 1. Obtener equipos actuales =
@@ -150,7 +69,6 @@ $sqlFree->execute([
     ":r" => $reactorAnterior
 ]);
 
-
 // ======================================
 // 4. Marcar nuevos equipos como En uso =
 // ======================================
@@ -163,11 +81,6 @@ $sqlUse->execute([
     ":m" => $mezcladorNuevo,
     ":r" => $reactorNuevo
 ]);
-
-echo json_encode([
-    "ok" => true,
-    "modo" => $sqlUse
-]); exit;
 
 // ===========================
 // 5. Actualizar la producción
@@ -193,11 +106,23 @@ $sqlUpdate->execute([
     ":num"  => $numeroProduccion
 ]);
 
-}
-
-
 // Devolver JSON
 echo json_encode([
+    "ok" => true,
+    "nº produccion" => $numeroProduccion,
+    "reactor" => $reactorNuevo,
+    "producto" => $producto,
+    "modo" => $modo,
+    "receta" => $receta,
+    "pesoInicialMezclador" => $pesoM,
+    "pesoInicialReactor" => $pesoR,
+    "PesoFinalReactor" => $pesoRF,
+    "fechaHoraInicio" => $fechaHoraInicio,
+    "fechaHoraFinal" => $fechaHoraFinal,
+    "message" => "Producción actualizada correctamente"
+    
+]); exit;
+/*echo json_encode([
     "ok" => true,
     "numeroProduccion" => $numeroProduccion,
     "mezcladorNuevo" => $mezcladorNuevo,
@@ -215,13 +140,7 @@ echo json_encode([
     "tiempoParado" => $segundosDesdePrevio,
     "horaprevia" => $HoraPrevia ? $HoraPrevia->format('Y-m-d H:i:s') : null,
     "message" => "Producción actualizada correctamente"    
-]); 
-
-exit;
-
-
-
-
+]); exit;*/ 
 
 
 
