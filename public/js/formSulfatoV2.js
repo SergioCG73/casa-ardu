@@ -164,6 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modo === "crear") {
 
         console.log("Estamos en modo creación");
+        const contenedorPesoFinal = document.getElementById("contenedor_peso_final");        
+        contenedorPesoFinal.style.display = "none"; 
 
         inicializarFormulario(modo, producto)
             .then(data => {
@@ -230,6 +232,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modo === "editar") {
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
         btnCrear.textContent = "Editar";
+        const contenedorPesoFinal = document.getElementById("contenedor_peso_final");        
+        contenedorPesoFinal.style.display = "none"; 
 
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
@@ -249,12 +253,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("producto", producto);
                     data.append("modo", modo);                    
 
-                    fetch("../../app/models/actualizardatos.php", {
+                    fetch("../../app/models/editarFabCurso.php", {
                         method: "POST",
                         body: data
                     })
                     .then(response => response.json())
-                    .then(json => {
+                    .then(json => {                        
                         if (json.ok) mostrarModal("Producción actualizada correctamente");
                         else alert("Error: " + json.error);                        
                     })

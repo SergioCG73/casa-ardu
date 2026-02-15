@@ -16,8 +16,10 @@
                     <label for="peso_inicial_reactor" class="input-label">Peso inicial reactor (Kg):</label>
                     <input type="text" id="peso_inicial_reactor" name="peso_inicial_reactor"> 
                     <br><br><br>
-                    <label for="peso_final_reactor" class="input-label">Peso final reactor (Kg):</label>
-                    <input type="text" id="peso_final_reactor" name="peso_final_reactor"> 
+                    <div id="contenedor_peso_final" class="peso_final">
+                        <label for="peso_final_reactor" class="input-label">Peso final reactor (Kg):</label>
+                        <input type="text" id="peso_final_reactor" name="peso_final_reactor"> 
+                    </div>
             </div>
 
             <div id="recetas" class="recetas">

@@ -127,7 +127,7 @@ function activarEventosTabla(tabla) {
             localStorage.setItem("datosBorrables", JSON.stringify(datos));
             localStorage.setItem("modo", "borrar");
 
-            fetch("/HTML/app/models/borrardatos.php", {
+            fetch("/HTML/app/models/borrarFabCurso.php", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(datos)
