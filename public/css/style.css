@@ -128,7 +128,7 @@ input[type="text"]:focus {
     background-color: #1f6f6d
 }
 
-#btnValidar {
+#btnCrear {
     background-color: #334155;
     color: white;
     border: none;
@@ -138,7 +138,7 @@ input[type="text"]:focus {
     font-weight: 600;
 }
 
-#btnValidar:hover {
+#btnCrear:hover {
     background-color: #1f6f6d
 }
 
