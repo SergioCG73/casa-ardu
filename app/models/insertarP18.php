@@ -1,62 +1,68 @@
 <?php
-ob_clean();
+// Este fichero recibe los datos enviados por AJAX desde formP18.js y los inserta en la tabla fabricaciones_en_curso
+
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode([
+        'ok' => false,
+        'message' => 'Método no permitido'
+    ]);
+    exit;
+}
 
-    require_once("miconexion.php");
+require_once("miconexion.php");
 
-    $numeroProduccion = $_POST["numeroProduccion"] ?? "";
-    $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";        
-    $mezclador = $_POST["mezclador"] ?? "";
-    $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";    
-    $receta = $_POST["receta"] ?? "";    
-    $producto = "P18";
+// Recoger datos
+$numeroProduccion = $_POST["numeroProduccion"] ?? "";
+$fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
+$mezclador = $_POST["mezclador"] ?? "";
+$pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
+$receta = $_POST["receta"] ?? "";
+$producto = $_POST["producto"] ?? ""; // Cambié clave POST a algo sin espacios
 
-    // Limpiar peso de puntos
-    $pesoInicialMezclador = str_replace('.', '', $pesoInicialMezclador);
+// Validación
+if (empty($fechaHoraInicio) || empty($mezclador) || empty($receta) || empty($numeroProduccion) || empty($pesoInicialMezclador) || empty($producto)) {
+    echo json_encode([
+        'ok' => false,
+        'message' => 'Faltan datos'
+    ]);
+    exit;
+}
 
-    if (empty($fechaHoraInicio) || empty($mezclador) || empty($receta) || empty($numeroProduccion) || empty($pesoInicialMezclador)) {
-        echo json_encode(['ok' => false, 'message' => 'Faltan datos']);
-        exit;
-    }
+try {
+    // INSERT
+    $insertSQL = "INSERT INTO fabricaciones_en_curso
+                  (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id)
+                  VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto)";
 
-    try {
-        // INSERT
-        $insertSQL = "INSERT INTO fabricaciones_en_curso
-                      (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id) 
-                      VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto)";
+    $insertStmt = $conexion->prepare($insertSQL);
+    $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
+    $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
+    $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);
+    $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
+    $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
+    $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
+    $insertStmt->execute();
 
-        $insertStmt = $conexion->prepare($insertSQL);
-        $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);        
-        $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
-        $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);
-        $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
-        $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
-        $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);        
-        $insertStmt->execute();
+    // UPDATE
+    $updateSQL = "UPDATE equipos SET Estado = 'En uso' WHERE Equipo_id = :Mezclador";
+    $updateStmt = $conexion->prepare($updateSQL);
+    $updateStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
+    $updateStmt->execute();
 
-        // UPDATE estado mezclador
-        $updateSQL = "UPDATE equipos
-                      SET Estado = 'En uso'
-                      WHERE Equipo_id = :Mezclador";
-        $updateStmt = $conexion->prepare($updateSQL);
-        $updateStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
-        $updateStmt->execute();
+    echo json_encode([
+        "ok" => true,
+        "message" => "Datos guardados correctamente"
+    ]);
+    exit;
 
-        echo json_encode([
-            "ok" => true,
-            "message" => "Datos guardados correctamente"
-        ]);
-        exit;
-
-    } catch (PDOException $e) {
-        echo json_encode([
-            "ok"=> false,
-            "error" => $e->getMessage()
-        ]);
-        exit;
-    }
+} catch (PDOException $e) {
+    echo json_encode([
+        "ok" => false,
+        "error" => $e->getMessage()
+    ]);
+    exit;
 }

@@ -238,8 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (peso_inicial_mezclador.value === "") {
                         alert("Por favor, selecciona un peso de mezclador");
                         return;
-                    }
-                                        
+                    }                                       
 
                     const recetaMarcada = document.querySelector("input[name='receta']:checked");
                     if (recetaMarcada) recetaSeleccionada = recetaMarcada.value;
@@ -267,6 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosEnviar.append("mezclador", mezcladorSeleccionado);
                     datosEnviar.append("pesoInicialMezclador", pesoInicialMezcladorLimpio);
                     datosEnviar.append("receta", recetaMarcada.value);
+                    datosEnviar.append("producto", "Papilla P18");
                     
                     //console.log (Object.fromEntries(datosEnviar)); return;
 
