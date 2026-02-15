@@ -79,6 +79,9 @@ function construirTabla(data) {
         if (p.Producto_id === 'P18') {            
             claseEspecial = "p18_destacado";
         }
+        else if (p.Producto_id === 'Papilla P18') {
+            claseEspecial = "papilla_destacado";
+        }
         else if (p.Producto_id === "Sulfato") {            
             claseEspecial = "sulfato_destacado";
         }
