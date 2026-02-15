@@ -67,7 +67,6 @@
         "producto" => $producto
     ]); exit;*/
 
-
     //Validación de datos recibidos    
     if (
         empty($fechaHoraInicio) ||        

@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (!recetaSeleccionada) {
                         alert("Por favor, selecciona una receta");
                         return;
-                    }
+                    }                    
 
                     const pesoLimpio = peso_inicial_reactor.value.replace(/\./g, "");
 
@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosEnviar.append("numeroProduccion", numeroProduccion);
                     datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
                     datosEnviar.append("reactor", reactorSeleccionado);
-                    datosEnviar.append("receta", recetaSeleccionada);
+                    datosEnviar.append("receta", recetaMarcada.value);
                     datosEnviar.append("pesoInicialReactor", pesoLimpio);
 
                     fetch("/HTML/app/models/insertarSulfato.php", {
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         body: datosEnviar
                     })
                     .then(response => response.json())
-                    .then(json => {
+                    .then(json => {                        
                         if (json.ok) mostrarModal(json.message);
                         else alert("Error: " + (json.error || "Error desconocido"));
                     });
@@ -255,9 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                     .then(response => response.json())
                     .then(json => {
-                        //if (json.ok) mostrarModal("Producción actualizada correctamente");
-                        //else alert("Error: " + json.error);
-                        console.log(json); return;
+                        if (json.ok) mostrarModal("Producción actualizada correctamente");
+                        else alert("Error: " + json.error);                        
                     })
                     .catch(error => console.log("ERROR", error));
                 });
@@ -303,17 +302,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.append("producto", producto);
                 data.append("modo", modo);
 
-                fetch("../../app/models/actualizardatos.php", {
+                fetch("../../app/models/transferirFabCurso.php", {
                     method: "POST",
                     body: data
                 })
                 .then(response => response.json())
                 .then(json => {
-                    //if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
-                    //else alert("Error: " + json.error);
-
-                    console.log(json);
-                    
+                    console.log(json); return;
+                    if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
+                    else alert("Error: " + json.error);                    
                 })
                 .catch(error => console.log("ERROR", error));
             });
