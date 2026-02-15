@@ -12,7 +12,7 @@ $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
-    if ($producto === "P18") {
+    if ($producto === "P18" || $producto === "PP18") {
         $tabla = "p18_terminadas";
     } elseif ($producto === "Sulfato") {
         $tabla = "sulfato_terminadas";
@@ -20,7 +20,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
     } elseif ($producto === "Ferrico") {
         $tabla = "ferrico_terminadas";        
         $producto = "ferrico";        
-    } 
+    }      
     else {
         return ["ok" => false, "error" => "Producto no válido"];
     }
@@ -45,9 +45,9 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
     $stmt = $conexion->prepare($sqlSelect);
     $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
     $stmt->execute();
-    $ultimaEnCurso = $stmt->fetchColumn();
+    $ultimaEnCurso = $stmt->fetchColumn();    
 
-    $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;
+    $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;    
 
     //3) Obtener los equipos del producto a fabricar
 
@@ -57,7 +57,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
     $stmt = $conexion->prepare($sqlSelect);
     $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
     $stmt->execute();
-    $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);    
 
     //4) Obtener las recetas del producto
 

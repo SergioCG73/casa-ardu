@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let fechaHoraInicio;
 
     let modo = localStorage.getItem("modo");
-    let producto = localStorage.getItem("producto");
+    //let producto = localStorage.getItem("producto");
+    producto = "Sulfato";
     let datosEdicion;
 
     //btnTransferir.style.display = "none";

@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let contenedorRecetas;
 
     let modo = localStorage.getItem("modo");
-    let producto = localStorage.getItem("producto");
+    //let producto = localStorage.getItem("producto");
+    producto = "PP18";
 
     // ===== INICIO ZONA DE FUNCIONES ======
 
@@ -133,19 +134,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === Función InicializarFormulario === 
 
-    function inicializarFormulario(modo, producto, datosEdicion = null) {
+    function inicializarFormulario(modo, producto, datosEdicion = null) {        
         const datos = new FormData();
 
         datos.append("modo", modo);
-        datos.append("producto", producto);
+        datos.append("producto", producto);        
 
         return fetch("/HTML/app/models/leerdatos.php", {
             method: "POST",
             body: datos
         })
         .then(response => response.json())
-        .then(data => {
-
+        .then(data => {            
             //==== Nº FABRICACION ====
             if(modo === "editar" || modo ==="transferir") {
                 numeroProduccion = data.ultimaEnCurso;
@@ -212,8 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pesoFinalMezcladores.style.display = "none";
 
         inicializarFormulario(modo, producto)
-            .then(data => {                
-
+            .then(data => {
                 btnCrear.addEventListener("click", () => {
 
                     const ahora = new Date();
@@ -266,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosEnviar.append("mezclador", mezcladorSeleccionado);
                     datosEnviar.append("pesoInicialMezclador", pesoInicialMezcladorLimpio);
                     datosEnviar.append("receta", recetaMarcada.value);
-                    datosEnviar.append("producto", "Papilla P18");
+                    datosEnviar.append("producto", "PP18");
                     
                     //console.log (Object.fromEntries(datosEnviar)); return;
 
@@ -275,8 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         body: datosEnviar
                     })
                     .then(response => response.json())
-                    .then(json => {                        
-                        console.log(json); return;
+                    .then(json => {                                                
                         if (json.ok) mostrarModal(json.message);
                         else alert("Error: " + (json.error || "Error desconocido"));
                     });
