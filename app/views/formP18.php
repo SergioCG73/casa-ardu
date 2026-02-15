@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <link href="/HTML/public/css/style.css" rel="stylesheet" type="text/css">
-    <title >Formulario</title>
+    <title >Formulario P18</title>
 </head>
 <body>
     <div id="contenedor" class="contenedor">
@@ -15,6 +15,11 @@
                     <br><br><br>
                     <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador (Kg):</label>
                     <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
+                    <div id="peso_final_mezcla">
+                        <br><br><br>
+                        <label for="peso_final_mezclador" class="input-label">Peso final mezclador (Kg):</label>
+                        <input type="text" id="peso_final_mezclador" name="peso_final_mezclador">
+                    </div>
             </div>
 
             <div id="reactores" class="reactores">
@@ -33,8 +38,8 @@
 
             <div id="botonera" class="botonera">
                 <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnValidar" name="btnValidar">Crear</button>
-                <button id="btnTransferir" name="btnTransferir">Transferir</button>
+                <button id="btnCrear" name="btnCrear">Crear</button>
+                <!--<button id="btnTransferir" name="btnTransferir">Transferir</button>-->
             </div>
         </div>
 
@@ -53,5 +58,6 @@
     </div>    
     </div>
 </body>
-    <script src="/html/public/js/formulario.js"></script>
+    <!--<script src="/html/public/js/formulario.js"></script>-->
+    <script src="/html/public/js/formp18.js"></script>
 </html>
