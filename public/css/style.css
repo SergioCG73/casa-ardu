@@ -289,6 +289,15 @@ br {
     text-align: center;
 }
 
+.papilla_destacado {
+    background-color: grey;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;    
+    text-align: center;
+}
+
 .sulfato_destacado {
     background-color: #cfe8d5; 
     color: white;
