@@ -1,6 +1,6 @@
 <?php
 
-ob_clean();
+//ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -37,15 +37,14 @@ function datosReadPHP($conexion, $producto) {
             LIMIT 1";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $ultimoNumero = $stmt->fetchColumn() ?? 0;    
-
+    $ultimoNumero = $stmt->fetchColumn() ?? 0;
 
     // 2) Producciones en curso
     $sql = "SELECT * FROM fabricaciones_en_curso WHERE Producto_id = :prod";
     $stmt = $conexion->prepare($sql);
     $stmt->bindParam(":prod", $producto);
     $stmt->execute();
-    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);    
 
     // 3) Lista de equipos
     $sql = "SELECT * FROM equipos";
@@ -57,7 +56,7 @@ function datosReadPHP($conexion, $producto) {
     $sql = "SELECT * FROM recetas";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $lista_de_recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $lista_de_recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);   
 
     return [
         "ok" => true,
@@ -90,7 +89,7 @@ if ($modo === "editar") {
 if ($modo === "inicial") {
 
     // 1) Producciones en curso
-    $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, Reactor, PesoInicialReactor, 
+    $sql = "SELECT FechaInicio, Mezclador, PesoInicialMezclador, PesoFinalMezclador, Reactor, PesoInicialReactor, 
                    PesoFinalReactor, Receta, NumeroFabricacion, Producto_id
             FROM fabricaciones_en_curso            
             ORDER BY NumeroFabricacion DESC";
@@ -146,6 +145,7 @@ if ($modo === "inicial") {
         ? date('Y-m-d H:i:s', strtotime($fila['FechaTransferenciaMezclador']))
         : null;
 
+   
     echo json_encode([
         "ok" => true,
         "producciones_en_curso" => $producciones_en_curso,

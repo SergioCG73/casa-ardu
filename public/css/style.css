@@ -67,8 +67,8 @@ fieldset {
     padding: 20px;
     background-color: #ffffff;
     transition: box-shadow 0.3s;
-    display: flex;
-    flex-direction: column;
+    display: block;
+    /*flex-direction: column;*/
     gap: 12px;
 }
 

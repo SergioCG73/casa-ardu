@@ -13,10 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let numeroProduccion;
     let fechaHoraInicio;
 
-    let modo = localStorage.getItem("modo");
-    //let producto = localStorage.getItem("producto");
+    let modo = localStorage.getItem("modo");    
     producto = "Sulfato";
-    let datosEdicion;
+    let datosEdicion;    
 
     //btnTransferir.style.display = "none";
 
@@ -233,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modo === "editar") {
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
         btnCrear.textContent = "Editar";
-        const contenedorPesoFinal = document.getElementById("contenedor_peso_final");        
+        const contenedorPesoFinal = document.getElementById("contenedor_peso_final");
         contenedorPesoFinal.style.display = "none"; 
 
         inicializarFormulario(modo, producto, datosEdicion)

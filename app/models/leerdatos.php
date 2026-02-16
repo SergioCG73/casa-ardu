@@ -78,6 +78,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
         "siguienteFabricacion" => $siguienteFabricacion,
         "equipos" => $equipos,
         "recetas" => $recetas
+        
 ]); 
 
      

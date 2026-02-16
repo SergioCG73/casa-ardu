@@ -38,8 +38,7 @@
 
             <div id="botonera" class="botonera">
                 <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnCrear" name="btnCrear">Crear</button>
-                <!--<button id="btnTransferir" name="btnTransferir">Transferir</button>-->
+                <button id="btnCrear" name="btnCrear">Crear</button>                
             </div>
         </div>
 
@@ -57,7 +56,6 @@
 
     </div>    
     </div>
-</body>
-    <!--<script src="/html/public/js/formulario.js"></script>-->
+</body>    
     <script src="/html/public/js/formp18.js"></script>
 </html>

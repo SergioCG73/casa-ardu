@@ -45,7 +45,6 @@ function cargarProducciones(tabla, divProducciones) {
     .then(response => response.json())
     .then(data => {        
         if (!data.ok) return;
-
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
 
@@ -115,10 +114,11 @@ function activarEventosTabla(tabla) {
             localStorage.setItem("datosEditables", JSON.stringify(datos));            
             localStorage.setItem("modo", "editar");
             if (datos.Producto_id === "Sulfato") {
-                console.log("A formulario");
+                console.log("Formulario Sulfato");                
                 window.location.href = "/HTML/app/views/formSulfato.php";
             } else {
-                window.location.href = "/HTML/app/views/formulario.php";
+                console.log("Formulario P18");                
+                window.location.href = "/HTML/app/views/formP18.php";
             }
             
             return;
