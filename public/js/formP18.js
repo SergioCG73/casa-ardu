@@ -173,13 +173,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO EDITAR =====
     if (modo === "editar") {
+        console.log("Modo edicioón");         
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
-        btnCrear.textContent = "Editar";
-        contenedorPesoFinalMezclador.style.display = "block";     
-        const contenedorReactores = document.getElementById("reactores");
-        contenedorReactores.style.display = "none";
+    
+        if (datosEdicion.Mezclador == "M214" || datosEdicion.Mezclador === "M215") {
+            console.log("Modo edición mezcladores");
+            btnCrear.textContent = "Editar";
 
-        inicializarFormulario(modo, producto, datosEdicion).then(() => {
+            //contenedorPesoFinalMezclador.style.display = "block";     
+            const contenedorReactores = document.getElementById("reactores");        
+            contenedorReactores.style.display = "none";
+        
+            inicializarFormulario(modo, producto, datosEdicion).then(() => {
             btnCrear.addEventListener("click", (e) => {
                 e.preventDefault();
                 const data = new FormData();
@@ -187,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.append("mezclador", mezcladorSeleccionado);
                 data.append("receta", recetaSeleccionada);
                 data.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g,""));
-                data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g,""));
+                //data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g,""));
                 data.append("producto", producto);
                 data.append("modo", modo);
 
@@ -198,5 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         else alert(json.error); });
             });
         });
+
+        }        
     }
+
+    // ==== MODO TRANSFERIR ====
 });
