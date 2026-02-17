@@ -1,2 +1,1 @@
-Implementación del P18 - Crear/Editar completados
-Implementación de Transferencia desde Mezcladores a Reactores
+Modificaciones de código para impleentar más limpiamente
