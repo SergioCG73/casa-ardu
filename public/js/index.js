@@ -110,8 +110,8 @@ function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         const iconoEditar = e.target.closest(".icono-editar");
         if (iconoEditar) {
-            const datos = JSON.parse(iconoEditar.dataset.info);             
-            localStorage.setItem("datosEditables", JSON.stringify(datos));            
+            const datos = JSON.parse(iconoEditar.dataset.info);
+            localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
             if (datos.Producto_id === "Sulfato") {
                 console.log("Formulario Sulfato");                
@@ -149,10 +149,22 @@ function activarEventosTabla(tabla) {
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {
             const datos = JSON.parse(iconoTransferir.dataset.info);
-            localStorage.setItem("datosTransferencia", JSON.stringify(datos));
+            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);            
+            localStorage.setItem("datosEditables", JSON.stringify(datos));            
+            localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
-            console.log("Se ha pulsado transferir"); 
-            window.location.href = "/HTML/app/views/formSulfato.php";
+            console.log("Se ha pulsado transferir");
+            
+            if (datos.Producto_id === "PP18"){
+                window.location.href = "/HTML/app/views/formP18.php";
+
+            } else if (datos.Producto_id === "Sulfato"){
+                window.location.href = "/HTML/app/views/formSulfato.php";
+            }
+
+            return;
+
+            
         }
     });
 }

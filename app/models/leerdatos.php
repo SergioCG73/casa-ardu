@@ -49,7 +49,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
     $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;    
 
-    //3) Obtener los equipos del producto a fabricar
+    //3) Obtener los equipos del producto a fabricar    
 
     $sqlSelect = "SELECT Equipo_id, Estado, Tipo FROM equipos
                   WHERE ProductoFabricado = :producto";
@@ -57,7 +57,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
     $stmt = $conexion->prepare($sqlSelect);
     $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
     $stmt->execute();
-    $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);    
+    $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);        
 
     //4) Obtener las recetas del producto
 
@@ -66,8 +66,24 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
     
     $stmt = $conexion->prepare($sqlSelect);
     $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
-    $stmt->execute();
+    $stmt->execute();    
+
     $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //5) Obtener los reactores
+
+    $sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
+    $stmt = $conexion->prepare($sqlReactores);
+    $stmt->execute();
+    
+if ($stmt->errorCode() !== "00000") {
+    var_dump($stmt->errorInfo());
+    exit;
+}
+
+
+
+    $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
         "ok" => true,
@@ -77,8 +93,8 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
         "ultimaEnCurso" => $ultimaEnCurso,
         "siguienteFabricacion" => $siguienteFabricacion,
         "equipos" => $equipos,
-        "recetas" => $recetas
-        
+        "recetas" => $recetas,
+        "reactores" => $reactores
 ]); 
 
      

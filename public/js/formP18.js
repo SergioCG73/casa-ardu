@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== VARIABLES GLOBALES =====
     let datosEdicion;
+    let datosTransferencia;
     let mezcladorSeleccionado;
     let recetaSeleccionada;
     let numeroProduccion;   
@@ -17,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const modo = localStorage.getItem("modo");    
 
     contenedorPesoFinalMezclador.style.display = "none";
+
+    datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
+    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
 
     // ===== FUNCIONES =====
     function mostrarModal(mensaje) {
@@ -43,8 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return valor;
     }
 
-    function generarRadiosMezcladores(mezcladores, datosEdicion) {
+    function generarRadiosMezcladores(mezcladores, datosEdicion) {        
+        const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
         contenedorMezcladores.innerHTML = "";
+
         mezcladores.forEach(mezclador => {
             const id = "mezclador_" + mezclador.Equipo_id;
             const label = document.createElement("label");
@@ -103,25 +109,68 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function inicializarFormulario(modo, producto, datosEdicion = null) {
+    function generarRadiosReactores(reactores, datosEdicion) {
+        const contenedorReactores = document.querySelector("#reactores .radio-group");
+        contenedorReactores.innerHTML = ""; // ← borrar los estáticos 
+
+        reactores.forEach(reactor => {
+            const id = "reactor_" + reactor.Equipo_id;
+            const label = document.createElement("label");
+            label.className = "radio-label";
+            label.htmlFor = id;
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "reactor";
+            input.id = id;
+            input.value = reactor.Equipo_id;
+
+            if (datosEdicion && datosEdicion.Reactor == reactor.Equipo_id) {
+                input.checked = true;
+            }
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(reactor.Equipo_id));
+            contenedorReactores.appendChild(label);
+        });
+    }
+
+   function inicializarFormulario(modo, producto, datosEdicion = null) {
         const formData = new FormData();
         formData.append("modo", modo);
-        formData.append("producto", producto);
+        formData.append("producto", producto);        
 
         return fetch("/HTML/app/models/leerdatos.php", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
-                numeroProduccion = (modo === "editar" && datosEdicion) ? datosEdicion.NumeroFabricacion : data.siguienteFabricacion;
+
+                numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
+                    ? data.ultimaEnCurso
+                    : data.siguienteFabricacion;
+
                 displayProduccion.textContent = numeroProduccion;
 
-                generarRadiosMezcladores(data.equipos.filter(e => e.Tipo === "Mezclador"), datosEdicion);
+                generarRadiosMezcladores(
+                    data.equipos.filter(e => e.Tipo === "Mezclador"),
+                    datosEdicion
+                );
+
                 generarRadiosRecetas(data.recetas, datosEdicion);
 
+                if (modo === "transferir") {
+                    console.log("dr", data.reactores);
+                    generarRadiosReactores(data.reactores, datosEdicion);
+                }
+
+                // Rellenar pesos si hay datos de edición
                 if (datosEdicion) {
+
                     if (datosEdicion.PesoInicialMezclador !== undefined)
                         peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+
                     if (datosEdicion.PesoFinalMezclador !== undefined)
                         peso_final_mezclador.value = datosEdicion.PesoFinalMezclador;
+
                     formatearNumero(peso_inicial_mezclador);
                     formatearNumero(peso_final_mezclador);
                 }
@@ -129,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return data;
             });
     }
+
 
     [peso_inicial_mezclador, peso_final_mezclador].forEach(input => {
         input.addEventListener("input", () => formatearNumero(input));
@@ -172,27 +222,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ===== MODO EDITAR =====
-    if (modo === "editar") {
-        console.log("Modo edicioón");         
-        datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
-    
-        if (datosEdicion.Mezclador == "M214" || datosEdicion.Mezclador === "M215") {
-            console.log("Modo edición mezcladores");
-            btnCrear.textContent = "Editar";
+if (modo === "editar") {
+    console.log("Modo edición");         
+    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+    console.log("datosEdicion", datosEdicion);
 
-            //contenedorPesoFinalMezclador.style.display = "block";     
-            const contenedorReactores = document.getElementById("reactores");        
-            contenedorReactores.style.display = "none";
-        
-            inicializarFormulario(modo, producto, datosEdicion).then(() => {
+    btnCrear.textContent = "Editar";
+
+    inicializarFormulario(modo, producto, datosEdicion)
+        .then(() => {
+
+            // === MOSTRAR LO QUE QUIERES ===
+            document.getElementById("mezcladores").style.display = "block";
+            document.getElementById("peso_inicial_mezcla").style.display = "block";
+            document.getElementById("recetas").style.display = "block";
+
+            // === OCULTAR LO QUE NO QUIERES ===
+            document.getElementById("peso_final_mezcla").style.display = "none";
+            document.getElementById("reactores").style.display = "none";
+
+            // === CLICK EDITAR ===
             btnCrear.addEventListener("click", (e) => {
                 e.preventDefault();
+
                 const data = new FormData();
                 data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
                 data.append("mezclador", mezcladorSeleccionado);
                 data.append("receta", recetaSeleccionada);
                 data.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g,""));
-                //data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g,""));
                 data.append("producto", producto);
                 data.append("modo", modo);
 
@@ -200,12 +257,51 @@ document.addEventListener("DOMContentLoaded", () => {
                     .then(res => res.json())
                     .then(json => {
                         if (json.ok) mostrarModal("Producción actualizada correctamente");
-                        else alert(json.error); });
+                        else alert(json.error); 
+                    });
             });
         });
+}
 
-        }        
-    }
+
 
     // ==== MODO TRANSFERIR ====
+
+    if (modo === "transferir") {
+    console.log("Modo transferencia ...");
+    console.log("datosEdicion Transferir", datosEdicion);
+
+    btnCrear.textContent = "Transferir";
+
+    // 1) Inicializar el formulario y ESPERAR a que termine
+    inicializarFormulario(modo, producto, datosEdicion)
+        .then(() => {
+
+            document.getElementById("mezcladores").style.display = "block";
+            document.getElementById("peso_inicial_mezcla").style.display = "block";
+            document.getElementById("peso_final_mezcla").style.display = "block";
+            
+            btnCrear.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                const data = new FormData();
+                data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                data.append("modo", modo);
+                data.append("producto", producto);
+                data.append("receta", recetaSeleccionada);
+                data.append("pesoInicialMezclador", datosEdicion.PesoInicialMezclador);
+                data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g,""));
+
+                fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: data })
+                    .then(res => res.json())
+                    .then(json => {
+                        console.log("json 298", json);
+
+                    });
+            });
+
+        });
+}
+
+
 });

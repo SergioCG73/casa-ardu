@@ -19,8 +19,10 @@
                         <label class="radio-label"><input type="radio" name="sel_mezclador" value="M2"> Mezclador 2</label>
                     </div>
 
-                    <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador (Kg):</label>
-                    <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
+                    <div id="peso_inicial_mezcla">
+                        <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador (Kg):</label>                    
+                        <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
+                    </div>
                     
                     <div id="peso_final_mezcla">
                         <label for="peso_final_mezclador" class="input-label">Peso final mezclador (Kg):</label>

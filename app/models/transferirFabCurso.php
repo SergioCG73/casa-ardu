@@ -21,6 +21,7 @@ $mezcladorNuevo     = $_POST["mezclador"] ?? null;
 $reactorNuevo       = $_POST["reactor"] ?? null;
 $receta             = $_POST["receta"] ?? null;
 $pesoM              = $_POST["pesoInicialMezclador"] ?? null;
+$pesoMF             = $_POST["pesoFinalMezclador"] ?? null;
 $pesoR              = $_POST["pesoInicialReactor"] ?? null;
 $pesoRF             = $_POST["pesoFinalReactor"] ?? null;
 $producto           = $_POST["producto"] ?? null;
@@ -33,7 +34,27 @@ if (!$numeroProduccion) {
                       "error" => "Falta numeroProduccion"]);
     exit;
 }
-    
+
+
+$sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
+$stmt = $pdo->prepare($sqlReactores);
+$stmt->execute();
+$reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if ($modo === 'transferir' && $producto === 'PP18') {
+    echo json_encode([
+        "ok" => true,
+        "modo" => $modo,
+        "producto" => $producto,
+        "numeroProduccion" => $numeroProduccion,
+        "receta" => $receta,
+        "pesoInicialMezclador" => $pesoM,
+        "pesoFinalMezclador" => $pesoMF,
+        "reactores" => $reactores
+    ]);   
+    exit; 
+}
+
 // ========================
 // 9. Cálculo de la semana 
 // ========================
