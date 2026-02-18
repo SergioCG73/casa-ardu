@@ -160,6 +160,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 displayProduccion.textContent = numeroProduccion;
 
+                mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
+                mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
+
+                if (mezcladoresDisponibles.length > 0 && !mezcladoresEnUso) {
+                    console.log("Puedes crear producción");
+                } else {
+                    alert("No se puede crear producción con los equipos disponibles");
+                    window.location.href = "/HTML/app/views/home.php";                    
+                }
+
                 generarRadiosMezcladores(
                     data.equipos.filter(e => e.Tipo === "Mezclador"),
                     datosEdicion                    

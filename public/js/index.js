@@ -12,7 +12,8 @@ function init() {
     btnP18.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "P18");
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
+        //window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
 
     });
 
@@ -37,13 +38,14 @@ function init() {
    CARGAR DATOS DESDE PHP
    ============================================================ */
 function cargarProducciones(tabla, divProducciones) {
-    fetch("/HTML/app/models/leer.php", {
+    //fetch("/HTML/app/models/leer.php", {
+    fetch("/HTML/app/models/leerV2.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {        
+    .then(data => {
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
@@ -78,7 +80,7 @@ function construirTabla(data) {
         if (p.Producto_id === 'P18') {            
             claseEspecial = "p18_destacado";
         }
-        else if (p.Producto_id === 'Papilla P18') {
+        else if (p.Producto_id === 'PP18') {  //HABÍA UN ERROR
             claseEspecial = "papilla_destacado";
         }
         else if (p.Producto_id === "Sulfato") {            

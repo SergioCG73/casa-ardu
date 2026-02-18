@@ -1,7 +1,8 @@
 <?php
 
 class FormularioController {
-    public function mostrar() {
+    //public function mostrar() {
+    public function p18() {
         //require_once "../app/views/formulario.php"; //funciona sin DIR
         //require_once __DIR__ . "/../views/formulario.php";
         require_once __DIR__ . "/../views/formP18.php";
