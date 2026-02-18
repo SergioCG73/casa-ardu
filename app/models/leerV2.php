@@ -30,7 +30,7 @@ if($modo === "inicial") {
     ]); exit;
 }
 
-if (($modo === "crear" || $modo === "editar") && $producto === "PP18") {
+if (($modo === "crear" || $modo === "editar" || $modo === "transferir") && $producto === "PP18") {
 if ($producto === "PP18") {
           $tabla = "p18_terminadas";
 } elseif ($producto === "Sulfato") {
