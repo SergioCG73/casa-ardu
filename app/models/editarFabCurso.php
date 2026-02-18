@@ -17,6 +17,13 @@ $pesoFinalMezclador   = $_POST["pesoFinalMezclador"] ?? null;
 $pesoInicialReactor   = $_POST["pesoInicialReactor"] ?? null;
 $pesoFinalReactor     = $_POST["pesoFinalReactor"] ?? null;
 
+
+/*echo json_encode([
+    "ok" => true,
+    "mensaje" => "POST_OK"
+]); exit;*/
+
+
 if (!$numeroProduccion) {
     echo json_encode(["ok"=>false,"error"=>"Falta numeroProduccion"]);
     exit;

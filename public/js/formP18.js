@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //const producto = "PP18";
     let producto = localStorage.getItem("producto");
 
-    if (modo === "crear" && producto === "P18") {
+    if ((modo === "crear" || modo === "editar") && producto === "P18") {
         producto = "PP18";
     }   
 
@@ -150,25 +150,30 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("modo", modo);
         formData.append("producto", producto);        
 
+        //const objeto = Object.fromEntries(formData.entries());  
+        //console.log(objeto);  //"editar", "P18"        
+
         //return fetch("/HTML/app/models/leerdatos.php", { method: "POST", body: formData })
         return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
             .then(res => res.json())
-            .then(data => {
+            .then(data => { //console.log(data); return;
                 numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
                     ? data.ultimaEnCurso
                     : data.siguienteFabricacion;
 
                 displayProduccion.textContent = numeroProduccion;
 
-                mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
-                mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
+                if (modo === "crear") {
+                    mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
+                    mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
 
-                if (mezcladoresDisponibles.length > 0 && !mezcladoresEnUso) {
-                    console.log("Puedes crear producción");
-                } else {
-                    alert("No se puede crear producción con los equipos disponibles");
-                    window.location.href = "/HTML/app/views/home.php";                    
-                }
+                    if (mezcladoresDisponibles.length > 0 && !mezcladoresEnUso) {
+                        console.log("Puedes crear producción");
+                    } else {
+                        alert("No se puede crear producción con los equipos disponibles");
+                        window.location.href = "/HTML/app/views/home.php";                    
+                    }
+                }                
 
                 generarRadiosMezcladores(
                     data.equipos.filter(e => e.Tipo === "Mezclador"),
@@ -217,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //contenedorReactores.style.display = "none";
         //contenedorReactores.disabled = true;        
 
-        inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php
+        inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php            
             document.querySelector('#peso_final_mezclador').disabled = true;
 
             const reactores = document.querySelector('#reactores');
@@ -260,23 +265,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO EDITAR =====
 if (modo === "editar") {
-    console.log("Modo edición");         
-    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+    console.log("Modo edición");    
+    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));    
     console.log("datosEdicion", datosEdicion);
 
     btnCrear.textContent = "Editar";
 
-    inicializarFormulario(modo, producto, datosEdicion)
+    //console.log(modo, producto, datosEdicion); return;
+
+    inicializarFormulario(modo, producto, datosEdicion)     
         .then(() => {
+            document.querySelector('#peso_final_mezclador').disabled = true;
 
-            // === MOSTRAR LO QUE QUIERES ===
-            document.getElementById("mezcladores").style.display = "block";
-            document.getElementById("peso_inicial_mezcla").style.display = "block";
-            document.getElementById("recetas").style.display = "block";
-
-            // === OCULTAR LO QUE NO QUIERES ===
-            document.getElementById("peso_final_mezcla").style.display = "none";
-            document.getElementById("reactores").style.display = "none";
+            const reactores = document.querySelector('#reactores');
+            reactores
+                .querySelectorAll("input, select, textarea, button")
+                .forEach(el => el.disabled = true);
 
             // === CLICK EDITAR ===
             btnCrear.addEventListener("click", (e) => {
@@ -292,7 +296,7 @@ if (modo === "editar") {
 
                 fetch("../../app/models/editarFabCurso.php", { method: "POST", body: data })
                     .then(res => res.json())
-                    .then(json => {
+                    .then(json => { console.log(json); 
                         if (json.ok) mostrarModal("Producción actualizada correctamente");
                         else alert(json.error); 
                     });
@@ -329,7 +333,7 @@ if (modo === "editar") {
 
                 fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: data })
                     .then(res => res.json())
-                    .then(json => {
+                    .then(json => { 
                         console.log("json 298", json);
 
                     });
