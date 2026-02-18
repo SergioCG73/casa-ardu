@@ -1,6 +1,7 @@
 <?php
 // Este fichero recibe los datos enviados por AJAX desde formP18.js y los inserta en la tabla fabricaciones_en_curso
 
+//ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -21,16 +22,23 @@ $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
 $mezclador = $_POST["mezclador"] ?? "";
 $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
 $receta = $_POST["receta"] ?? "";
-$producto = $_POST["producto"] ?? ""; // Cambié clave POST a algo sin espacios
+$producto = $_POST["producto"] ?? ""; 
+
 
 // Validación
-if (empty($fechaHoraInicio) || empty($mezclador) || empty($receta) || empty($numeroProduccion) || empty($pesoInicialMezclador) || empty($producto)) {
+if (empty($fechaHoraInicio) ||
+    empty($mezclador) ||
+    empty($receta) ||
+    empty($numeroProduccion) ||
+    empty($pesoInicialMezclador) ||
+    empty($producto)) {
     echo json_encode([
         'ok' => false,
         'message' => 'Faltan datos'
     ]);
     exit;
 }
+
 
 try {
     // INSERT
@@ -54,10 +62,16 @@ try {
     $updateStmt->execute();
 
     echo json_encode([
-        "ok" => true,
-        "message" => "Datos guardados correctamente"
-    ]);
-    exit;
+    "ok" => true, 
+    "numeroProduccion" => $numeroProduccion,
+    "fechaHoraInicio" => $fechaHoraInicio,
+    "mezclado" => $mezclador,
+    "pesoInicial" => $pesoInicialMezclador,
+    "receta" => $receta, 
+    "producto" => $producto,
+    "message" => "Datos guardados correctamente"
+    ]); 
+    exit;    
 
 } catch (PDOException $e) {
     echo json_encode([

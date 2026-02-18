@@ -14,13 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let mezcladorSeleccionado;
     let recetaSeleccionada;
     let numeroProduccion;   
-    const producto = "PP18";
-    const modo = localStorage.getItem("modo");    
+    
+    const modo = localStorage.getItem("modo");
+    //const producto = "PP18";
+    let producto = localStorage.getItem("producto");
 
-    contenedorPesoFinalMezclador.style.display = "none";
+    if (modo === "crear" && producto === "P18") {
+        producto = "PP18";
+    }   
 
+    //contenedorPesoFinalMezclador.disabled = true;
+
+
+//¿CUÁNDO LLEGA ESTO?
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+//¿?
 
     // ===== FUNCIONES =====
     function mostrarModal(mensaje) {
@@ -79,9 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function generarRadiosRecetas(recetas, datosEdicion) {
-        const contenedorRecetas = document.querySelector("#recetas fieldset");
-        contenedorRecetas.innerHTML = "";
+    function generarRadiosRecetas(recetas, datosEdicion) {        
+        const contenedorRecetas = document.querySelector("#recetas .radio-group");        
+        contenedorRecetas.innerHTML = "";        
+        
         recetas.forEach((receta, index) => {
             const id = `R${index + 1}_p18`;
             const label = document.createElement("label");
@@ -140,10 +150,10 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("modo", modo);
         formData.append("producto", producto);        
 
-        return fetch("/HTML/app/models/leerdatos.php", { method: "POST", body: formData })
+        //return fetch("/HTML/app/models/leerdatos.php", { method: "POST", body: formData })
+        return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
-
                 numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
                     ? data.ultimaEnCurso
                     : data.siguienteFabricacion;
@@ -152,19 +162,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 generarRadiosMezcladores(
                     data.equipos.filter(e => e.Tipo === "Mezclador"),
-                    datosEdicion
+                    datosEdicion                    
                 );
 
+                generarRadiosReactores(                    
+                    data.reactores, datosEdicion
+                );
+                
                 generarRadiosRecetas(data.recetas, datosEdicion);
 
                 if (modo === "transferir") {
-                    console.log("dr", data.reactores);
-                    generarRadiosReactores(data.reactores, datosEdicion);
+                    console.log("dr", data.recetas);
+                    generarRadiosReactores(data.recetas, datosEdicion);
                 }
 
                 // Rellenar pesos si hay datos de edición
                 if (datosEdicion) {
-
                     if (datosEdicion.PesoInicialMezclador !== undefined)
                         peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
 
@@ -179,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-
     [peso_inicial_mezclador, peso_final_mezclador].forEach(input => {
         input.addEventListener("input", () => formatearNumero(input));
     });
@@ -188,15 +200,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO CREAR =====
     if (modo === "crear") {
-        contenedorPesoFinalMezclador.style.display = "none";
-        const contenedorReactores = document.getElementById("reactores");
-        contenedorReactores.style.display = "none";
+        //contenedorPesoFinalMezclador.style.display = "none";
+        //const contenedorMezcladores = document.getElementById("mezcladores");
+        //const contenedorReactores = document.getElementById("reactores");
+        //contenedorMezcladores.disabled = false;
+        //contenedorReactores.style.display = "none";
+        //contenedorReactores.disabled = true;        
 
-        inicializarFormulario(modo, producto).then(() => {
+        inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php
+            document.querySelector('#peso_final_mezclador').disabled = true;
+
+            const reactores = document.querySelector('#reactores');
+            reactores
+                .querySelectorAll("input, select, textarea, button")
+                .forEach(el => el.disabled = true);
+            
             btnCrear.addEventListener("click", () => {
                 if (!mezcladorSeleccionado) return alert("Selecciona un mezclador");
                 if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
-                if (!recetaSeleccionada) return alert("Selecciona una receta");
+                if (!recetaSeleccionada) return alert("Selecciona una receta");                
 
                 const ahora = new Date();
                 const fechaHoraInicio = ahora.getFullYear() + "-" +
@@ -204,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                        String(ahora.getSeconds()).padStart(2, '0');                
 
                 const datosEnviar = new FormData();
                 datosEnviar.append("numeroProduccion", numeroProduccion);
@@ -214,9 +236,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 datosEnviar.append("receta", recetaSeleccionada);
                 datosEnviar.append("producto", producto);
 
+                /*const objeto = Object.fromEntries(datosEnviar.entries()); 
+                console.log("objeto", objeto); return;*/ //producto = PP18                
+
                 fetch("/HTML/app/models/insertarP18.php", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
-                    .then(json => { if (json.ok) mostrarModal(json.message); else alert(json.error); });
+                    .then(json => { 
+                        if (json.ok) mostrarModal(json.message);
+                        else alert(json.error); });
             });
         });
     }
@@ -262,8 +289,6 @@ if (modo === "editar") {
             });
         });
 }
-
-
 
     // ==== MODO TRANSFERIR ====
 
