@@ -157,7 +157,7 @@ function activarEventosTabla(tabla) {
             localStorage.setItem("modo", "transferir");
             console.log("Se ha pulsado transferir");
             
-            if (datos.Producto_id === "PP18"){
+            if (datos.Producto_id === "P18"){
                 window.location.href = "/HTML/app/views/formP18.php";
 
             } else if (datos.Producto_id === "Sulfato"){

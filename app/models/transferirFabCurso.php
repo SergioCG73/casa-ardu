@@ -35,8 +35,8 @@ if (!$numeroProduccion) {
     exit;
 }
 
-if ($modo === "transferir" && $producto === "PP18") {
-    $producto = "P18SR";
+if ($modo === "transferir" && $producto === "P18") {
+    //$producto = "P18SR";
 
 // Actualizar tabla fabricaciones_en_curso con los nuevos datos al transferir    
 $sqlUpdate = $pdo->prepare("
@@ -106,7 +106,6 @@ echo json_encode([
 ]); exit;
 
 }
-
 
 
 $sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";

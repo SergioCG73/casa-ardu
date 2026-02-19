@@ -30,19 +30,9 @@ if($modo === "inicial") {
     ]); exit;
 }
 
-if (($modo === "crear" || $modo === "editar" || $modo === "transferir") && $producto === "PP18") {
-if ($producto === "PP18") {
-          $tabla = "p18_terminadas";
-} elseif ($producto === "Sulfato") {
-          $tabla = "sulfato_terminadas";
-          $producto = "sulfato";
-} elseif ($producto === "Ferrico") {
-          $tabla = "ferrico_terminadas";        
-          $producto = "ferrico";        
-} 
-else {
-    return ["ok" => false, "error" => "Producto no válido"];
-}
+
+if ($modo === "crear" && $producto === "P18") {
+    $tabla = "p18_terminadas";
 
 //2) Última producción terminada
 $sqlSelect = "SELECT NumeroFabricacion 
@@ -104,6 +94,221 @@ echo json_encode([
     "recetas" => $recetas,
     "reactores" => $reactores
 ]); exit;
+
+}
+
+if ($modo === "editar" && $producto === "P18") {
+    $tabla = "p18_terminadas";
+
+    //2) Última producción terminada
+$sqlSelect = "SELECT NumeroFabricacion 
+        FROM $tabla
+        ORDER BY NumeroFabricacion DESC 
+        LIMIT 1";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->execute();
+$ultimaAcabada = $stmt->fetchColumn() ?? 0;
+
+//3) Última producción en curso
+$sqlSelect = "SELECT NumeroFabricacion
+        FROM  fabricaciones_en_curso
+        WHERE producto_id = :producto
+        ORDER BY NumeroFabricacion DESC
+        LIMIT 1
+        ";    
+    
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$ultimaEnCurso = $stmt->fetchColumn();
+
+$siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+//4) Obtener los equipos del producto a fabricar
+$sqlSelect = "SELECT Equipo_id, Estado, Tipo FROM equipos
+             WHERE ProductoFabricado = :producto";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//5) Obtener las recetas del producto
+$sqlSelect = "SELECT NombreReceta FROM recetas
+             WHERE ProductoFabricado = :producto";
+    
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//6) Obtener los reactores
+$sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
+$stmt = $conexion->prepare($sqlReactores);
+$stmt->execute();
+$reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo json_encode([
+    "ok" => true,
+    "modo" => $modo,
+    "producto" => $producto,
+    "ultimaAcabada" => $ultimaAcabada,
+    "ultimaEnCurso" => $ultimaEnCurso,
+    "siguienteFabricacion" => $siguienteFabricacion,
+    "equipos" => $equipos,
+    "recetas" => $recetas,
+    "reactores" => $reactores
+]); exit;
+
+}; 
+
+
+if ($modo === "transferir" && $producto === "P18") {
+    $tabla = "p18_terminadas";
+
+//2) Última producción terminada
+$sqlSelect = "SELECT NumeroFabricacion 
+        FROM $tabla
+        ORDER BY NumeroFabricacion DESC 
+        LIMIT 1";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->execute();
+$ultimaAcabada = $stmt->fetchColumn() ?? 0;
+
+//3) Última producción en curso
+$sqlSelect = "SELECT NumeroFabricacion
+        FROM  fabricaciones_en_curso
+        WHERE producto_id = :producto
+        ORDER BY NumeroFabricacion DESC
+        LIMIT 1
+        ";    
+    
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$ultimaEnCurso = $stmt->fetchColumn();
+
+$siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+//4) Obtener los equipos del producto a fabricar
+$sqlSelect = "SELECT Equipo_id, Estado, Tipo FROM equipos
+             WHERE ProductoFabricado = :producto";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//5) Obtener las recetas del producto
+$sqlSelect = "SELECT NombreReceta FROM recetas
+             WHERE ProductoFabricado = :producto";
+    
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//6) Obtener los reactores
+$sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
+$stmt = $conexion->prepare($sqlReactores);
+$stmt->execute();
+$reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo json_encode([
+    "ok" => true,
+    "modo" => $modo,
+    "producto" => $producto,
+    "ultimaAcabada" => $ultimaAcabada,
+    "ultimaEnCurso" => $ultimaEnCurso,
+    "siguienteFabricacion" => $siguienteFabricacion,
+    "equipos" => $equipos,
+    "recetas" => $recetas,
+    "reactores" => $reactores,
+    "tabla" => $tabla
+]); exit;
+
+};
+
+
+
+
+
+if (($modo === "crear" || $modo === "editar" || $modo === "transferir") && $producto === "PP18") {
+if ($producto === "PP18") {
+          $tabla = "p18_terminadas";
+} elseif ($producto === "Sulfato") {
+          $tabla = "sulfato_terminadas";
+          $producto = "sulfato";
+} elseif ($producto === "Ferrico") {
+          $tabla = "ferrico_terminadas";        
+          $producto = "ferrico";        
+} 
+else {
+    return ["ok" => false, "error" => "Producto no válido"];
+}
+
+//2) Última producción terminada
+/*$sqlSelect = "SELECT NumeroFabricacion 
+        FROM $tabla
+        ORDER BY NumeroFabricacion DESC 
+        LIMIT 1";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->execute();
+$ultimaAcabada = $stmt->fetchColumn() ?? 0;
+
+//3) Última producción en curso
+$sqlSelect = "SELECT NumeroFabricacion
+        FROM  fabricaciones_en_curso
+        WHERE producto_id = :producto
+        ORDER BY NumeroFabricacion DESC
+        LIMIT 1
+        ";    
+    
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$ultimaEnCurso = $stmt->fetchColumn();
+
+$siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+//4) Obtener los equipos del producto a fabricar
+$sqlSelect = "SELECT Equipo_id, Estado, Tipo FROM equipos
+             WHERE ProductoFabricado = :producto";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//5) Obtener las recetas del producto
+$sqlSelect = "SELECT NombreReceta FROM recetas
+             WHERE ProductoFabricado = :producto";
+    
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+$stmt->execute();
+$recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//6) Obtener los reactores
+$sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
+$stmt = $conexion->prepare($sqlReactores);
+$stmt->execute();
+$reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo json_encode([
+    "ok" => true,
+    "modo" => $modo,
+    "producto" => $producto,
+    "ultimaAcabada" => $ultimaAcabada,
+    "ultimaEnCurso" => $ultimaEnCurso,
+    "siguienteFabricacion" => $siguienteFabricacion,
+    "equipos" => $equipos,
+    "recetas" => $recetas,
+    "reactores" => $reactores
+]); exit;*/
 
 }
 
