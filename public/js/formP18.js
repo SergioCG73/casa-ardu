@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Marcar automáticamente en editar
             if (datosEdicion && datosEdicion.Mezclador == mezclador.Equipo_id) {
                 input.checked = true;
-                mezcladorSeleccionado = mezclador.Equipo_id;
+                mezcladorSeleccionado = mezclador.Equipo_id;                
             }
 
             input.addEventListener("change", () => {
@@ -144,11 +144,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (datosEdicion && datosEdicion.Reactor == reactor.Equipo_id) {
                 input.checked = true;
+                reactorSeleccionado = reactor. Equipo_id;                
             }
 
             input.addEventListener("change", () => {
-                reactorSeleccionado = input.value;
+                reactorSeleccionado = input.value;                
+                console.log(reactorSeleccionado);
             });
+
 
             label.appendChild(input);
             label.appendChild(document.createTextNode(reactor.Equipo_id));
@@ -341,9 +344,11 @@ if (modo === "editar") {
             btnCrear.addEventListener("click", (e) => {
                 e.preventDefault();
 
-                console.log(modo, producto); debugger
-
                 const data = new FormData();
+
+                if (datosEdicion.Reactor === "") {
+                console.log("REACTOR = ''"); 
+                
                 data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
                 data.append("mezclador", mezcladorSeleccionado);
                 data.append("receta", recetaSeleccionada);
@@ -351,9 +356,26 @@ if (modo === "editar") {
                 data.append("producto", producto);
                 data.append("modo", modo);
 
+                } else if (datosEdicion.Reactor != "") {
+                console.log("REACTOR = R200", datosEdicion);                
+
+                data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                data.append("mezclador", mezcladorSeleccionado);
+                data.append("receta", recetaSeleccionada);
+                data.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g,""));
+                data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g,""));
+                data.append("reactor", reactorSeleccionado);
+                data.append("pesoInicialReactor", peso_inicial_reactor.value.replace(/\./g,""));                
+                data.append("producto", producto);
+                data.append("modo", modo);
+
+                /*const objeto = Object.fromEntries(data.entries()); 
+                console.log(objeto); debugger*/
+                }                
+
                 fetch("../../app/models/editarFabCurso.php", { method: "POST", body: data })
                     .then(res => res.json())
-                    .then(json => { console.log(json); 
+                    .then(json => { console.log(json);
                         if (json.ok) mostrarModal("Producción actualizada correctamente");
                         else alert(json.error); 
                     });
