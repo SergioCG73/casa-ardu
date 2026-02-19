@@ -10,19 +10,14 @@ $pdo = $conexion;
 // ===========================
 $numeroProduccion     = $_POST["numeroProduccion"] ?? null;
 $mezcladorNuevo       = $_POST["mezclador"] ?? null;
-$reactorNuevo         = $_POST["reactor"] ?? null; // solo si lo envías
 $receta               = $_POST["receta"] ?? null;
 $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? null;
 $pesoFinalMezclador   = $_POST["pesoFinalMezclador"] ?? null;
+$reactorNuevo         = $_POST["reactor"] ?? null; // solo si lo envías
 $pesoInicialReactor   = $_POST["pesoInicialReactor"] ?? null;
+$producto             = $_POST["producto"] ?? null;
+$modo                 = $_POST["modo"] ?? null;
 $pesoFinalReactor     = $_POST["pesoFinalReactor"] ?? null;
-
-
-/*echo json_encode([
-    "ok" => true,
-    "mensaje" => "POST_OK"
-]); exit;*/
-
 
 if (!$numeroProduccion) {
     echo json_encode(["ok"=>false,"error"=>"Falta numeroProduccion"]);
@@ -112,26 +107,36 @@ try {
         ":num"=>$numeroProduccion
     ]);
 
-    $pdo->commit();
-
-    echo json_encode([
+echo json_encode([
     "ok" => true,
-    "pesoFinalMezclador2" => $pesoFinalMezclador 
-    ]); exit;
+    "mensaje" => "POST_OK",
+    "numeroProduccion" => $numeroProduccion, 
+    "mezclador" => $mezcladorNuevo,
+    "receta" => $receta,
+    "pesoInicialMezclador" => $pesoInicialMezclador,
+    "PesoFinalMezclador" =>  $pesoFinalMezclador,
+    "reactor" => $reactorNuevo,
+    "PesoInicialReactor" => $pesoInicialReactor,
+    "producto" => $producto,
+    "modo" => $modo,
+    "PesoFinalReactor" => $pesoFinalReactor
+]); exit;
 
-    echo json_encode([
-        "ok"=>true,
-        "message"=>"Producción actualizada correctamente"
-    ]);
+$pdo->commit();
+
+echo json_encode([
+    "ok"=>true,
+    "message"=>"Producción actualizada correctamente"
+]);
 
 } catch (Exception $e) {
 
     $pdo->rollBack();
 
-    echo json_encode([
-        "ok"=>false,
-        "error"=>$e->getMessage()
-    ]);
+echo json_encode([
+    "ok"=>false,
+    "error"=>$e->getMessage()
+]);
 }
 
 exit;
