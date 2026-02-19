@@ -128,24 +128,28 @@ function activarEventosTabla(tabla) {
 
         const iconoBorrar = e.target.closest(".icono-borrar");
         if (iconoBorrar) {
-            const datos = JSON.parse(iconoBorrar.dataset.info);
-            localStorage.setItem("datosBorrables", JSON.stringify(datos));
-            localStorage.setItem("modo", "borrar");
-
-            fetch("/HTML/app/models/borrarFabCurso.php", {
+            if(confirm("¿Estás seguro de que deseas eliminar esta producción?")) {
+                const datos = JSON.parse(iconoBorrar.dataset.info);
+                localStorage.setItem("datosBorrables", JSON.stringify(datos));
+                localStorage.setItem("modo", "borrar");            
+                
+                fetch("/HTML/app/models/borrarFabCurso.php", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(datos)
             })
             .then(response => response.json())
-            .then(json => {
+            .then(json => { //console.log(json); debugger
                 if(json.ok) {
-                    alert("Producción eliminada correctamente");
+                    alert("Producción eliminada correctamente");                    
                     window.location.href = "/HTML/app/views/home.php";
                 } else alert("ERROR: " + json.error);
-            })         
-            
+            })
             .catch(error => console.log("ERROR", error));                
+            
+            } else {
+                console.log("Eliminación cancelada");
+            }
         }
 
         const iconoTransferir = e.target.closest(".icono-transferir");
