@@ -1,1 +1,8 @@
 Modificaciones de código para impleentar más limpiamente
+
+
+
+
+MEJORAS
+-----------------------------------------
+- Si en la segunda transferencia de P18 cambio el reactor no modifica el estado del reactor.
