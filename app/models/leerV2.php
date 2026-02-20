@@ -13,7 +13,8 @@ $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;  //Entra PP18
 
 if($modo === "inicial") {
-    // 1) Producciones en curso
+
+// 1) Producciones en curso
     //$sql = "SELECT * FROM fabricaciones_en_curso WHERE Producto_id = :prod";
     $sql = "SELECT * FROM fabricaciones_en_curso";
     $stmt = $conexion->prepare($sql);
@@ -21,15 +22,22 @@ if($modo === "inicial") {
     $stmt->execute();
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode([
-        "ok" => true,
-        "modo" => $modo,
-        "producto" => $producto,
-        "producciones_en_curso" => $producciones_en_curso,
-        "mensaje" =>"INICIAL"
-    ]); exit;
-}
+// 2) Producciones en M216
+    $sql = "SELECT COUNT(*) FROM fabricaciones_sin_filtrar";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+    $producciones_sin_filtrar = $stmt->fetchColumn();
 
+
+echo json_encode([
+    "ok" => true,
+    "modo" => $modo,
+    "producto" => $producto,
+    "producciones_en_curso" => $producciones_en_curso,
+    "producciones_sin_filtrar" => $producciones_sin_filtrar,
+    "mensaje" =>"INICIAL"
+]); exit;
+}
 
 if ($modo === "crear" && $producto === "P18") {
     $tabla = "p18_terminadas";
