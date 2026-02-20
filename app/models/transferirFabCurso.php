@@ -28,6 +28,7 @@ $producto                   = $_POST["producto"] ?? null;
 $modo                       = $_POST["modo"] ?? null;
 $fechaHoraInicio            = $_POST["fechaHoraInicio"] ?? null;
 $fechaHoraTransferencia     = $_POST["fechaHoraTransferencia"] ?? null;
+$fechaHoraFinal             = $_POST["fechaHoraFinal"] ?? null;
 
 if (!$numeroProduccion) {
     echo json_encode(["ok" => false,                      
@@ -35,7 +36,7 @@ if (!$numeroProduccion) {
     exit;
 }
 
-if ($modo === "transferir" && $producto === "P18") {
+if ($modo === "transferir" && $producto === "P18" && $pesoRF === "") {
     //$producto = "P18SR";
 
 // Actualizar tabla fabricaciones_en_curso con los nuevos datos al transferir    
@@ -106,6 +107,56 @@ echo json_encode([
 ]); exit;
 
 }
+
+//-----------------------------------------------------------
+
+if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
+
+$sqlUpdate = $pdo->prepare("
+    UPDATE fabricaciones_en_curso
+    SET 
+        FechaFinal = :horafinal,
+        PesoFinalReactor = :pesofinal        
+    WHERE NumeroFabricacion = :numerofabricacion
+");
+
+$sqlUpdate->execute([
+    ':horafinal'         => $fechaHoraFinal,     
+    ':pesofinal'         => $pesoRF,
+    ':numerofabricacion' => $numeroProduccion
+]);
+
+$sqlInsert = $pdo->prepare("INSERT INTO fabricaciones_sin_filtrar (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
+
+$sqlInsert->execute([
+    ":nf" => $numeroProduccion,
+    ":fecha" => $fechaHoraFinal
+]);
+
+
+$sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
+
+$sqlUpdate->execute([
+    ":reactor" => $reactorNuevo
+]);
+
+$sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
+
+$sqlDelete->execute([
+    ":nf" => $numeroProduccion
+]);
+
+echo json_encode([
+        "ok" => true,
+        "FechaHoraFinal" => $fechaHoraFinal,        
+        "PesoFinalReactor" => $pesoRF,
+        "reactor" => $reactorNuevo,
+        "NumeroFabricacion" => $numeroProduccion
+]); exit;
+}; 
+
+
+//---------------------------------------------------------------------------------------------------
 
 
 $sqlReactores = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = 'P18'";
