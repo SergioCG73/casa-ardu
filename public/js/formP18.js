@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const peso_final_mezclador = document.getElementById("peso_final_mezclador");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     const peso_final_reactor = document.getElementById("peso_final_reactor");
-    const m216 = document.getElementById("label_m216");
+    
 
     console.log(m216); debugger
 
