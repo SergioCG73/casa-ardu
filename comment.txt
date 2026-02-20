@@ -1,5 +1,4 @@
-Modificaciones de código para impleentar más limpiamente
-
+Agregar el filtrado al P18
 
 
 
