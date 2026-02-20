@@ -17,4 +17,8 @@ class FormularioController {
         //require_once "../app/views/formSulfato.php"; funciona sin DIR
         require_once __DIR__ . "/../views/formFerrico.php";
     }
+
+    public function filtrado() {
+        require_once __DIR__ . "/../views/formFiltrado.php";
+    }
 }
