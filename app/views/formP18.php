@@ -58,8 +58,8 @@
             </div>
 
             <div id="botonera" class="botonera">
-                <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnCrear" name="btnCrear">Crear</button>                
+                <button id="btnRetroceder" class="boton">Retroceder</button>                
+                <button id="btnCrear" class="boton">Crear</button>                
             </div>
         </div>
 
@@ -72,7 +72,7 @@
                 <p id="modalMsg"></p>
                 <button id="btnAceptar" class="mi-boton">Aceptar</button>
             </div>
-        </div>
+        </div>        
     </div> 
     
     <script src="/html/public/js/formp18.js"></script>
