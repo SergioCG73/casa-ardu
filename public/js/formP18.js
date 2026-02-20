@@ -9,9 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const peso_final_mezclador = document.getElementById("peso_final_mezclador");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     const peso_final_reactor = document.getElementById("peso_final_reactor");
-    
-
-    console.log(m216); debugger
 
     // ===== VARIABLES GLOBALES =====
     let datosEdicion;
