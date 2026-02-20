@@ -21,6 +21,7 @@
         <button id="btnFerrico" class="boton">Férrico</button>
         <button id="btnHB10" class="boton">HB 10</button>
         <button id="btnSulfacid" class="boton">SulfaCID</button>
+        <button id="btnFiltrado" class="boton">Filtrado</button>
     </div>
 
     <div id="producciones_en_curso" name="producciones_en_curso" class="producciones_en_curso"  style="display:none">
@@ -29,7 +30,7 @@
 
     <div id="displayM216" class="m216">
         <label>M216</label>
-        <label id="label_m216">1</label>            
+        <label id="label_m216"></label>            
     </div>
 
 </body>
