@@ -273,3 +273,15 @@ fieldset input[type="radio"] {
 .icono-transferir {
     cursor: pointer;
 }
+
+
+#fabricaciones h2 {
+    background: #f1f5f9;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    border-left: 5px solid #2563eb;
+    margin-bottom: 20px;
+}
