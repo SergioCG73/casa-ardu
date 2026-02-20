@@ -38,24 +38,27 @@ body {
     position: absolute;
     top: 20px;
     right: 20px;
+
     display: flex;
     flex-direction: column;   /* M216 arriba, número debajo */
     align-items: center;
     gap: 4px;
+
     font-weight: 700;
     font-size: 24px;
-    color: #334155;           /* texto gris azulado, como tu estilo */
+    color: #334155;           /* mismo tono gris azulado de tu UI */
 }
 
 /* El número con fondo verde */
 #label_m216 {
-    background-color: #16a34a;
+    background-color: #16a34a;  /* verde elegante */
     color: white;
     padding: 4px 10px;
     border-radius: 6px;
-    font-size: 20px;
+    font-size: 20px;            /* ligeramente más pequeño que el título */
     font-weight: 700;
 }
+
 
 /* DISPLAY PRODUCCIÓN */
 #resultados {
