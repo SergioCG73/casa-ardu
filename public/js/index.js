@@ -4,8 +4,10 @@ function init() {
     const btnP18 = document.getElementById("btnP18");
     const btnSulfato = document.getElementById("btnSulfato");
     const btnFerrico = document.getElementById("btnFerrico");
+    const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
+    const displayM216 = document.getElementById("label_m216");
     
     localStorage.setItem("modo", "inicial");
     
@@ -24,11 +26,17 @@ function init() {
     });
 
     btnFerrico.addEventListener("click", () => {
-        localStorage.removeItem("editarFerrico"); //ATENTO AL RESULTADO DE HACER ESTO
-        localStorage.removeItem("modoFerrico");
+        //localStorage.removeItem("editarFerrico"); //ATENTO AL RESULTADO DE HACER ESTO
+        //localStorage.removeItem("modoFerrico");
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
         window.location.href = "/HTML/public/index.php?c=Formulario&a=ferrico";
+    })
+
+    btnFiltrado.addEventListener("click", () => {
+        localStorage.setItem("modo", "filtrar");
+        localStorage.setItem("producto", "P18");
+        window.location.href = "/HTML/public/index.php?c=Formulario&a=filtrado";        
     })
 
     cargarProducciones(tabla, divProducciones, btnP18);
@@ -45,12 +53,22 @@ function cargarProducciones(tabla, divProducciones) {
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {
+    .then(data => { console.log(data); debugger
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
 
         divProducciones.style.display = "block";
+
+        if (data.producciones_sin_filtrar === 0) {
+            displayM216.style.display = "none";
+        } else {
+            displayM216.style.display = "block";
+            const textM216 = document.getElementById("label_m216");
+            textM216.innerHTML = data.producciones_sin_filtrar;
+        }
+
+        
     })
     .catch(err => console.error("Error cargando producciones:", err));
 }
