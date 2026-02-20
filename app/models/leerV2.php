@@ -23,20 +23,28 @@ if($modo === "inicial") {
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 2) Producciones en M216
-    $sql = "SELECT COUNT(*) FROM fabricaciones_sin_filtrar";
+    $sql = "SELECT NumeroFabricacion FROM fabricaciones_sin_filtrar";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $producciones_sin_filtrar = $stmt->fetchColumn();
+    $producciones_sin_filtrar = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Filtrar las que NO son "0000"
+    $solo_fabricaciones = array_filter($producciones_sin_filtrar, function($fila) {
+    return $fila["NumeroFabricacion"] !== "0000";
+});
+
+    // Contar
+    $cantidad = count($solo_fabricaciones);
 
 echo json_encode([
     "ok" => true,
     "modo" => $modo,
     "producto" => $producto,
     "producciones_en_curso" => $producciones_en_curso,
-    "producciones_sin_filtrar" => $producciones_sin_filtrar,
+    "producciones_sin_filtrar" => $cantidad,
     "mensaje" =>"INICIAL"
 ]); exit;
+
 }
 
 if ($modo === "crear" && $producto === "P18") {
@@ -171,7 +179,7 @@ echo json_encode([
 
 }; 
 
-
+//3) Condición
 if ($modo === "transferir" && $producto === "P18") {
     $tabla = "p18_terminadas";
 
@@ -239,9 +247,7 @@ echo json_encode([
 
 };
 
-
-
-
+//4) Condición
 
 if (($modo === "crear" || $modo === "editar" || $modo === "transferir") && $producto === "PP18") {
 if ($producto === "PP18") {
@@ -256,6 +262,29 @@ if ($producto === "PP18") {
 else {
     return ["ok" => false, "error" => "Producto no válido"];
 }
+
+}
+
+// 5) Condición
+
+if ($modo === "filtrar") {
+
+$sqlSelect = "SELECT NumeroFabricacion FROM fabricaciones_sin_filtrar " ;
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->execute();
+$fabricaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo json_encode([
+    "ok" => true,
+    "modo" => $modo,
+    "fabricaciones" => $fabricaciones
+]); exit;
+}
+
+
+
+
+
 
 //2) Última producción terminada
 /*$sqlSelect = "SELECT NumeroFabricacion 
@@ -318,7 +347,7 @@ echo json_encode([
     "reactores" => $reactores
 ]); exit;*/
 
-}
+
 
 
 
