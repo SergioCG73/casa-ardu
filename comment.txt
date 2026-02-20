@@ -1,6 +1,10 @@
 Agregar el filtrado al P18
 
 
+ERRORES
+--------
+- En transferencia 2 me pide peso final reactor pero no desmarca el input
+
 
 MEJORAS
 -----------------------------------------
