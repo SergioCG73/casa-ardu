@@ -30,9 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //contenedorPesoFinalMezclador.disabled = true;
 
-    
-
-
 //¿CUÁNDO LLEGA ESTO?
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
@@ -177,12 +174,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 displayProduccion.textContent = numeroProduccion;
 
-                if (modo === "crear") {                                     
+                let reactoresDisponibles = [];
+                
+                if (modo === "crear") {                                            
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");                    
-                    mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
+                    mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");                    
 
-                    console.log("MD", mezcladoresDisponibles.length); 
-                    console.log("EU", mezcladoresEnUso.length);
+                    /*console.log("MD", mezcladoresDisponibles.length); 
+                    console.log("EU", mezcladoresEnUso.length);*/                    
 
                     if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso <= 0) {                        
                         console.log("Puedes crear producción");
@@ -190,23 +189,30 @@ document.addEventListener("DOMContentLoaded", () => {
                         alert("No se puede crear producción con los equipos disponibles");
                         window.location.href = "/HTML/app/views/home.php";                    
                     }
-                }       
+                }
 
                 generarRadiosMezcladores(
                     data.equipos.filter(e => e.Tipo === "Mezclador"),
                     datosEdicion                    
                 );                
-
-                generarRadiosReactores(                    
-                    data.reactores, datosEdicion                  
-                );
                 
-                generarRadiosRecetas(data.recetas, datosEdicion);
-
-                /*if (modo === "transferir") {
-                    //console.log("dr", data.recetas);
-                    generarRadiosReactores(data.recetas, datosEdicion);
+                //console.log(datosEdicion.PesoFinalMezclador);
+                               
+                /*if (modo === "transferir" && datosEdicion.PesoFinalMezclador ==="") {
+                    reactoresDisponibles = data.reactores.filter(e => e.Tipo === "Reactor" && e.Estado === "Vacio");
+                } else if (modo === "transferir" && datosEdicion.PesoFinalMezclador !="") {                    
+                    reactoresDisponibles = data.reactores;                    
+                    console.log("peso", datosEdicion.PesoFinalMezclador);
                 }*/
+                
+                if (modo === "transferir") {
+                    console.log("reactores transferencia", data);
+                    generarRadiosReactores(data.reactores, datosEdicion);
+                } else {
+                    generarRadiosReactores(data.reactores, datosEdicion);
+                }
+
+                generarRadiosRecetas(data.recetas, datosEdicion);
 
                 // Rellenar pesos si hay datos de edición
                 if (datosEdicion) {                    
@@ -228,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     formatearNumero(peso_final_mezclador);
                     formatearNumero(peso_inicial_reactor);
                     formatearNumero(peso_final_reactor);
-                }
+                }                
 
                 return data;
             });
@@ -397,8 +403,10 @@ if (modo === "editar") {
     btnCrear.textContent = "Transferir";
 
     // 1) Inicializar el formulario y ESPERAR a que termine
+    
     inicializarFormulario(modo, producto, datosEdicion)
         .then(() => {
+            
             document.querySelector('#peso_final_mezclador').disabled = false;
 
             const reactores = document.querySelector('#reactores');
@@ -411,6 +419,12 @@ if (modo === "editar") {
             if (datosEdicion.Reactor != "") {                
                 peso_final_reactor.disabled = false;                
             }
+
+            // 👉 Nuevo comportamiento
+           /* if (datosEdicion.PesoFinalMezclador == null) {
+                 const contenedor = document.querySelector('#contenedor_mezclador');
+                 contenedor .querySelectorAll("input, select, textarea, button") .forEach(el => el.disabled = true); 
+            }*/
 
             btnCrear.addEventListener("click", (e) => {
                 datosEdicion.PesoFinalReactor = Number(peso_final_reactor.value.replace(/\./g,""));
@@ -441,7 +455,7 @@ if (modo === "editar") {
                     return;
                 }
                 
-                if (peso_final_reactor.value === "") {
+                if (peso_final_reactor.value === "" && peso_final_mezclador.value === "") {
                     alert("Debe introducir un peso final de reactor antes de transferir");
                     return;
                 }
@@ -459,8 +473,8 @@ if (modo === "editar") {
                 data.append("pesoInicialReactor", peso_inicial_reactor.value.replace(/\./g,""));
                 data.append("pesoFinalReactor", peso_final_reactor.value.replace(/\./g,""));
 
-                /*const objeto = Object.fromEntries(data.entries());
-                console.log(objeto); debugger */
+                const objeto = Object.fromEntries(data.entries());
+                console.log(objeto); debugger 
 
                 fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: data })
                     .then(res => res.json())
