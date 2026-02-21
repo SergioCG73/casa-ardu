@@ -118,9 +118,24 @@ function construirTabla(data) {
             <td>${p.Mezclador}</td>
             <td>${p.Reactor}</td>
             <td>${p.Receta}</td>
-            <td><img src="/HTML/public/images/editar_azul_icon_20x20.png" class="icono-editar" data-info='${JSON.stringify(p)}'></td>
-            <td><img src="/HTML/public/images/basura_rojo_icon_15x20.png" class="icono-borrar" data-info='${JSON.stringify(p)}'></td>
-            <td><img src="/HTML/public/images/flecha_amarilla_icon_15x20.png" class="icono-transferir" data-info='${JSON.stringify(p)}'></td>
+            <td>
+                <img src="/HTML/public/images/editar_azul_icon_20x20.png"
+                     class="icono-editar"
+                     data-info='${JSON.stringify(p)}'
+                     title="Editar fabricación">
+            </td>
+            <td>
+                <img src="/HTML/public/images/flecha_amarilla_icon_15x20.png"
+                     class="icono-transferir"
+                     data-info='${JSON.stringify(p)}'
+                     title="Transferir fabricación">
+            </td>            
+            <td>
+                <img src="/HTML/public/images/basura_rojo_icon_15x20.png"
+                     class="icono-borrar"
+                     data-info='${JSON.stringify(p)}'
+                     title="Borrar fabricación">
+            </td>         
         </tr>
     `;
     }).join("");
