@@ -138,15 +138,22 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
 // -----------------------------
 if ($modo === "filtrar") {
 
-    $sql = "SELECT NumeroFabricacion FROM fabricaciones_sin_filtrar";
-    $stmt = $conexion->prepare($sql);
+    $sqlSelect = "SELECT NumeroFabricacion FROM fabricaciones_sin_filtrar";
+    $stmt = $conexion->prepare($sqlSelect);
     $stmt->execute();
     $fabricaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $sqlSelect = "SELECT * FROM equipos WHERE Tipo = 'Depósito' AND ProductoFabricado = 'P18'";
+    $stmt = $conexion->prepare($sqlSelect);
+    $stmt->execute();
+    $depositos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
     echo json_encode([
         "ok" => true,
         "modo" => $modo,
-        "fabricaciones" => $fabricaciones
+        "fabricaciones" => $fabricaciones,
+        "depositos" => $depositos
     ]);
     exit;
 }

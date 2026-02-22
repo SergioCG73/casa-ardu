@@ -138,4 +138,18 @@ input:focus {
     resize: none;
 }
 
+/* Fila con los 3 fieldsets */
+#fila-superior {
+    grid-column: 1 / 3;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+/* Notas debajo ocupando todo el ancho */
+#notas {
+    grid-column: 1 / 3;
+}
+
+
 

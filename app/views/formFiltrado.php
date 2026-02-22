@@ -8,12 +8,15 @@
 </head>
 <body>
     <div id="contenedor" class="contenedor">
-        <h1 id="titulo-formulario">Filtrado Policloruro</h1>
-        <div id="formulario">
-            <div id="fabricaciones">
-                <h2></h2>
-            </div>                   
-        
+    <h1 id="titulo-formulario">Filtrado Policloruro</h1>
+
+    <div id="fabricaciones">
+        <h2></h2>
+    </div>
+
+
+    <!-- NUEVO CONTENEDOR PARA LOS 3 FIELDSETS EN LÍNEA -->
+    <div id="fila-superior">
         <div id="analitica">
             <fieldset><legend>Analítica</legend>
                 <label>Densidad</label>
@@ -30,21 +33,22 @@
                 <input id="volumen_inicial" class="volumen_inicial">
                 <br><br><br>
                 <label>Volumen de agua</label>
-                <input id="volumen:agua" class="volumen_agua">                
+                <input id="volumen:agua" class="volumen_agua">
             </fieldset>
         </div>
+
         <div id="depositos">
-            <fieldset><legend>Depósitos</legend>                
+            <fieldset><legend>Depósitos</legend>
             </fieldset>
         </div>
     </div>
-        
+
+    <!-- NOTAS DEBAJO OCUPANDO EL ANCHO COMPLETO -->
     <div id="notas">
         <fieldset><legend>Notas</legend>
             <textarea id="notasTexto"></textarea>
         </fieldset>
     </div>
-
 
     <div id="botonera">
         <button id="btnRetroceder" class="btnRetroceder">Retroceder</button>
@@ -54,7 +58,8 @@
     <div id="resultados" class="resultados">
         <p id="displayFiltrado" name="displayFiltrado"></p>
     </div>
-        
+</div>
+    
   <!--  <div id="modal" class="mi-modal">
             <div class="mi-modal-contenido">
                 <p id="modalMsg"></p>
