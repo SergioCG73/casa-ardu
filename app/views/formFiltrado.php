@@ -9,13 +9,9 @@
 <body>
     <div id="contenedor" class="contenedor">
     <h1 id="titulo-formulario">Filtrado Policloruro</h1>
-
     <div id="fabricaciones">
         <h2></h2>
-    </div>
-
-
-    <!-- NUEVO CONTENEDOR PARA LOS 3 FIELDSETS EN LÍNEA -->
+    </div>    
     <div id="fila-superior">
         <div id="analitica">
             <fieldset><legend>Analítica</legend>
