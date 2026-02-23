@@ -17,20 +17,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once("miconexion.php");
 
 // Recoger datos
-$numeroProduccion = $_POST["numeroProduccion"] ?? "";
 $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
+$numeroProduccion = $_POST["numeroProduccion"] ?? "";
 $mezclador = $_POST["mezclador"] ?? "";
-$pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
 $receta = $_POST["receta"] ?? "";
-$producto = $_POST["producto"] ?? ""; 
+$pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
+$pesoFinalMezclador = $_POST["pesoFinalMezclador"] ?? "";
+$producto = $_POST["producto"] ?? "";
+//$reactor = $_POST["reactor"] ?? "";
+//$pesoInicialReactor = $_POST["pesoInicialReactor"] ?? "";
+//$fechaFinal = $_POST["fechaFinal"] ?? "";
+//$pesoFinalReactor = $_POST["pesoFinalReactor"] ?? "";
 
 
 // Validación
 if (empty($fechaHoraInicio) ||
+    empty($numeroProduccion) ||
     empty($mezclador) ||
     empty($receta) ||
-    empty($numeroProduccion) ||
     empty($pesoInicialMezclador) ||
+    empty($pesoFinalMezclador) ||    
     empty($producto)) {
     echo json_encode([
         'ok' => false,
@@ -38,6 +44,7 @@ if (empty($fechaHoraInicio) ||
     ]);
     exit;
 }
+
 
 
 try {
@@ -53,13 +60,13 @@ try {
     $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
     $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
     $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
-    $insertStmt->execute();
+    //$insertStmt->execute();
 
-    // UPDATE
+    // UPDATE 
     $updateSQL = "UPDATE equipos SET Estado = 'En uso' WHERE Equipo_id = :Mezclador";
     $updateStmt = $conexion->prepare($updateSQL);
     $updateStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
-    $updateStmt->execute();
+    //$updateStmt->execute();
 
     echo json_encode([
     "ok" => true, 
