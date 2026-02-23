@@ -81,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 input.checked = true;
                 mezcladorSeleccionado = mezclador.Equipo_id;
             }
-
             // NUEVO
 
                 if (datosEdicion && datosEdicion.Mezclador !== "") {
@@ -96,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             input.addEventListener("change", () => {
                 mezcladorSeleccionado = input.value;
-            });
+            });            
 
             label.appendChild(input);
             label.appendChild(document.createTextNode(mezclador.Equipo_id));
@@ -127,46 +126,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             input.addEventListener("change", () => {
                 recetaSeleccionada = input.value;
-            });
+                console.log(recetaSeleccionada);
+            });            
 
             label.appendChild(input);
             label.appendChild(document.createTextNode(receta.NombreReceta));
             contenedorRecetas.appendChild(label);
         });
-    }
-
-    /*function generarRadiosReactores(reactores, datosEdicion) {
-        const contenedorReactores = document.querySelector("#reactores .radio-group");
-        contenedorReactores.innerHTML = ""; // ← borrar los estáticos 
-
-        reactores.forEach(reactor => {
-            const id = "reactor_" + reactor.Equipo_id;
-            const label = document.createElement("label");
-            label.className = "radio-label";
-            label.htmlFor = id;
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = "reactor";
-            input.id = id;
-            input.value = reactor.Equipo_id;
-
-            if (datosEdicion && datosEdicion.Reactor == reactor.Equipo_id) {
-                input.checked = true;
-                reactorSeleccionado = reactor. Equipo_id;                
-            }
-
-            input.addEventListener("change", () => {
-                reactorSeleccionado = input.value;
-                console.log(reactorSeleccionado);
-            });
-
-
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(reactor.Equipo_id));
-            contenedorReactores.appendChild(label);
-        });
-    }*/
+    }   
 
     function generarRadiosReactores(reactores, datosEdicion) {
         const contenedorReactores = document.querySelector("#reactores .radio-group");
@@ -207,6 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (datosEdicion && datosEdicion.Reactor !== "") {
                     if (reactor.NombreEquipo === datosEdicion.Reactor) {
                         input.checked = true;
+                        //reactorSeleccionado = reactor.NombreEquipo;
+                        reactorSeleccionado = reactor.Equipo_id;
                     } else {
                         input.disabled = true;
                     }
@@ -214,10 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // fin nuevo
 
-
                 input.addEventListener("change", () => {
                     reactorSeleccionado = input.value;
+                    console.log(reactorSeleccionado);
                 });
+
+                
 
                 label.appendChild(input);
                 label.appendChild(document.createTextNode(reactor.Equipo_id));
@@ -499,8 +470,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelector('#peso_final_mezclador').disabled = false;
                 document.querySelector('#peso_final_reactor').disabled = true;
                 const reactores = document.querySelector('#peso_inicial_reactor').disabled = false;
-                
-                
 
                 if (datosEdicion.Reactor != "") {
                     peso_final_reactor.disabled = false;
@@ -511,20 +480,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     e.preventDefault();
 
-                    const ahora = new Date();
-                    const fechaInicioReaccion = ahora.getFullYear() + "-" +
-                        String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
-                        String(ahora.getDate()).padStart(2, '0') + " " +
-                        String(ahora.getHours()).padStart(2, '0') + ":" +
-                        String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                    let fechaInicioReaccion =  null;  //Nueva
+
+                    if (peso_final_mezclador.disabled === false && peso_final_reactor.disabled === true) {
+                        const ahora = new Date();
+                        fechaInicioReaccion = ahora.getFullYear() + "-" +
+                            String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
+                            String(ahora.getDate()).padStart(2, '0') + " " +
+                            String(ahora.getHours()).padStart(2, '0') + ":" +
+                            String(ahora.getMinutes()).padStart(2, '0') + ":" +
+                            String(ahora.getSeconds()).padStart(2, '0');
+                    }
+
+                    //console.log(fechaInicioReaccion); debugger
 
                     if (peso_final_mezclador.value === "") {
                         alert("Debe introducir un peso final de mezclador antes de transferir");
                         return;
-                    }
+                    }                    
 
-                    reactorSeleccionado = datosEdicion.Reactor;
+                    console.log(fechaInicioReaccion);                     
+                    //reactorSeleccionado = datosEdicion.Reactor;
+                    console.log(reactorSeleccionado); debugger
 
                     if (!reactorSeleccionado) {
                         alert("Debe elegir un reactor antes de transferir");
