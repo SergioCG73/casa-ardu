@@ -82,6 +82,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 mezcladorSeleccionado = mezclador.Equipo_id;
             }
 
+            // NUEVO
+
+                if (datosEdicion && datosEdicion.Mezclador !== "") {
+                    if (mezclador.NombreEquipo === datosEdicion.Mezclador) {
+                        input.checked = true;
+                    } else {
+                        input.disabled = true;
+                    }
+                }
+
+            // fin nuevo
+
             input.addEventListener("change", () => {
                 mezcladorSeleccionado = input.value;
             });
@@ -193,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // NUEVO
 
                 if (datosEdicion && datosEdicion.Reactor !== "") {
-                    if(reactor.NombreEquipo === datosEdicion.Reactor) {
+                    if (reactor.NombreEquipo === datosEdicion.Reactor) {
                         input.checked = true;
                     } else {
                         input.disabled = true;
@@ -222,6 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*const objeto = Object.fromEntries(formData.entries());  
         console.log(objeto);  debugger */
+        //1console.log(datosEdicion); debugger
 
         //return fetch("/HTML/app/models/leerdatos.php", { method: "POST", body: formData })
         return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
@@ -364,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fetch("/HTML/app/models/crearP18.php", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
                     .then(json => {
-                        console.log(json); 
+                        console.log(json);
                         if (json.ok) mostrarModal(json.message);
                         else alert(json.error);
                     });
@@ -455,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data.append("producto", producto);
                         data.append("modo", modo);
 
-                        const objeto = Object.fromEntries(data.entries()); 
+                        const objeto = Object.fromEntries(data.entries());
                         console.log(objeto); debugger
                     }
 
@@ -479,16 +492,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 1) Inicializar el formulario y ESPERAR a que termine
 
-        console.log(datosEdicion);
-        
+        //console.log(datosEdicion); return;
+
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
-
                 document.querySelector('#peso_final_mezclador').disabled = false;
-
-                const reactores = document.querySelector('#peso_inicial_reactor').disabled = false;
-
                 document.querySelector('#peso_final_reactor').disabled = true;
+                const reactores = document.querySelector('#peso_inicial_reactor').disabled = false;
+                
+                
 
                 if (datosEdicion.Reactor != "") {
                     peso_final_reactor.disabled = false;
@@ -496,7 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 btnCrear.addEventListener("click", (e) => {
                     datosEdicion.PesoFinalReactor = Number(peso_final_reactor.value.replace(/\./g, ""));
-                    
+
                     e.preventDefault();
 
                     const ahora = new Date();
@@ -512,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    reactorSeleccionado = datosEdicion.Reactor;                    
+                    reactorSeleccionado = datosEdicion.Reactor;
 
                     if (!reactorSeleccionado) {
                         alert("Debe elegir un reactor antes de transferir");
@@ -528,13 +540,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         alert("Debe introducir un peso final de reactor antes de transferir");
                         return;
                     }
-                    
+
                     const data = new FormData();
 
                     data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
                     data.append("producto", producto);
-                    data.append("modo", modo); 
-                    data.append("mezclador", mezcladorSeleccionado);                    
+                    data.append("modo", modo);
+                    data.append("mezclador", mezcladorSeleccionado);
                     data.append("fechaInicioReaccion", fechaInicioReaccion);
                     data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
                     data.append("reactor", reactorSeleccionado);
@@ -543,10 +555,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     //data.append("pesoInicialMezclador", datosEdicion.PesoInicialMezclador);
                     //data.append("pesoFinalReactor", peso_final_reactor.value.replace(/\./g, ""));
                     //data.append("receta", recetaSeleccionada);
-                    
+
 
                     const objeto = Object.fromEntries(data.entries());
-                    console.log(objeto); debugger 
+                    console.log(objeto); debugger
 
                     fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: data })
                         .then(res => res.json())
