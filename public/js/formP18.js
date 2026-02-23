@@ -190,6 +190,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     label.classList.add("reactor-disabled");
                 }
 
+                // NUEVO
+
+                if (datosEdicion && datosEdicion.Reactor !== "") {
+                    if(reactor.NombreEquipo === datosEdicion.Reactor) {
+                        input.checked = true;
+                    } else {
+                        input.disabled = true;
+                    }
+                }
+
+                // fin nuevo
+
+
                 input.addEventListener("change", () => {
                     reactorSeleccionado = input.value;
                 });
@@ -327,19 +340,31 @@ document.addEventListener("DOMContentLoaded", () => {
                     String(ahora.getSeconds()).padStart(2, '0');
 
                 const datosEnviar = new FormData();
-                datosEnviar.append("numeroProduccion", numeroProduccion);
+                /*datosEnviar.append("numeroProduccion", numeroProduccion);
                 datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
                 datosEnviar.append("mezclador", mezcladorSeleccionado);
                 datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
                 datosEnviar.append("receta", recetaSeleccionada);
+                datosEnviar.append("producto", producto);*/
+
+                datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
+                datosEnviar.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                datosEnviar.append("mezclador", mezcladorSeleccionado);
+                datosEnviar.append("receta", recetaSeleccionada);
+                datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
+                datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
+                //datosEnviar.append("reactor", reactorSeleccionado);
+                //datosEnviar.append("pesoInicialReactor", peso_inicial_reactor.value.replace(/\./g, ""));
                 datosEnviar.append("producto", producto);
+                datosEnviar.append("modo", modo);
 
                 /*const objeto = Object.fromEntries(datosEnviar.entries()); 
                 console.log("objeto", objeto); return;*/ //producto = PP18                
 
-                fetch("/HTML/app/models/insertarP18.php", { method: "POST", body: datosEnviar })
+                fetch("/HTML/app/models/crearP18.php", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
                     .then(json => {
+                        console.log(json); 
                         if (json.ok) mostrarModal(json.message);
                         else alert(json.error);
                     });
@@ -419,7 +444,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         data.append("modo", modo);
 
                     } else if (datosEdicion.Reactor != "") {
-                        console.log("REACTOR = R200", datosEdicion);
 
                         data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
                         data.append("mezclador", mezcladorSeleccionado);
@@ -431,8 +455,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         data.append("producto", producto);
                         data.append("modo", modo);
 
-                        /*const objeto = Object.fromEntries(data.entries()); 
-                        console.log(objeto); debugger*/
+                        const objeto = Object.fromEntries(data.entries()); 
+                        console.log(objeto); debugger
                     }
 
                     fetch("../../app/models/editarFabCurso.php", { method: "POST", body: data })
@@ -455,6 +479,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 1) Inicializar el formulario y ESPERAR a que termine
 
+        console.log(datosEdicion);
+        
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
 
@@ -468,20 +494,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     peso_final_reactor.disabled = false;
                 }
 
-                // 👉 Nuevo comportamiento
-                /* if (datosEdicion.PesoFinalMezclador == null) {
-                      const contenedor = document.querySelector('#contenedor_mezclador');
-                      contenedor .querySelectorAll("input, select, textarea, button") .forEach(el => el.disabled = true); 
-                 }*/
-
                 btnCrear.addEventListener("click", (e) => {
                     datosEdicion.PesoFinalReactor = Number(peso_final_reactor.value.replace(/\./g, ""));
-                    //console.log(datosEdicion);
-                    //debugger
+                    
                     e.preventDefault();
 
                     const ahora = new Date();
-                    const fechaHoraFinal = ahora.getFullYear() + "-" +
+                    const fechaInicioReaccion = ahora.getFullYear() + "-" +
                         String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
@@ -492,6 +511,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         alert("Debe introducir un peso final de mezclador antes de transferir");
                         return;
                     }
+
+                    reactorSeleccionado = datosEdicion.Reactor;                    
 
                     if (!reactorSeleccionado) {
                         alert("Debe elegir un reactor antes de transferir");
@@ -507,27 +528,29 @@ document.addEventListener("DOMContentLoaded", () => {
                         alert("Debe introducir un peso final de reactor antes de transferir");
                         return;
                     }
-
+                    
                     const data = new FormData();
-                    data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
-                    data.append("fechaHoraFinal", fechaHoraFinal);
-                    data.append("modo", modo);
-                    data.append("producto", producto);
-                    data.append("receta", recetaSeleccionada);
-                    data.append("mezclador", mezcladorSeleccionado);
-                    data.append("reactor", reactorSeleccionado);
-                    data.append("pesoInicialMezclador", datosEdicion.PesoInicialMezclador);
-                    data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
-                    data.append("pesoInicialReactor", peso_inicial_reactor.value.replace(/\./g, ""));
-                    data.append("pesoFinalReactor", peso_final_reactor.value.replace(/\./g, ""));
 
-                    /*const objeto = Object.fromEntries(data.entries());
-                    console.log(objeto); debugger */
+                    data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                    data.append("producto", producto);
+                    data.append("modo", modo); 
+                    data.append("mezclador", mezcladorSeleccionado);                    
+                    data.append("fechaInicioReaccion", fechaInicioReaccion);
+                    data.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
+                    data.append("reactor", reactorSeleccionado);
+                    data.append("pesoInicialReactor", peso_inicial_reactor.value.replace(/\./g, ""));
+
+                    //data.append("pesoInicialMezclador", datosEdicion.PesoInicialMezclador);
+                    //data.append("pesoFinalReactor", peso_final_reactor.value.replace(/\./g, ""));
+                    //data.append("receta", recetaSeleccionada);
+                    
+
+                    const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger 
 
                     fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: data })
                         .then(res => res.json())
-                        .then(json => { //console.log(json); debugger
-                            console.log("json", json);
+                        .then(json => { //console.log(json); debugger                            
                             if (json.ok) mostrarModal("Producción transferida correctamente");
                             else alert(json.error);
                         });
