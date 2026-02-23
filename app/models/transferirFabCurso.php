@@ -17,17 +17,17 @@ $pdo = $conexion;
 // 1. Recoger datos del POST =
 // ===========================
 $numeroProduccion           = $_POST["numeroProduccion"] ?? null;
+$fechaHoraInicio            = $_POST["fechaHoraInicio"] ?? null;
 $mezcladorNuevo             = $_POST["mezclador"] ?? null;
-$reactorNuevo               = $_POST["reactor"] ?? null;
-$receta                     = $_POST["receta"] ?? null;
 $pesoM                      = $_POST["pesoInicialMezclador"] ?? null;
 $pesoMF                     = $_POST["pesoFinalMezclador"] ?? null;
+$reactorNuevo               = $_POST["reactor"] ?? null;
 $pesoR                      = $_POST["pesoInicialReactor"] ?? null;
 $pesoRF                     = $_POST["pesoFinalReactor"] ?? null;
+$receta                     = $_POST["receta"] ?? null;
 $producto                   = $_POST["producto"] ?? null;
 $modo                       = $_POST["modo"] ?? null;
-$fechaHoraInicio            = $_POST["fechaHoraInicio"] ?? null;
-$fechaHoraTransferencia     = $_POST["fechaHoraTransferencia"] ?? null;
+$fechaInicioReaccion        = $_POST["fechaInicioReaccion"] ?? null;
 $fechaHoraFinal             = $_POST["fechaHoraFinal"] ?? null;
 
 if (!$numeroProduccion) {
@@ -36,34 +36,26 @@ if (!$numeroProduccion) {
     exit;
 }
 
-if ($modo === "transferir" && $producto === "P18" && $pesoRF === "") {
-    //$producto = "P18SR";
 
-// Actualizar tabla fabricaciones_en_curso con los nuevos datos al transferir    
+if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
+
+// Actualizar tabla fabricaciones_en_curso con los nuevos datos al transferir
 $sqlUpdate = $pdo->prepare("
     UPDATE fabricaciones_en_curso
     SET 
-        FechaTransferenciaMezclador = :horatransferencia,
-        Mezclador = :mezclador,
-        PesoInicialMezclador = :pesoM,
+        FechaInicioReaccion = :horaInicioReaccion,
         PesoFinalMezclador = :pesoMF,
         Reactor = :reactor,
-        PesoInicialReactor = :pesoR,
-        Receta = :receta,
-        Producto_id = :producto
+        PesoInicialReactor = :pesoR
     WHERE NumeroFabricacion = :numerofabricacion
 ");
 
 $sqlUpdate->execute([
-    ':horatransferencia'       => $fechaHoraTransferencia,
-    ':mezclador'               => $mezcladorNuevo,
-    ':pesoM'                   => $pesoM,
+    ':horaInicioReaccion'      => $fechaInicioReaccion,        
     ':pesoMF'                  => $pesoMF,
     ':reactor'                 => $reactorNuevo,    
-    ':pesoR'                   => $pesoR,         // Peso inicial del reactor
-    ':receta'                  => $receta,
-    ':numerofabricacion'       => $numeroProduccion,
-    ':producto'                => $producto
+    ':pesoR'                   => $pesoR,    
+    ':numerofabricacion'       => $numeroProduccion,    
 ]);
 
 // Actualizar estado de equipos
@@ -90,11 +82,10 @@ $sqlUpdateReactor->execute([
     ':reactor' => $reactorNuevo
 ]);
 
-
 echo json_encode([
     "ok"                        => true,
     "modo"                      => $modo,
-    "fechaHoraTransferencia"    => $fechaHoraTransferencia,
+    "fechaHoraTransferencia"    => $fechaHoraFinal,
     "mezclador"                 => $mezcladorNuevo,
     "pesoInicialMezclador"      => $pesoM,
     "pesoFinalMezclador"        => $pesoMF,
@@ -103,14 +94,26 @@ echo json_encode([
     "receta"                    => $receta,
     "numeroProduccion"          => $numeroProduccion,
     "producto"                  => $producto,
-    "mensaje"                   => "Update OK"
+    "mensaje"                   => "Update  1 OK"
 ]); exit;
 
 }
 
+
+
+
+
+
+
+
 //-----------------------------------------------------------
 
 if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
+
+echo json_encode([
+    "ok" => true,
+    "mensaje" => "2ª transferencia"
+]); exit;
 
 $sqlUpdate = $pdo->prepare("
     UPDATE fabricaciones_en_curso
@@ -120,40 +123,56 @@ $sqlUpdate = $pdo->prepare("
     WHERE NumeroFabricacion = :numerofabricacion
 ");
 
-$sqlUpdate->execute([
+/*$sqlUpdate->execute([
     ':horafinal'         => $fechaHoraFinal,     
     ':pesofinal'         => $pesoRF,
     ':numerofabricacion' => $numeroProduccion
-]);
+]);*/
 
 $sqlInsert = $pdo->prepare("INSERT INTO fabricaciones_sin_filtrar (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
 
-$sqlInsert->execute([
+/*$sqlInsert->execute([
     ":nf" => $numeroProduccion,
     ":fecha" => $fechaHoraFinal
-]);
+]);*/
 
 
 $sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
 
-$sqlUpdate->execute([
+/*$sqlUpdate->execute([
     ":reactor" => $reactorNuevo
-]);
+]);*/
 
 $sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
 
-$sqlDelete->execute([
+/*$sqlDelete->execute([
     ":nf" => $numeroProduccion
-]);
+]);*/
 
-echo json_encode([
+/*echo json_encode([
         "ok" => true,
         "FechaHoraFinal" => $fechaHoraFinal,        
         "PesoFinalReactor" => $pesoRF,
         "reactor" => $reactorNuevo,
         "NumeroFabricacion" => $numeroProduccion
 ]); exit;
-}; 
+};*/ 
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //---------------------------------------------------------------------------------------------------
