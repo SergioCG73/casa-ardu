@@ -36,8 +36,12 @@ if (!$numeroProduccion) {
     exit;
 }
 
+if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) { //transferencia de Mezclador a Reactor
 
-if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
+/*echo json_encode([
+    "ok" => true,
+    "mensaje" => "1º transferencia"
+]); exit;*/
 
 // Actualizar tabla fabricaciones_en_curso con los nuevos datos al transferir
 $sqlUpdate = $pdo->prepare("
@@ -94,17 +98,10 @@ echo json_encode([
     "receta"                    => $receta,
     "numeroProduccion"          => $numeroProduccion,
     "producto"                  => $producto,
-    "mensaje"                   => "Update  1 OK"
+    "mensaje"                   => "Transferencia Mezclador a Reactor"
 ]); exit;
 
 }
-
-
-
-
-
-
-
 
 //-----------------------------------------------------------
 
@@ -123,31 +120,31 @@ $sqlUpdate = $pdo->prepare("
     WHERE NumeroFabricacion = :numerofabricacion
 ");
 
-/*$sqlUpdate->execute([
+$sqlUpdate->execute([
     ':horafinal'         => $fechaHoraFinal,     
     ':pesofinal'         => $pesoRF,
     ':numerofabricacion' => $numeroProduccion
-]);*/
+]);
 
 $sqlInsert = $pdo->prepare("INSERT INTO fabricaciones_sin_filtrar (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
 
-/*$sqlInsert->execute([
+$sqlInsert->execute([
     ":nf" => $numeroProduccion,
     ":fecha" => $fechaHoraFinal
-]);*/
+]);
 
 
 $sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
 
-/*$sqlUpdate->execute([
+$sqlUpdate->execute([
     ":reactor" => $reactorNuevo
-]);*/
+]);
 
 $sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
 
-/*$sqlDelete->execute([
+$sqlDelete->execute([
     ":nf" => $numeroProduccion
-]);*/
+]);
 
 /*echo json_encode([
         "ok" => true,

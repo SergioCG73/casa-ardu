@@ -1,5 +1,6 @@
 <?php
 
+//ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -29,7 +30,9 @@ if ($modo === "inicial") {
     $producciones_sin_filtrar = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Filtrar las que NO son "0000"
-    $solo_fabricaciones = array_filter($producciones_sin_filtrar, fn($fila) =>
+    $solo_fabricaciones = array_filter(
+        $producciones_sin_filtrar,
+        fn($fila) =>
         $fila["NumeroFabricacion"] !== "0000"
     );
 
@@ -47,8 +50,8 @@ if ($modo === "inicial") {
 // -----------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
 // -----------------------------
-function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
-
+function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
+{
     // Última terminada
     $sql = "SELECT NumeroFabricacion FROM $tablaTerminadas ORDER BY NumeroFabricacion DESC LIMIT 1";
     $stmt = $conexion->prepare($sql);
@@ -71,15 +74,15 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     $ultimaSinFiltrar = $stmt->fetchColumn() ?? 0;
 
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
-
 }
 
-function obtenerDatosProducto($conexion, $producto) {
-
+function obtenerDatosProducto($conexion, $producto)
+{
     // Equipos
+    //$sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto AND Estado = 'Vacio'";
     $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
     $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(":producto", $producto);
+    $stmt->bindParam(":producto", $producto);    
     $stmt->execute();
     $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -157,5 +160,3 @@ if ($modo === "filtrar") {
     ]);
     exit;
 }
-
-?>
