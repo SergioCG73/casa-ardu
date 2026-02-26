@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let recetaSeleccionada;
     let reactorSeleccionado;
     let numeroProduccion;
+    let numeroProduccionActual = null;  //AÑADIDO
+
 
     const modo = localStorage.getItem("modo");
     //const producto = "PP18";
@@ -315,14 +317,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     : data.siguienteFabricacion;
 
                 displayProduccion.textContent = numeroProduccion;
+                numeroProduccionActual = numeroProduccion; //añadido
+
+
+                //AÑADIDO PARA RESOLVER PROBLEMA TEST Nº 5 
+                if (modo === "crear") {
+                    datosEdicion = datosEdicion || {};
+                    datosEdicion.NumeroFabricacion = data.siguienteFabricacion;
+                    //console.log(datosEdicion.NumeroFabricacion); debugger
+                }
+                //FIN AÑADIDO 
 
                 let reactoresDisponibles = [];
 
-                if (modo === "crear") {
-                    //console.log("Data", data.equipos);
+                if (modo === "crear") {                    
+                    //console.log("Data", data.equipos);                    
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
                     mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
+                    
+                    //console.log("Nº Produccion:", data.siguienteFabricacion); debugger
 
                     /*console.log("Disponibles", mezcladoresDisponibles); 
                     console.log("Uso", mezcladoresEnUso); 
@@ -398,7 +412,9 @@ document.addEventListener("DOMContentLoaded", () => {
     btnRetroceder.addEventListener("click", () => window.location.href = "/HTML/public/");
 
     // ===== MODO CREAR =====
-    if (modo === "crear") {
+    if (modo === "crear") {        
+        console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion);
+        console.log("datosEdicion", datosEdicion); debugger
         inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php            
             document.querySelector('#peso_final_mezclador').disabled = true;
 
@@ -408,6 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .forEach(el => el.disabled = true);
 
             btnCrear.addEventListener("click", () => {
+                //console.log(datosEdicion); debugger
                 if (!mezcladorSeleccionado) return alert("Selecciona un mezclador");
                 if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
                 if (!recetaSeleccionada) return alert("Selecciona una receta");
@@ -422,7 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const datosEnviar = new FormData();
                 datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
-                datosEnviar.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                //datosEnviar.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                datosEnviar.append("numeroProduccion", numeroProduccionActual); //Añadido y cambiado
                 datosEnviar.append("mezclador", mezcladorSeleccionado);
                 datosEnviar.append("receta", recetaSeleccionada);
                 datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
@@ -433,7 +451,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 datosEnviar.append("modo", modo);
 
                 /*const objeto = Object.fromEntries(datosEnviar.entries()); 
-                console.log("objeto", objeto); return;*/ //producto = PP18                
+                console.log("objeto", objeto); return; */
 
                 fetch("/HTML/app/models/crearP18.php", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
@@ -491,7 +509,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // === CLICK EDITAR ===
 
-                console.log("reactorSeleccionado 495: ", reactorSeleccionado); debugger
+                //console.log("reactorSeleccionado 495: ", reactorSeleccionado); debugger
                 btnCrear.addEventListener("click", (e) => {
                     e.preventDefault();
 
