@@ -96,7 +96,6 @@ if ($reactorNuevo === null) {
             "message" => "Producción actualizada correctamente"
         ]);
         exit;
-
     } catch (Exception $e) {
 
         $pdo->rollBack();
@@ -108,8 +107,6 @@ if ($reactorNuevo === null) {
         exit;
     }
 }
-
-
 
 // =====================================================
 // RAMA 2: reactorNuevo !== null
@@ -137,8 +134,32 @@ try {
     // 4. Si cambia reactor
     if ($reactorNuevo && $reactorNuevo != $reactorAnterior) {
 
-        $pdo->prepare("UPDATE equipos SET Estado='Vacio' WHERE Equipo_id=:id")
-            ->execute([":id" => $reactorAnterior]);
+        /*$pdo->prepare("UPDATE equipos SET Estado='Vacio' WHERE Equipo_id=:id")
+            ->execute([":id" => $reactorAnterior]);*/
+
+        //añadido ----
+        // Comprobar si otro proceso sigue usando el reactor anterior
+        $check = $pdo->prepare("
+                                SELECT COUNT(*) 
+                                FROM fabricaciones_en_curso
+                                WHERE Reactor = :reactor
+                                AND NumeroFabricacion != :num
+                            ");
+        $check->execute([
+            ":reactor" => $reactorAnterior,
+            ":num" => $numeroProduccion
+        ]);
+
+        $enUso = $check->fetchColumn();
+
+        if ($enUso == 0) {
+            $pdo->prepare("UPDATE equipos SET Estado='Vacio' WHERE Equipo_id=:id")
+                ->execute([":id" => $reactorAnterior]);
+        }
+
+
+
+        //------ fin añadido
 
         $pdo->prepare("UPDATE equipos SET Estado='En uso' WHERE Equipo_id=:id")
             ->execute([":id" => $reactorNuevo]);
@@ -176,7 +197,6 @@ try {
         "message" => "Producción actualizada correctamente"
     ]);
     exit;
-
 } catch (Exception $e) {
 
     $pdo->rollBack();
