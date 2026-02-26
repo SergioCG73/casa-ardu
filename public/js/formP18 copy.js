@@ -17,13 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let recetaSeleccionada;
     let reactorSeleccionado;
     let numeroProduccion;
-    let numeroProduccionActual = null;
-    let fechaHoraFinal;
+    let numeroProduccionActual = null;  //AÑADIDO
 
-    const modo = localStorage.getItem("modo");
+
+    const modo = localStorage.getItem("modo");    
     let producto = localStorage.getItem("producto");
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
-    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));    
 
     // ===== FUNCIONES =====
     function mostrarModal(mensaje) {
@@ -51,8 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function generarRadiosMezcladores(mezcladores, datosEdicion, modo) {
-        console.group("funcion generarRadiosMezcladores", modo); debugger
-        if (modo === "crear" || modo === "editar" || modo === "transferenciafinal") {
+        //console.group("funcion generarRadiosMezcladores", modo);
+        if (modo === "crear" || modo === "editar") {
             mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador");
 
             const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (estado === "en uso") {
                     input.disabled = true;
                     label.classList.add("reactor-disabled");
-                }
+                }               
 
                 input.addEventListener("change", () => {
                     reactorSeleccionado = input.value;
@@ -259,34 +259,31 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(objeto);  debugger */
         //console.log(datosEdicion); debugger
 
-        //modo = "transferir"; //añadido
-
         return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
             .then(res => res.json())
-            .then(data => {
-                console.log(data); debugger
+            .then(data => { //console.log(data); debugger
                 numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
                     ? data.ultimaEnCurso
                     : data.siguienteFabricacion;
 
                 displayProduccion.textContent = numeroProduccion;
-                numeroProduccionActual = numeroProduccion;
-
+                numeroProduccionActual = numeroProduccion; 
+                
                 if (modo === "crear") {
                     datosEdicion = datosEdicion || {};
                     datosEdicion.NumeroFabricacion = data.siguienteFabricacion;
                     //console.log(datosEdicion.NumeroFabricacion); debugger
                 }
-
+                
 
                 let reactoresDisponibles = [];
 
-                if (modo === "crear") {
+                if (modo === "crear") {                    
                     //console.log("Data", data.equipos);                    
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
                     mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
-
+                    
                     //console.log("Nº Produccion:", data.siguienteFabricacion); debugger
 
                     /*console.log("Disponibles", mezcladoresDisponibles); 
@@ -303,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 generarRadiosMezcladores(data.equipos, datosEdicion, modo);
                 //console.log(datosEdicion.PesoFinalMezclador);
-
+                
                 const reactoresFiltrados = data.reactores.filter(r => r.Estado !== "Averiado");
                 generarRadiosReactores(reactoresFiltrados, datosEdicion);
 
@@ -343,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnRetroceder.addEventListener("click", () => window.location.href = "/HTML/public/");
 
     // ===== MODO CREAR =====
-    if (modo === "crear") {
+    if (modo === "crear") {        
         console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion);
         console.log("datosEdicion", datosEdicion); debugger
         inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php            
@@ -369,12 +366,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     String(ahora.getSeconds()).padStart(2, '0');
 
                 const datosEnviar = new FormData();
-                datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
+                datosEnviar.append("fechaHoraInicio", fechaHoraInicio);                
                 datosEnviar.append("numeroProduccion", numeroProduccionActual); //Añadido y cambiado
                 datosEnviar.append("mezclador", mezcladorSeleccionado);
                 datosEnviar.append("receta", recetaSeleccionada);
                 datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
-                datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
+                datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));                
                 datosEnviar.append("producto", producto);
                 datosEnviar.append("modo", modo);
 
@@ -393,13 +390,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ===== MODO EDITAR =====
-    if (modo === "editar") {
+    if (modo === "editar") {        
         console.log("Modo edición");
-        datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+        datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));        
 
         btnCrear.textContent = "Editar";
 
-        console.log("datosEdicion", datosEdicion);
+        console.log("datosEdicion", datosEdicion); 
 
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
@@ -502,9 +499,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     btnCrear.addEventListener("click", (e) => {
                         e.preventDefault();
-                        const pesoMF = Number(inputPesoFinalMezclador.value.replace(/\./g, ""));
+                        const pesoMF = Number(inputPesoFinalMezclador.value.replace(/\./g,""));                        
                         /*console.log(inputPesoInicialReactor.value); */
-                        const pesoR = inputPesoInicialReactor.value;
+                        const pesoR = inputPesoInicialReactor.value; 
 
                         /*console.log("PESO MF", pesoMF);
                         console.log("PESO R", pesoR); debugger*/
@@ -513,7 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (!reactorSeleccionado) return alert("Selecciona un reactor");
                         if (!pesoR) return alert("Introduzca peso inicial reactor");
 
-                        datosEdicion.PesoInicialReactor = Number(peso_inicial_reactor.value.replace(/\./g, ""));
+                        datosEdicion.PesoInicialReactor = Number(peso_inicial_reactor.value.replace(/\./g, ""));                        
 
                         let horaTransferenciaMezcladoraReactor = null;
 
@@ -526,24 +523,23 @@ document.addEventListener("DOMContentLoaded", () => {
                             String(ahora.getSeconds()).padStart(2, '0');
 
                         //console.log(horaTransferenciaMezcladoraReactor); debugger
-
+                        
                         const datosTransferenciaMezcladoraReactor = new FormData();
-                        datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);
+                        datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);                        
                         datosTransferenciaMezcladoraReactor.append("mezclador", datosEdicion.Mezclador);
                         datosTransferenciaMezcladoraReactor.append("modo", modo);
                         datosTransferenciaMezcladoraReactor.append("numeroProduccion", datosEdicion.NumeroFabricacion);
                         datosTransferenciaMezcladoraReactor.append("pesoFinalMezclador", pesoMF);
                         datosTransferenciaMezcladoraReactor.append("pesoInicialReactor", pesoR);
-                        datosTransferenciaMezcladoraReactor.append("producto", producto);
-                        datosTransferenciaMezcladoraReactor.append("reactor", reactorSeleccionado);
-
+                        datosTransferenciaMezcladoraReactor.append("producto", producto);                        
+                        datosTransferenciaMezcladoraReactor.append("reactor", reactorSeleccionado);                        
+                        
                         const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
                         console.log(objeto); debugger
 
                         fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: datosTransferenciaMezcladoraReactor })
                             .then(res => res.json())
-                            .then(json => {
-                                console.log(json); debugger
+                            .then(json => { console.log(json); debugger                            
                                 if (json.ok) mostrarModal("Producción transferida correctamente");
                                 else alert(json.error);
                             });
@@ -552,15 +548,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }  //Fin Transferencia M a R
     }
-
+    
     // ============================================== INICIO TRANSFERENCIA DE REACTOR A M216 *****************************
-    if (modo === "transferir" && datosEdicion.pesoR !== "") {
+    if(modo === "transferir" && datosEdicion.pesoR !== "") {
         console.log("Transferencia Reactor a M216...");
-        let modo = "transferenciafinal";
-        btnCrear.textContent = "Finalizar";
-
-        console.log(modo); debugger
-
+        btnCrear.textContent = "Finalizar ";
 
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
@@ -569,38 +561,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const inputPesoFinalReactor = document.querySelector("#peso_final_reactor");
                 inputPesoFinalReactor.disabled = false;
 
-                btnCrear.addEventListener("click", () => {
-
-                    if (inputPesoFinalReactor.value === "") {
-                        alert("Debe introducir un peso final de reactor");
-                    }
-
-                    console.log(inputPesoFinalReactor.value);
-                    pesoRF = inputPesoFinalReactor.value.replace(/\./g, "");
-
-                    const ahora = new Date();
-
-                    fechaHoraFinal = ahora.getFullYear() + "-" +
-                        String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
-                        String(ahora.getDate()).padStart(2, '0') + " " +
-                        String(ahora.getHours()).padStart(2, '0') + ":" +
-                        String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
-
-
-                    const datosTransferenciaFinal = new FormData();
-                    datosTransferenciaFinal.append("horaFinal", fechaHoraFinal);
-                    datosTransferenciaFinal.append("pesoRF", pesoRF);                    
-
-                    /*const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
-                    console.log(objeto); debugger*/
-
-                    //A FALTA DEL FETCH
-
-                })
-
-
             })
+    
+
+
 
 
     }
