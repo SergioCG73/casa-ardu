@@ -103,9 +103,9 @@ function obtenerDatosProducto($conexion, $producto)
     return [$equipos, $recetas, $reactores];
 }
 
-// -------------------------------------------------------
-// MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR
-// -------------------------------------------------------
+// -----------------------------
+// MODO CREAR / EDITAR / TRANSFERIR PARA P18
+// -----------------------------
 if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     $tabla = "p18_terminadas";
 
@@ -121,6 +121,7 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     if ($modo === "crear") {
         $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1;
     }
+
 
     list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
 
@@ -139,28 +140,6 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     ]);
     exit;
 }
-
-if ($modo === "transferenciafinal") {
-    list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
-
-    echo json_encode([
-    "modo" => $modo,
-    "equipos" => $equipos,
-    "recetas" => $recetas,
-    "reactores" => $reactores,
-    "mensaje" => "R ---> M216"
-]); exit;
-
-
-}
-
-
-
-
-
-
-
-
 
 // -----------------------------
 // MODO FILTRAR
