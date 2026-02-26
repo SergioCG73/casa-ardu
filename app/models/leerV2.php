@@ -82,7 +82,7 @@ function obtenerDatosProducto($conexion, $producto)
     //$sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto AND Estado = 'Vacio'";
     $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
     $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(":producto", $producto);    
+    $stmt->bindParam(":producto", $producto);
     $stmt->execute();
     $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -107,7 +107,6 @@ function obtenerDatosProducto($conexion, $producto)
 // MODO CREAR / EDITAR / TRANSFERIR PARA P18
 // -----------------------------
 if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
-
     $tabla = "p18_terminadas";
 
     list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =
@@ -117,6 +116,12 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     $siguienteFabricacion = ($modo === "crear")
         ? max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1
         : max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+    // FORZAR QUE SIEMPRE DEVUELVA EL MISMO NÚMERO EN MODO CREAR
+    if ($modo === "crear") {
+        $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1;
+    }
+
 
     list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
 
