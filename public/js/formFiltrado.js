@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(depositos);
 
     const modo = localStorage.getItem("modo");
-    //const usuario = "laboratorio";
-
 
     function bloquearTodoMenosAnalitica() {
         const contenedor = document.querySelector("#fila-superior");
@@ -32,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const contenedorDepositos = document.querySelector("#depositos fieldset");
         contenedorDepositos.innerHTML = "<legend>Depósitos</legend>";
 
-        console.log(data.depositos); return;
+        //console.log(data.depositos); return;
 
         // Validación correcta
         if (!data.depositos || data.depositos.length === 0) {
