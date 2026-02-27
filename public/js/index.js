@@ -47,13 +47,14 @@ function init() {
    ============================================================ */
 function cargarProducciones(tabla, divProducciones) {
     //fetch("/HTML/app/models/leer.php", {
-    fetch("/HTML/app/models/leerV2.php", {
+    //fetch("/HTML/app/models/leerV2.php", 
+    fetch("index.php?c=Leer&a=leerV2", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => { 
+    .then(data => {  //console.log(data); debugger
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
@@ -153,7 +154,10 @@ function activarEventosTabla(tabla) {
                 window.location.href = "/HTML/app/views/formSulfato.php";
             } else {
                 console.log("Formulario P18");                
-                window.location.href = "/HTML/app/views/formP18.php";
+                //window.location.href = "/HTML/app/views/formP18.php";
+                window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+
+
             }
             
             return;
@@ -175,7 +179,7 @@ function activarEventosTabla(tabla) {
             .then(json => { //console.log(json); debugger
                 if(json.ok) {
                     alert("Producción eliminada correctamente");                    
-                    window.location.href = "/HTML/app/views/home.php";
+                    window.location.href = "/HTML/public/index.php";
                 } else alert("ERROR: " + json.error);
             })
             .catch(error => console.log("ERROR", error));                
@@ -195,7 +199,8 @@ function activarEventosTabla(tabla) {
             console.log("Se ha pulsado transferir");
             
             if (datos.Producto_id === "P18"){
-                window.location.href = "/HTML/app/views/formP18.php";
+                //window.location.href = "/HTML/app/views/formP18.php";
+                window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
 
             } else if (datos.Producto_id === "Sulfato"){
                 window.location.href = "/HTML/app/views/formSulfato.php";

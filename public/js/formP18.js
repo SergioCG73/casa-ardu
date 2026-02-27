@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function generarRadiosMezcladores(mezcladores, datosEdicion, modo) {
-        console.group("funcion generarRadiosMezcladores", modo); debugger
+        //console.group("funcion generarRadiosMezcladores", modo); debugger
         if (modo === "crear" || modo === "editar" || modo === "transferenciafinal") {
             mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador");
 
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (modo === "transferir") {
-            console.log("modo transferir-->M a R");
+            //console.log("modo transferir-->M a R");
             mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso");
             receta = datosEdicion.Receta
             //console.log("mezcladores", mezcladores); debugger
@@ -255,19 +255,25 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("modo", modo);
         formData.append("producto", producto);
 
-        /*const objeto = Object.fromEntries(formData.entries());  
-        console.log(objeto);  debugger */
+        const objeto = Object.fromEntries(formData.entries());
+        //console.log(objeto);  debugger 
         //console.log(datosEdicion); debugger
 
         //modo = "transferir"; //añadido
 
-        return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
+        //return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
+        //return fetch("index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
+        return fetch("/HTML/public/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
-                console.log(data); debugger
-                numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
+                //console.log(data); debugger;
+                /*numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
                     ? data.ultimaEnCurso
+                    : data.siguienteFabricacion;*/
+                numeroProduccion = (modo === "editar" || modo === "transferir")
+                    ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
+
 
                 displayProduccion.textContent = numeroProduccion;
                 numeroProduccionActual = numeroProduccion;
@@ -277,7 +283,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosEdicion.NumeroFabricacion = data.siguienteFabricacion;
                     //console.log(datosEdicion.NumeroFabricacion); debugger
                 }
-
 
                 let reactoresDisponibles = [];
 
@@ -345,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== MODO CREAR =====
     if (modo === "crear") {
         console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion);
-        console.log("datosEdicion", datosEdicion); debugger
+        //console.log("datosEdicion", datosEdicion); debugger
         inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php            
             document.querySelector('#peso_final_mezclador').disabled = true;
 
@@ -381,7 +386,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 /*const objeto = Object.fromEntries(datosEnviar.entries()); 
                 console.log("objeto", objeto); return; */
 
-                fetch("/HTML/app/models/crearP18.php", { method: "POST", body: datosEnviar })
+                //fetch("/HTML/app/models/crearP18.php", { method: "POST", body: datosEnviar })
+                //fetch("/HTML/public/index.php?c=Crear&a=p18", { method: "POST", body: datosEnviar })
+                fetch("/HTML/public/index.php?c=Crear&a=fabricacion", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
                     .then(json => {
                         console.log(json);
@@ -394,16 +401,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO EDITAR =====
     if (modo === "editar") {
-        console.log("Modo edición");
+        console.log("Modo edición"); debugger
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
 
         btnCrear.textContent = "Editar";
-
-        console.log("datosEdicion", datosEdicion);
-
+        //console.log("datosEdicion", datosEdicion);        
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
-                //console.log(modo, producto, datosEdicion); debugger
                 const pesoMF = datosEdicion.PesoFinalMezclador;
 
                 // Selecciones
@@ -471,7 +475,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.log(objeto); debugger ///ERROR en el reactor*/
                     }
 
-                    fetch("../../app/models/editarFabCurso.php", { method: "POST", body: data })
+                    //fetch("../../app/models/editarFabCurso.php", { method: "POST", body: data })
+                    //fetch("index.php?c=Editar&a=fabCurso", { method: "POST", body: data })
+                    fetch("/HTML/public/index.php?c=Editar&a=fabCurso", { method: "POST", body: data })
                         .then(res => res.json())
                         .then(json => {
                             console.log(json); debugger
@@ -487,7 +493,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modo === "transferir") {
         //console.log(datosEdicion); debugger
         if (datosEdicion.Mezclador !== "" && datosEdicion.Reactor === "") {
-            console.log("Modo transferencia M a R...");
+            console.log("494", datosEdicion);
+            console.log("Modo transferencia M a R..."); debugger
+
             btnCrear.textContent = "Transferir ";
 
             // Creamos el formulario y ESPERAMOS a que termine
@@ -498,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const inputPesoFinalReactor = document.querySelector("#peso_final_reactor");
                     inputPesoFinalReactor.disabled = true;
                     /*console.log(inputPesoFinalMezclador);
-                    console.log(inputPesoInicialReactor); return;*/
+                    console.log(inputPesoInicialReactor); debugger*/
 
                     btnCrear.addEventListener("click", (e) => {
                         e.preventDefault();
@@ -537,10 +545,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         datosTransferenciaMezcladoraReactor.append("producto", producto);
                         datosTransferenciaMezcladoraReactor.append("reactor", reactorSeleccionado);
 
-                        const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
-                        console.log(objeto); debugger
+                        /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
+                        console.log(objeto); debugger*/
 
-                        fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: datosTransferenciaMezcladoraReactor })
+                        //fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: datosTransferenciaMezcladoraReactor })                                                    
+                        //fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: datosTransferenciaMezcladoraReactor })
+                        fetch("/HTML/public/index.php?c=Transferir&a=mezclarAReactor", { method: "POST", body: datosTransferenciaMezcladoraReactor })
                             .then(res => res.json())
                             .then(json => {
                                 console.log(json); debugger
@@ -553,15 +563,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }  //Fin Transferencia M a R
     }
 
+
     // ============================================== INICIO TRANSFERENCIA DE REACTOR A M216 *****************************
-    if (modo === "transferir" && datosEdicion.pesoR !== "") {
+    if (modo === "transferir" && datosEdicion.PesoInicialReactor !== null && datosEdicion.Reactor !== null) {
         console.log("Transferencia Reactor a M216...");
-        let modo = "transferenciafinal";
+        //console.log("datosEdicion 566", datosEdicion); debugger
         btnCrear.textContent = "Finalizar";
 
-        console.log(modo); debugger
-
-
+        //inicializarFormulario(modo, producto, datosEdicion)
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
                 const inputPesoFinalMezclador = document.querySelector("#peso_final_mezclador");
@@ -569,7 +578,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const inputPesoFinalReactor = document.querySelector("#peso_final_reactor");
                 inputPesoFinalReactor.disabled = false;
 
-                btnCrear.addEventListener("click", () => {
+                btnCrear.addEventListener("click", (e) => {
+                    e.preventDefault();
 
                     if (inputPesoFinalReactor.value === "") {
                         alert("Debe introducir un peso final de reactor");
@@ -588,14 +598,32 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getSeconds()).padStart(2, '0');
 
 
-                    const datosTransferenciaFinal = new FormData();
-                    datosTransferenciaFinal.append("horaFinal", fechaHoraFinal);
-                    datosTransferenciaFinal.append("pesoRF", pesoRF);                    
+                    console.log(datosEdicion);
+                    const datosTransferenciaFinal = new FormData();                
+                    datosTransferenciaFinal.append("fechaHoraInicio", datosEdicion.FechaInicio);
+                    datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);
+                    datosTransferenciaFinal.append("fechaInicioReaccion", datosEdicion.FechaInicioReaccion);
+                    datosTransferenciaFinal.append("mezclador", mezcladorSeleccionado);    
+                    datosTransferenciaFinal.append("modo", modo);
+                    datosTransferenciaFinal.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                    datosTransferenciaFinal.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));    
+                    datosTransferenciaFinal.append("pesoFinalReactor", pesoRF);
+                    datosTransferenciaFinal.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));    
+                    datosTransferenciaFinal.append("pesoInicialReactor", datosEdicion.PesoInicialReactor);
+                    datosTransferenciaFinal.append("producto", producto);
+                    datosTransferenciaFinal.append("reactor", reactorSeleccionado);
+                    datosTransferenciaFinal.append("receta", recetaSeleccionada);
 
                     /*const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
                     console.log(objeto); debugger*/
 
-                    //A FALTA DEL FETCH
+                    fetch("/HTML/public/index.php?c=Transferir&a=reactorAM216", {
+                        method: "POST",
+                        body: datosTransferenciaFinal
+                    })
+                        .then(response => response.json())
+                        .then(data => console.log("data final", data))
+                        .catch(err => console.error("Error en fetch:", err));
 
                 })
 

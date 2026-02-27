@@ -36,6 +36,14 @@ if (!$numeroProduccion) {
     exit;
 }
 
+/*echo json_encode([
+    "ok" => true,
+    "mensaje" => "2º transferencia",
+    "Nº Produc" => $numeroProduccion,
+    "pesoFinalReactor" => $pesoRF
+]); exit;*/
+
+
 if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) { //transferencia de Mezclador a Reactor
 
 /*echo json_encode([
@@ -107,66 +115,113 @@ echo json_encode([
 
 if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
 
-echo json_encode([
-    "ok" => true,
-    "mensaje" => "2ª transferencia"
-]); exit;
+// ========================
+// 9. Cálculo de la semana 
+// ========================
 
-$sqlUpdate = $pdo->prepare("
+$semana = (int)(new DateTime($fechaHoraInicio))->format("W");
+
+// ==========================
+// 10. Cálculo de la duración 
+// ==========================
+
+$inicio = new DateTime($fechaHoraInicio);
+$final  = new DateTime($fechaHoraFinal);
+
+$segundosTotales = $final->getTimestamp() - $inicio->getTimestamp();
+
+// ==============================
+// 11. Tiempo de paro del reactor
+// =============================
+
+$numeroPrevio = $numeroProduccion - 1;
+
+$sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
+                            FROM p18_terminadas
+                            WHERE NumeroFabricacion = :num");
+$sqlStoped->execute(['num' => $numeroPrevio]);
+$Stoped = $sqlStoped->fetchColumn();
+
+if ($Stoped && isset($Stoped)) {
+    $HoraPrevia = new DateTime($Stoped);
+} else {
+    $HoraPrevia = null; // no hay producción anterior
+}
+
+// Calcular segundos desde la producción anterior
+if ($HoraPrevia) {
+    $inicio = new DateTime($fechaHoraInicio);
+    $segundosDesdePrevio = $inicio->getTimestamp() - $HoraPrevia->getTimestamp();
+} else {
+    $segundosDesdePrevio = null;
+}
+
+
+/*$sqlUpdate = $pdo->prepare("
     UPDATE fabricaciones_en_curso
     SET 
         FechaFinal = :horafinal,
         PesoFinalReactor = :pesofinal        
     WHERE NumeroFabricacion = :numerofabricacion
-");
+");*/
 
-$sqlUpdate->execute([
+/*$sqlUpdate->execute([
     ':horafinal'         => $fechaHoraFinal,     
     ':pesofinal'         => $pesoRF,
     ':numerofabricacion' => $numeroProduccion
-]);
+]);*/
 
-$sqlInsert = $pdo->prepare("INSERT INTO fabricaciones_sin_filtrar (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
+/*$sqlInsert = $pdo->prepare("INSERT INTO fabricaciones_sin_filtrar (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
 
 $sqlInsert->execute([
     ":nf" => $numeroProduccion,
     ":fecha" => $fechaHoraFinal
-]);
+]);*/
 
 
-$sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
+/*$sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
 
 $sqlUpdate->execute([
     ":reactor" => $reactorNuevo
-]);
+]);*/
 
-$sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
+
+
+/*$sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
 
 $sqlDelete->execute([
     ":nf" => $numeroProduccion
-]);
+]);*/
 
-/*echo json_encode([
-        "ok" => true,
-        "FechaHoraFinal" => $fechaHoraFinal,        
-        "PesoFinalReactor" => $pesoRF,
-        "reactor" => $reactorNuevo,
-        "NumeroFabricacion" => $numeroProduccion
+
+echo json_encode([
+    "ok" => true,
+    "fechaInicioMezcla" => $fechaHoraInicio,
+    "pesoInicialMezclador" => $pesoM,
+    "pesoFinalMezclador" => $pesoMF,
+    "mezclador" => $mezcladorNuevo,
+    "mensaje" => "2º transferencia",
+    "Nº Produc" => $numeroProduccion,
+    "modo" => $modo,
+    "producto" => $producto,
+    "pesoInicialReactor" => $pesoR,
+    "pesoRF" => $pesoRF,
+    "fechaInicioReaccion" => $fechaInicioReaccion,
+    "fechaHoraFinal" => $fechaHoraFinal,
+    "reactor" => $reactorNuevo,
+    "semana" => $semana,
+    "duracion" => $segundosTotales,
+    "parado" => $segundosDesdePrevio,
+    "receta" => $receta,
+    "HoraPrevia" => $HoraPrevia,
+
 ]); exit;
-};*/ 
+
+}; 
 
 
 
-}
-
-
-
-
-
-
-
-
-
+exit;
 
 
 
@@ -195,46 +250,9 @@ $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }*/
 
 
-// ========================
-// 9. Cálculo de la semana 
-// ========================
 
-$semana = (int)(new DateTime($fechaHoraInicio))->format("W");
 
-// ==========================
-// 10. Cálculo de la duración 
-// ==========================
 
-$inicio = new DateTime($fechaHoraInicio);
-$final  = new DateTime($fechaHoraFinal);
-
-$segundosTotales = $final->getTimestamp() - $inicio->getTimestamp();
-
-// ==============================
-// 11. Tiempo de paro del reactor
-// =============================
-
-$numeroPrevio = $numeroProduccion - 1;
-
-$sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
-                            FROM sulfato_terminadas
-                            WHERE NumeroFabricacion = :num");
-$sqlStoped->execute(['num' => $numeroPrevio]);
-$Stoped = $sqlStoped->fetchColumn();
-
-if ($Stoped && isset($Stoped)) {
-    $HoraPrevia = new DateTime($Stoped);
-} else {
-    $HoraPrevia = null; // no hay producción anterior
-}
-
-// Calcular segundos desde la producción anterior
-if ($HoraPrevia) {
-    $inicio = new DateTime($fechaHoraInicio);
-    $segundosDesdePrevio = $inicio->getTimestamp() - $HoraPrevia->getTimestamp();
-} else {
-    $segundosDesdePrevio = null;
-}
 
 $sqlInsert = $pdo->prepare("
     INSERT INTO sulfato_terminadas (

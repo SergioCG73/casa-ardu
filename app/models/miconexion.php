@@ -1,19 +1,17 @@
-<?php    
-    //require_once("database.php");
+<?php
+require_once __DIR__ . "/../../config/config.php";
 
-    require_once __DIR__ . "/../../config/config.php";
-    
-
-    try {
-        $conexion = new PDO(DB_DSN, DB_USER, DB_PASS);
-        //echo "Conectado";    
-        //echo "<br>";    
-    }
-    
-    catch (PDOException $e) {
-        echo "¡Error en la conexión: " . $e->getMessage();
-        die();
-        $conexion = null;
-    }
-
+try {
+    // Conexión PDO
+    $conexion = new PDO(DB_DSN, DB_USER, DB_PASS);
+    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    // Devuelve JSON SIEMPRE, NO texto plano
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        "ok" => false,
+        "error" => "Error en la conexión: " . $e->getMessage()
+    ]);
+    exit; // termina la ejecución
+}
 ?>
