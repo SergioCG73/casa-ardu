@@ -34,5 +34,6 @@
     </div>
 
 </body>
-    <script src="/HTML/public/js/index.js"></script>
+    <!--<script src="/HTML/public/js/index.js"></script>-->
+    <script src="/HTML/public/js/home.js"></script>
 </html>
