@@ -3,7 +3,8 @@
 //$c = $_GET['c'] ?? 'Home';  //Recoge el nombre del fichero y de la clase controller.
 $c = !empty($_GET['c']) ? $_GET['c'] : 'Home';
 //$a = $_GET['a'] ?? 'index'; //Recoge el método 
-$a = !empty($_GET['a']) ? $_GET['a'] : 'index';
+//$a = !empty($_GET['a']) ? $_GET['a'] : 'index';
+$a = !empty($_GET['a']) ? $_GET['a'] : 'home';
 
 
 $controllerFile = __DIR__ . '/../app/controllers/' . $c . 'Controller.php';
