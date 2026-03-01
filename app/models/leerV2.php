@@ -7,16 +7,19 @@ ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
-// Entrada combinada: JSON o POST
-$input = json_decode(file_get_contents("php://input"), true);
-$modo = $input["modo"] ?? $_POST["modo"] ?? null;
-$producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
 /*echo json_encode([
     "prueba" => "prueba",
     "modo" => $modo,
     "producto" => $producto
 ]); exit;*/
+
+
+// Entrada combinada: JSON o POST
+$input = json_decode(file_get_contents("php://input"), true);
+$modo = $input["modo"] ?? $_POST["modo"] ?? null;
+$producto = $input["producto"] ?? $_POST["producto"] ?? null;
+
 
 // -----------------------------
 // MODO INICIAL

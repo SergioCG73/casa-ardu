@@ -20,6 +20,24 @@ $producto             = $_POST["producto"] ?? null;
 $modo                 = $_POST["modo"] ?? null;
 $pesoFinalReactor     = $_POST["pesoFinalReactor"] ?? null;
 
+/*echo json_encode([
+    "numeroProduccion" => $numeroProduccion,
+    "receta" => $receta,
+    "mezcladorNuevo" => $mezcladorNuevo,
+    "pesoInicialMezclador" => $pesoInicialMezclador,
+    "pesoFinalMezclador" => $pesoFinalMezclador,
+    "reactorNuevo" => $reactorNuevo,
+    "pesoInicialReactor" => $pesoInicialReactor,
+    "reactor" => "null",
+    "sql" => $actual    
+    
+]); exit; */
+
+
+
+
+
+
 if (!$numeroProduccion) {
     echo json_encode(["ok" => false, "error" => "Falta numeroProduccion"]);
     exit;
@@ -44,19 +62,6 @@ if ($reactorNuevo === null) {
     $sql->execute([":num" => $numeroProduccion]);
     $actual = $sql->fetch(PDO::FETCH_ASSOC);
     
-/*    echo json_encode([
-    "numeroProduccion" => $numeroProduccion,
-    "receta" => $receta,
-    "mezcladorNuevo" => $mezcladorNuevo,
-    "pesoInicialMezclador" => $pesoInicialMezclador,
-    "pesoFinalMezclador" => $pesoFinalMezclador,
-    "reactorNuevo" => $reactorNuevo,
-    "pesoInicialReactor" => $pesoInicialReactor,
-    "reactor" => "null",
-    "sql" => $actual    
-    
-]); exit; */
-
     
 
     if (!$actual) {

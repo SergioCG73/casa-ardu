@@ -13,8 +13,8 @@ function init() {
     
     btnP18.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "P18");        
-        window.location.href = "/index.php?c=Crear&a=fabricacion";
+        localStorage.setItem("producto", "P18");       
+        window.location.href = "index.php?c=Formulario&a=p18";
     });
 
     btnSulfato.addEventListener("click", () => {        
@@ -114,13 +114,12 @@ function activarEventosTabla(tabla) {
         if (iconoEditar) {
             const datos = JSON.parse(iconoEditar.dataset.info);            
             localStorage.setItem("datosEditables", JSON.stringify(datos));            
-            localStorage.setItem("modo", "editar");
-            console.log(datos); debugger
+            localStorage.setItem("modo", "editar");                    
             if (datos.Producto_id === "Sulfato") {                
                 window.location.href = "/index.php?c=Formulario&a=sulfato";
             } else {               
                 window.location.href = "/index.php?c=Formulario&a=p18";
-            }
+            }            
             return;
         }
 
@@ -156,15 +155,15 @@ function activarEventosTabla(tabla) {
             localStorage.setItem("datosTransferencia", JSON.stringify(datos));            
             localStorage.setItem("modo", "transferir");
             
-            console.log(datos); debugger
-            
             if (datos.Producto_id === "P18"){
                 //window.location.href = "/HTML/app/views/formP18.php";
-                window.location.href = "index.php?c=Editar&a=fabCurso";
+                window.location.href = "/index.php?c=Formulario&a=p18";
             } else if (datos.Producto_id === "Sulfato"){
                 window.location.href = "/HTML/app/views/formSulfato.php";
-            }
+            }            
             return;
+            
         }
     });
+    
 }

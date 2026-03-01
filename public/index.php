@@ -3,9 +3,11 @@
 //$c = $_GET['c'] ?? 'Home';  //Recoge el nombre del fichero y de la clase controller.
 $c = !empty($_GET['c']) ? $_GET['c'] : 'Home';
 //$a = $_GET['a'] ?? 'index'; //Recoge el método 
-$a = !empty($_GET['a']) ? $_GET['a'] : 'index';
+//$a = !empty($_GET['a']) ? $_GET['a'] : 'index';
+$a = !empty($_GET['a']) ? $_GET['a'] : 'home';
 
 $controllerFile = __DIR__ . '/../app/controllers/' . $c . 'Controller.php';
+
 
 if (!file_exists($controllerFile)) {
     die("No existe el controlador: $controllerFile");
@@ -14,6 +16,7 @@ if (!file_exists($controllerFile)) {
 require_once $controllerFile;
 
 $controllerClass = $c . 'Controller';
+
 
 if (!class_exists($controllerClass)) {
     die("La clase $controllerClass no existe");
