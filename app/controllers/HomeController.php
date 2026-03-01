@@ -1,7 +1,10 @@
 <?php 
 
 class HomeController {
-    public function index() {
+    /*public function index() {
+        require_once '../app/views/home.php';
+    }*/
+    public function home() {
         require_once '../app/views/home.php';
     }
 }
