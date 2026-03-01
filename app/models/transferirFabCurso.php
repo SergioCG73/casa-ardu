@@ -156,7 +156,6 @@ if ($HoraPrevia) {
     $segundosDesdePrevio = null;
 }
 
-
 /*$sqlUpdate = $pdo->prepare("
     UPDATE fabricaciones_en_curso
     SET 
