@@ -635,3 +635,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
+
+//fetch("/index.php?c=Transferir&a=reactorAM216")
