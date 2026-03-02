@@ -265,7 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
         //return fetch("index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
-        return fetch("/HTML/public/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
+        //return fetch("/HTML/public/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
+        return fetch("/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
                 //console.log(data); debugger;
