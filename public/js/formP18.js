@@ -18,12 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let reactorSeleccionado;
     let numeroProduccion;
     let numeroProduccionActual = null;
-    let fechaHoraFinal;    
+    let fechaHoraFinal;
 
     const modo = localStorage.getItem("modo");
     let producto = localStorage.getItem("producto");
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
-    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));    
+    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
 
     //console.log(datosEdicion); debugger
 
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generarRadiosMezcladores(mezcladores, datosEdicion, modo) {
         //console.group("funcion generarRadiosMezcladores", modo); debugger
-        if (modo === "crear" || modo === "editar" || modo === "transferenciafinal") {
+        if (modo === "crear" || modo === "editar" || modo === "transferir") {
             mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador");
 
             const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
@@ -78,43 +78,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     mezcladorSeleccionado = mezclador.Equipo_id;
                 }
 
-                input.addEventListener("change", () => {
-                    mezcladorSeleccionado = input.value;
-                    console.log(mezcladorSeleccionado);
-                });
-
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(mezclador.Equipo_id));
-                contenedorMezcladores.appendChild(label);
-            });
-        }
-
-        if (modo === "transferir") {
-            //console.log("modo transferir-->M a R");
-            mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso");
-            receta = datosEdicion.Receta
-            //console.log("mezcladores", mezcladores); debugger
-            //console.log(receta); debugger
-            const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
-            contenedorMezcladores.innerHTML = "";
-
-            mezcladores.forEach(mezclador => {
-                const id = "mezclador_" + mezclador.Equipo_id;
-                const label = document.createElement("label");
-                label.className = "radio-label";
-                label.htmlFor = id;
-
-                const input = document.createElement("input");
-                input.type = "radio";
-                input.name = "mezclador";
-                input.id = id;
-                input.value = mezclador.Equipo_id;
-
-                // Marcar automáticamente en editar
+                // 🔥 1) Si es el reactor anterior → seleccionado + deshabilitado
                 if (datosEdicion && datosEdicion.Mezclador == mezclador.Equipo_id) {
                     input.checked = true;
+                    input.disabled = true;
                     mezcladorSeleccionado = mezclador.Equipo_id;
+                    label.classList.add("mezclador-disabled");
                 }
+
+                // 🔥 2) Si está en uso → deshabilitado SIEMPRE
+                /*if (estado === "En uso") {
+                    input.disabled = true;
+                    label.classList.add("mezclador-disabled");
+                }*/
+
 
                 input.addEventListener("change", () => {
                     mezcladorSeleccionado = input.value;
@@ -126,12 +103,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 contenedorMezcladores.appendChild(label);
             });
         }
+
+        /* if (modo === "transferir") {
+             //console.log("modo transferir-->M a R");
+             mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso");
+             receta = datosEdicion.Receta
+             //console.log("mezcladores", mezcladores); debugger
+             //console.log(receta); debugger
+             const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
+             contenedorMezcladores.innerHTML = "";
+ 
+             mezcladores.forEach(mezclador => {
+                 const id = "mezclador_" + mezclador.Equipo_id;
+                 const label = document.createElement("label");
+                 label.className = "radio-label";
+                 label.htmlFor = id;
+ 
+                 const input = document.createElement("input");
+                 input.type = "radio";
+                 input.name = "mezclador";
+                 input.id = id;
+                 input.value = mezclador.Equipo_id;
+ 
+                 // Marcar automáticamente en editar
+                 if (datosEdicion && datosEdicion.Mezclador == mezclador.Equipo_id) {
+                     input.checked = true;
+                     mezcladorSeleccionado = mezclador.Equipo_id;
+                 }
+ 
+                 input.addEventListener("change", () => {
+                     mezcladorSeleccionado = input.value;
+                     console.log(mezcladorSeleccionado);
+                 });
+ 
+                 label.appendChild(input);
+                 label.appendChild(document.createTextNode(mezclador.Equipo_id));
+                 contenedorMezcladores.appendChild(label);
+             });
+         }*/
 
         //mezcladores = mezcladores.filter(m => m.Tipo === "Mezclador");
         /*console.log("mezcladores antes filter", mezcladores)
         console.log("mezcladores después filter", mezcladores); debugger */
 
-        const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
+        /*const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
         contenedorMezcladores.innerHTML = "";
 
         mezcladores.forEach(mezclador => {
@@ -160,49 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
             label.appendChild(input);
             label.appendChild(document.createTextNode(mezclador.Equipo_id));
             contenedorMezcladores.appendChild(label);
-        });
-    }
-
-    function generarRadiosRecetas(recetas, datosEdicion, modo) {
-
-        //console.log(datosEdicion);
-
-        if (modo === "transferir" && datosEdicion.Reactor === "") {
-            //console.log("recetas en función", datosEdicion.Receta); debugger
-            //console.log("TIPO:", typeof datosEdicion.Receta);
-            const receta = datosEdicion.Receta;
-            recetas = [{ NombreReceta: receta }];
-        }
-
-        const contenedorRecetas = document.querySelector("#recetas .radio-group");
-        contenedorRecetas.innerHTML = "";
-
-        recetas.forEach((receta, index) => {
-            const id = `R${index + 1}_p18`;
-            const label = document.createElement("label");
-            label.className = "radio-label";
-            label.htmlFor = id;
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = "receta";
-            input.id = id;
-            input.value = receta.NombreReceta;
-
-            if (datosEdicion && datosEdicion.Receta == receta.NombreReceta) {
-                input.checked = true;
-                recetaSeleccionada = receta.NombreReceta;
-            }
-
-            input.addEventListener("change", () => {
-                recetaSeleccionada = input.value;
-                console.log(recetaSeleccionada);
-            });
-
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(receta.NombreReceta));
-            contenedorRecetas.appendChild(label);
-        });
+        });*/
     }
 
     function generarRadiosReactores(reactores, datosEdicion) {
@@ -252,6 +225,49 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    function generarRadiosRecetas(recetas, datosEdicion, modo) {
+        //console.log(datosEdicion);
+
+        if (modo === "transferir" && datosEdicion.Reactor === "") {
+            //console.log("recetas en función", datosEdicion.Receta); debugger
+            //console.log("TIPO:", typeof datosEdicion.Receta);
+            const receta = datosEdicion.Receta;
+            recetas = [{ NombreReceta: receta }];
+        }
+
+        const contenedorRecetas = document.querySelector("#recetas .radio-group");
+        contenedorRecetas.innerHTML = "";
+
+        recetas.forEach((receta, index) => {
+            const id = `R${index + 1}_p18`;
+            const label = document.createElement("label");
+            label.className = "radio-label";
+            label.htmlFor = id;
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "receta";
+            input.id = id;
+            input.value = receta.NombreReceta;
+
+            if (datosEdicion && datosEdicion.Receta == receta.NombreReceta) {
+                input.checked = true;
+                recetaSeleccionada = receta.NombreReceta;
+            }
+
+            input.addEventListener("change", () => {
+                recetaSeleccionada = input.value;
+                console.log(recetaSeleccionada);
+            });
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(receta.NombreReceta));
+            contenedorRecetas.appendChild(label);
+        });
+    }
+
+
+
     function inicializarFormulario(modo, producto, datosEdicion = null) {
         const formData = new FormData();
         formData.append("modo", modo);
@@ -260,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
         /*const objeto = Object.fromEntries(formData.entries());
         console.log(objeto);  debugger */
         //console.log(datosEdicion); debugger
-
         //modo = "transferir"; //añadido
 
         //return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
@@ -295,7 +310,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
 
                     //console.log("Nº Produccion:", data.siguienteFabricacion); debugger
-
                     /*console.log("Disponibles", mezcladoresDisponibles); 
                     console.log("Uso", mezcladoresEnUso); 
                     console.log("Averida", mezcladoresAveriados); debugger*/
@@ -303,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso <= 0) {
                         console.log("Puedes crear producción");
                     } else {
-                        alert("No se puede crear producción con los equipos disponibles");                        
+                        alert("No se puede crear producción con los equipos disponibles");
                         window.location.href = "/HTML/public/index.php?c=Home&a=home";
                     }
                 }
@@ -348,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     btnRetroceder.addEventListener("click", () => window.location.href = "/HTML/public/");
-    
+
     // ===== MODO CREAR =====
     if (modo === "crear") {
         /*console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion); 
@@ -514,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         const pesoMF = Number(inputPesoFinalMezclador.value.replace(/\./g, ""));
                         /*console.log(inputPesoInicialReactor.value); */
                         let pesoR = inputPesoInicialReactor.value;
-                        pesoR = Number(inputPesoInicialReactor.value.replace(/\./g,""));
+                        pesoR = Number(inputPesoInicialReactor.value.replace(/\./g, ""));
 
                         /*console.log("PESO MF", pesoMF);
                         console.log("PESO R", pesoR); debugger*/
@@ -549,7 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
                         console.log(objeto); debugger*/
-                        
+
                         fetch("index.php?c=Transferir&a=mezclarAReactor", { method: "POST", body: datosTransferenciaMezcladoraReactor })
                             .then(res => res.json())
                             .then(json => {
@@ -562,7 +576,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }  //Fin Transferencia M a R
     }
-
 
     // ============================================== INICIO TRANSFERENCIA DE REACTOR A M216 *****************************
     if (modo === "transferir" && datosEdicion.PesoInicialReactor !== null && datosEdicion.Reactor !== null) {
@@ -597,18 +610,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
                         String(ahora.getSeconds()).padStart(2, '0');
 
-
-                    console.log(datosEdicion);
-                    const datosTransferenciaFinal = new FormData();                
+                    //console.log(datosEdicion); debugger                    
+                    const datosTransferenciaFinal = new FormData();
                     datosTransferenciaFinal.append("fechaHoraInicio", datosEdicion.FechaInicio);
                     datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);
                     datosTransferenciaFinal.append("fechaInicioReaccion", datosEdicion.FechaInicioReaccion);
-                    datosTransferenciaFinal.append("mezclador", mezcladorSeleccionado);    
+                    datosTransferenciaFinal.append("mezclador", datosEdicion.Mezclador);
                     datosTransferenciaFinal.append("modo", modo);
                     datosTransferenciaFinal.append("numeroProduccion", datosEdicion.NumeroFabricacion);
-                    datosTransferenciaFinal.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));    
-                    datosTransferenciaFinal.append("pesoFinalReactor", pesoRF);
-                    datosTransferenciaFinal.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));    
+                    datosTransferenciaFinal.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
+                    datosTransferenciaFinal.append("pesoFinalReactor", peso_final_reactor.value.replace(/\./g, ""));
+                    datosTransferenciaFinal.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
                     datosTransferenciaFinal.append("pesoInicialReactor", datosEdicion.PesoInicialReactor);
                     datosTransferenciaFinal.append("producto", producto);
                     datosTransferenciaFinal.append("reactor", reactorSeleccionado);
@@ -617,24 +629,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
                     console.log(objeto); debugger*/
 
-                    fetch("/HTML/public/index.php?c=Transferir&a=reactorAM216", {
+                    fetch("index.php?c=Transferir&a=reactorAM216", {
                         method: "POST",
                         body: datosTransferenciaFinal
                     })
                         .then(response => response.json())
-                        .then(data => console.log("data final", data))
+                        .then(data => {
+                            console.log("data final", data);
+                            alert("Producción transferida a M216");
+                            window.location.href = "index.php";
+                        })
                         .catch(err => console.error("Error en fetch:", err));
-
                 })
-
-
             })
-
-
     }
-
-
 });
-
-
-//fetch("/index.php?c=Transferir&a=reactorAM216")
