@@ -23,9 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const modo = localStorage.getItem("modo");
     let producto = localStorage.getItem("producto");
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
-    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+    datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));    
 
-    console.log(datosEdicion); debugger
+    //console.log(datosEdicion); debugger
 
     // ===== FUNCIONES =====
     function mostrarModal(mensaje) {
@@ -257,16 +257,16 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("modo", modo);
         formData.append("producto", producto);
 
-        const objeto = Object.fromEntries(formData.entries());
-        //console.log(objeto);  debugger 
+        /*const objeto = Object.fromEntries(formData.entries());
+        console.log(objeto);  debugger */
         //console.log(datosEdicion); debugger
 
         //modo = "transferir"; //añadido
 
         //return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
         //return fetch("index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
-        //return fetch("/HTML/public/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
-        return fetch("/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
+        //return fetch("/HTML/public/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })        
+        return fetch("index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
                 //console.log(data); debugger;
@@ -276,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 numeroProduccion = (modo === "editar" || modo === "transferir")
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
-
 
                 displayProduccion.textContent = numeroProduccion;
                 numeroProduccionActual = numeroProduccion;
@@ -290,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let reactoresDisponibles = [];
 
                 if (modo === "crear") {
-                    //console.log("Data", data.equipos);                    
+                    //console.log("Data", data.equipos); debugger
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
                     mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
@@ -404,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO EDITAR =====
     if (modo === "editar") {
-        console.log("Modo edición"); debugger
+        //console.log("Modo edición"); debugger
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
 
         btnCrear.textContent = "Editar";
@@ -480,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     //fetch("../../app/models/editarFabCurso.php", { method: "POST", body: data })
                     //fetch("index.php?c=Editar&a=fabCurso", { method: "POST", body: data })
-                    fetch("/HTML/public/index.php?c=Editar&a=fabCurso", { method: "POST", body: data })
+                    fetch("index.php?c=Editar&a=fabCurso", { method: "POST", body: data })
                         .then(res => res.json())
                         .then(json => {
                             console.log(json); debugger
@@ -496,9 +495,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modo === "transferir") {
         //console.log(datosEdicion); debugger
         if (datosEdicion.Mezclador !== "" && datosEdicion.Reactor === "") {
-            console.log("494", datosEdicion);
-            console.log("Modo transferencia M a R..."); debugger
-
+            //console.log("494", datosEdicion);
+            console.log("Modo transferencia M a R...");
             btnCrear.textContent = "Transferir ";
 
             // Creamos el formulario y ESPERAMOS a que termine
@@ -515,7 +513,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         e.preventDefault();
                         const pesoMF = Number(inputPesoFinalMezclador.value.replace(/\./g, ""));
                         /*console.log(inputPesoInicialReactor.value); */
-                        const pesoR = inputPesoInicialReactor.value;
+                        let pesoR = inputPesoInicialReactor.value;
+                        pesoR = Number(inputPesoInicialReactor.value.replace(/\./g,""));
 
                         /*console.log("PESO MF", pesoMF);
                         console.log("PESO R", pesoR); debugger*/
@@ -550,13 +549,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
                         console.log(objeto); debugger*/
-
-                        //fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: datosTransferenciaMezcladoraReactor })                                                    
-                        //fetch("../../app/models/transferirFabCurso.php", { method: "POST", body: datosTransferenciaMezcladoraReactor })
-                        fetch("/HTML/public/index.php?c=Transferir&a=mezclarAReactor", { method: "POST", body: datosTransferenciaMezcladoraReactor })
+                        
+                        fetch("index.php?c=Transferir&a=mezclarAReactor", { method: "POST", body: datosTransferenciaMezcladoraReactor })
                             .then(res => res.json())
                             .then(json => {
-                                console.log(json); debugger
+                                //console.log(json); debugger
                                 if (json.ok) mostrarModal("Producción transferida correctamente");
                                 else alert(json.error);
                             });
