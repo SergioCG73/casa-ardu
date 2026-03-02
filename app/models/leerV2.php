@@ -154,8 +154,6 @@ if ($modo === "transferenciafinal") {
     "reactores" => $reactores,
     "mensaje" => "R ---> M216"
 ]); exit;
-
-
 }
 
 // -----------------------------
