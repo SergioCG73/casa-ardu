@@ -18,12 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let reactorSeleccionado;
     let numeroProduccion;
     let numeroProduccionActual = null;
-    let fechaHoraFinal;
+    let fechaHoraFinal;    
 
     const modo = localStorage.getItem("modo");
     let producto = localStorage.getItem("producto");
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+
+    console.log(datosEdicion); debugger
 
     // ===== FUNCIONES =====
     function mostrarModal(mensaje) {
@@ -301,8 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso <= 0) {
                         console.log("Puedes crear producción");
                     } else {
-                        alert("No se puede crear producción con los equipos disponibles");
-                        window.location.href = "/HTML/app/views/home.php";
+                        alert("No se puede crear producción con los equipos disponibles");                        
+                        window.location.href = "/HTML/public/index.php?c=Home&a=home";
                     }
                 }
 
@@ -346,11 +348,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     btnRetroceder.addEventListener("click", () => window.location.href = "/HTML/public/");
-
+    
     // ===== MODO CREAR =====
     if (modo === "crear") {
-        console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion);
-        //console.log("datosEdicion", datosEdicion); debugger
+        /*console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion); 
+        console.log("datosEdicion", datosEdicion); debugger*/
         inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php            
             document.querySelector('#peso_final_mezclador').disabled = true;
 
@@ -388,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 //fetch("/HTML/app/models/crearP18.php", { method: "POST", body: datosEnviar })
                 //fetch("/HTML/public/index.php?c=Crear&a=p18", { method: "POST", body: datosEnviar })
-                fetch("/HTML/public/index.php?c=Crear&a=fabricacion", { method: "POST", body: datosEnviar })
+                fetch("index.php?c=Crear&a=fabricacion", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
                     .then(json => {
                         console.log(json);

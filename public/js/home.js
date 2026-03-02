@@ -15,9 +15,9 @@ function init() {
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "P18");
         //window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
-
-    });
+        //window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+        window.location.href = "index.php?c=Formulario&a=p18";
+    });    
 
     btnSulfato.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
@@ -54,7 +54,7 @@ function cargarProducciones(tabla, divProducciones) {
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {  console.log("57",data); debugger
+    .then(data => {  
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
@@ -67,9 +67,7 @@ function cargarProducciones(tabla, divProducciones) {
             displayM216.style.display = "block";
             const textM216 = document.getElementById("label_m216");
             textM216.innerHTML = data.producciones_sin_filtrar;
-        }
-
-        
+        }        
     })
     .catch(err => console.error("Error cargando producciones:", err));
 }
@@ -156,8 +154,6 @@ function activarEventosTabla(tabla) {
                 console.log("Formulario P18");                
                 //window.location.href = "/HTML/app/views/formP18.php";
                 window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
-
-
             }
             
             return;
