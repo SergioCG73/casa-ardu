@@ -54,7 +54,7 @@ function cargarProducciones(tabla, divProducciones) {
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {  
+    .then(data => {
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
