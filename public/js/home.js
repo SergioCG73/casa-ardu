@@ -205,9 +205,7 @@ function activarEventosTabla(tabla) {
                 window.location.href = "/HTML/app/views/formSulfato.php";
             }
 
-            return;
-
-            
+            return;            
         }
     });
 }
