@@ -48,6 +48,8 @@ function init() {
 function cargarProducciones(tabla, divProducciones) {
     //fetch("/HTML/app/models/leer.php", {
     //fetch("/HTML/app/models/leerV2.php", 
+
+    //console.log(cargarProducciones); debugger
     fetch("index.php?c=Leer&a=leerV2", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -153,7 +155,8 @@ function activarEventosTabla(tabla) {
             } else {
                 console.log("Formulario P18");                
                 //window.location.href = "/HTML/app/views/formP18.php";
-                window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+                //window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+                window.location.href = "index.php?c=Formulario&a=p18";
             }
             
             return;
