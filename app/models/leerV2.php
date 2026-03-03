@@ -12,12 +12,6 @@ $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
-/*echo json_encode([
-    "prueba" => "prueba",
-    "modo" => $modo,
-    "producto" => $producto
-]); exit;*/
-
 // -----------------------------
 // MODO INICIAL
 // -----------------------------
@@ -82,8 +76,7 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 
 function obtenerDatosProducto($conexion, $producto)
 {
-    // Equipos
-    //$sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto AND Estado = 'Vacio'";
+    // Equipos    
     $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
     $stmt = $conexion->prepare($sql);
     $stmt->bindParam(":producto", $producto);
@@ -105,6 +98,7 @@ function obtenerDatosProducto($conexion, $producto)
     $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     return [$equipos, $recetas, $reactores];
+
 }
 
 // -------------------------------------------------------
@@ -128,7 +122,14 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
 
     list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
 
-    echo json_encode([
+/*echo json_encode([
+    "equipos" => $equipos,
+    "recetas" => $recetas,
+    "reactores" => $reactores
+]); exit;*/
+
+
+echo json_encode([
         "ok" => true,
         "modo" => $modo,
         "producto" => $producto,
@@ -140,9 +141,37 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
         "recetas" => $recetas,
         "reactores" => $reactores,
         "tabla" => $tabla
-    ]);
-    exit;
+]); exit;
 }
+
+if ($modo === "crear" && $producto === "Sulfato") {
+    $tabla = "sulfato_terminadas";
+    
+    list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    
+    $siguienteFabricacion = ($modo === "crear")
+        ? max($ultimaAcabada, $ultimaEnCurso) + 1
+        : max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+        if ($modo === "crear") {
+            $siguienteFabricacion = max ($ultimaAcabada, $ultimaEnCurso) + 1;            
+        }
+
+    list ($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
+
+echo json_encode([
+    "prueba" => "SULFATO",
+    "modo" => $modo,
+    "producto" => $producto,
+    "tabla" => $tabla,
+    "Fabricacion" => $siguienteFabricacion,
+    "recetas" => $recetas,
+    "reactores" => $reactores,
+    "equipos" => $equipos
+]); exit;
+
+}
+
 
 if ($modo === "transferenciafinal") {
     list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
@@ -180,3 +209,5 @@ if ($modo === "filtrar") {
     ]);
     exit;
 }
+
+
