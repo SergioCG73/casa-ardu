@@ -97,8 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
         //console.log(datosEdicion); debugger
         const datos = new FormData();
         datos.append("modo", modo);
-        //datos.append("producto", producto);
-        datos.append("producto", datosEdicion.Producto_id); 
+        datos.append("producto", producto);
+        //datos.append("producto", datosEdicion.Producto_id); 
 
         /*const objeto = Object.fromEntries(datos.entries());
         console.log(objeto); debugger*/
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(response => response.json())
         .then(data => {                        
-            //console.log(data);  debugger
+            console.log(data);  debugger
             //==== Nº FABRICACION ====
             /*if(modo === "editar" || modo ==="transferir") {
                 numeroProduccion = datosEdicion.NumeroFabricacion;
