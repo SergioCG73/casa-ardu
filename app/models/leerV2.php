@@ -1,24 +1,18 @@
 <?php
 
-//ob_clean();
+ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
-
-/*echo json_encode([
-    "prueba" => "prueba",
-    "modo" => $modo,
-    "producto" => $producto
-]); exit;*/
-
-
 // Entrada combinada: JSON o POST
 $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
+
+
 
 
 // -----------------------------
@@ -33,7 +27,7 @@ if ($modo === "inicial") {
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 2) Producciones sin filtrar
-    $sql = "SELECT NumeroFabricacion FROM fabricaciones_sin_filtrar";
+    $sql = "SELECT NumeroFabricacion FROM mezclador_216";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $producciones_sin_filtrar = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -77,7 +71,7 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
     $ultimaEnCurso = $stmt->fetchColumn() ?? 0;
 
     // Última sin filtrar (solo para CREAR)
-    $sql = "SELECT MAX(NumeroFabricacion) FROM fabricaciones_sin_filtrar";
+    $sql = "SELECT MAX(NumeroFabricacion) FROM mezclador_216";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $ultimaSinFiltrar = $stmt->fetchColumn() ?? 0;
@@ -166,7 +160,7 @@ if ($modo === "transferenciafinal") {
 // -----------------------------
 if ($modo === "filtrar") {
 
-    $sqlSelect = "SELECT NumeroFabricacion FROM fabricaciones_sin_filtrar";
+    $sqlSelect = "SELECT NumeroFabricacion FROM mezclador_216";
     $stmt = $conexion->prepare($sqlSelect);
     $stmt->execute();
     $fabricaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);

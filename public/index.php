@@ -8,7 +8,6 @@ $a = !empty($_GET['a']) ? $_GET['a'] : 'home';
 
 $controllerFile = __DIR__ . '/../app/controllers/' . $c . 'Controller.php';
 
-
 if (!file_exists($controllerFile)) {
     die("No existe el controlador: $controllerFile");
 }

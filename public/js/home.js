@@ -42,13 +42,14 @@ function init() {
    CARGAR DATOS DESDE PHP
    ============================================================ */
 function cargarProducciones(tabla, divProducciones) {    
-    fetch("/index.php?c=Leer&a=leerV2", {
+    fetch("index.php?c=Leer&a=leerV2", {    
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {  
+    .then(data => {    
+        //console.log(data); debugger    
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
