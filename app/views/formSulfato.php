@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <link href="/HTML/public/css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/styleSulfato.css" rel="stylesheet" type="text/css">
     <title >FormularioSulfato</title>
 </head>
 <body>
@@ -24,11 +24,11 @@
 
             <div id="recetas" class="recetas">
                 <fieldset><legend>Recetas</legend></fieldset>
-            </div>
+            </div>            
 
             <div id="botonera" class="botonera">
-                <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnValidar" name="btnValidar">Crear</button>                
+                <button id="btnRetroceder" class="boton">Retroceder</button>                
+                <button id="btnCrear" class="boton">Crear</button>                
             </div>
         </div>
 

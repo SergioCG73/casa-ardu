@@ -41,12 +41,11 @@ function init() {
 /* ============================================================
    CARGAR DATOS DESDE PHP
    ============================================================ */
-function cargarProducciones(tabla, divProducciones) {
-    //fetch("/HTML/app/models/leer.php", {
-    //fetch("/HTML/app/models/leerV2.php", 
-
+function cargarProducciones(tabla, divProducciones) {    
     //console.log(cargarProducciones); debugger
-    fetch("index.php?c=Leer&a=leerV2", {
+    //fetch("index.php?c=Leer&a=leerV3", {
+    fetch("index.php?c=Leer&a=lectura", {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
@@ -145,15 +144,16 @@ function activarEventosTabla(tabla) {
             const datos = JSON.parse(iconoEditar.dataset.info);
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
+            //console.log(datos); debugger
             if (datos.Producto_id === "Sulfato") {
-                console.log("Formulario Sulfato");                
-                window.location.href = "/HTML/app/views/formSulfato.php";
+                //console.log("Formulario Sulfato"); debugger
+                window.location.href = "index.php?c=Formulario&a=sulfato";
             } else {
-                console.log("Formulario P18");                
+                //console.log("Formulario P18"); debugger               
                 //window.location.href = "/HTML/app/views/formP18.php";
                 //window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
                 window.location.href = "index.php?c=Formulario&a=p18";
-            }
+            }           
             
             return;
         }
@@ -191,14 +191,15 @@ function activarEventosTabla(tabla) {
             localStorage.setItem("datosEditables", JSON.stringify(datos));            
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
-            console.log("Se ha pulsado transferir");
+            //console.log("Se ha pulsado transferir");
+            //console.log(datosTransferir); debugger
             
-            if (datos.Producto_id === "P18"){
+            if (datosTransferir.Producto_id === "P18"){
                 //window.location.href = "/HTML/app/views/formP18.php";
-                window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+                window.location.href = "index.php?c=Formulario&a=p18";
 
-            } else if (datos.Producto_id === "Sulfato"){
-                window.location.href = "/HTML/app/views/formSulfato.php";
+            } else if (datosTransferir.Producto_id === "Sulfato"){
+                window.location.href = "index.php?c=Formulario&a=sulfato";
             }
 
             return;            

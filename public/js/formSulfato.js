@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const btnRetroceder = document.getElementById("btnRetroceder");
-    const btnCrear = document.getElementById("btnValidar");
+    const btnCrear = document.getElementById("btnCrear");
     const btnTransferir = document.getElementById("btnTransferir");
     const displayProduccion = document.getElementById("displayProduccion");
     const divReactores = document.getElementById("reactores");
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let modo = localStorage.getItem("modo");    
     producto = "Sulfato";
-    let datosEdicion;        
+    let datosEdicion;    
 
     // ===== INICIO ZONA DE FUNCIONES ======
 
@@ -93,41 +93,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function inicializarFormulario(modo, producto, datosEdicion = null) {        
+    function inicializarFormulario(modo, producto, datosEdicion = null) {
+        //console.log(datosEdicion); debugger
         const datos = new FormData();
-
         datos.append("modo", modo);
-        datos.append("producto", producto);
+        //datos.append("producto", producto);
+        datos.append("producto", datosEdicion.Producto_id); 
 
         /*const objeto = Object.fromEntries(datos.entries());
         console.log(objeto); debugger*/
 
-        return fetch("index.php?c=Leer&a=leerV2", {
-            method: "POST",
+        return fetch("index.php?c=Leer&a=lectura", {   //Hay que quitar el método de LeerController cuando funcione
+            method: "POST",    
             body: datos
         })
         .then(response => response.json())
-        .then(data => {
-            
-            console.log(data);  debugger
+        .then(data => {                        
+            //console.log(data);  debugger
             //==== Nº FABRICACION ====
-            if(modo === "editar" || modo ==="transferir") {
-                numeroProduccion = data.Fabricacion;
+            /*if(modo === "editar" || modo ==="transferir") {
+                numeroProduccion = datosEdicion.NumeroFabricacion;
                 displayProduccion.innerHTML = numeroProduccion;
             } else {
-                numeroProduccion = data.Fabricacion;
+                numeroProduccion = datosEdicion.NumeroFabricacion;
                 displayProduccion.innerHTML = numeroProduccion;
-            }
+            }*/
 
-            console.log(numeroProduccion); debugger
-
+            numeroProduccion = (modo === "editar" || modo === "transferir")
+                    ? datosEdicion.NumeroFabricacion
+                    : data.siguienteFabricacion;
             
+            displayProduccion.textContent = numeroProduccion;
+            numeroProduccionActual = numeroProduccion;
+
+            //console.log(numeroProduccion); debugger            
 
             //==== REACTORES ====
             const contenedorReactores = document.querySelector("#reactores fieldset");
             //contenedorReactores.innerHTML = "";
             
             //console.log(data.equipos); debugger
+            //console.log(datosEdicion); debugger
             generarRadiosReactores(data.equipos, contenedorReactores, modo, datosEdicion);
 
             //==== RECETAS ====
@@ -147,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if ((modo === "editar" || modo === "transferir") && datosEdicion) {
                 peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
                 formatearNumero(peso_inicial_reactor);
-            }            
+            }
 
             return data;
         });
@@ -189,6 +195,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 btnCrear.addEventListener("click", () => {
+
+                    const PesoInicialReactor = peso_inicial_reactor.value.replace(/\./g ,"");
+
+                    console.log("peso", PesoInicialReactor); debugger
+
+                    if (PesoInicialReactor === "") {
+                        alert("Introduzca un peso inicial para el reactor");
+                        return;
+                    }                    
+                    
                     const ahora = new Date();
 
                     const fechaHoraInicio =
@@ -230,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                     .then(response => response.json())
                     .then(json => {
-                        //console.log(json); debugger
+                        console.log(json); debugger
                         if (json.ok) mostrarModal(json.message);
                         else alert("Error: " + (json.error || "Error desconocido"));
                     });
@@ -240,8 +256,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==== MODO EDITAR ====
-    if (modo === "editar") {
+    if (modo === "editar") {        
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+        //console.log(datosEdicion); debugger
         btnCrear.textContent = "Editar";
         const contenedorPesoFinal = document.getElementById("contenedor_peso_final");
         contenedorPesoFinal.style.display = "none"; 
@@ -251,7 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 btnCrear.addEventListener("click", (e) => {                    
                     e.preventDefault();
-
                     const pesoReactorEditado = parseInt(peso_inicial_reactor.value.replace(/\./g, ""), 10);
                     const pesoReactorFinal = parseInt(peso_final_reactor.value.replace(/\./g, ""), 10);
 
@@ -262,14 +278,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoInicialReactor", pesoReactorEditado);
                     data.append("pesoFinalReactor", pesoReactorFinal);
                     data.append("producto", producto);
-                    data.append("modo", modo);                    
+                    data.append("modo", modo);       
+                    
+                    const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger
 
-                    fetch("../../app/models/editarFabCurso.php", {
+                    fetch("index.php?c=Editar&a=fabCurso", {
                         method: "POST",
                         body: data
                     })
                     .then(response => response.json())
-                    .then(json => {                        
+                    .then(json => {   
+                        console.log(json)                     ; debugger
                         if (json.ok) mostrarModal("Producción actualizada correctamente");
                         else alert("Error: " + json.error);                        
                     })
