@@ -12,12 +12,6 @@ $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 
-/*echo json_encode([ 
-    "ok" => true,
-    "modo" => $modo,
-    "producto" => $producto
-]); exit;*/
-
 // -----------------------------
 // MODO INICIAL
 // -----------------------------
@@ -51,9 +45,9 @@ echo json_encode([
 ]); exit;
 }
 
-// -----------------------------
+// -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
-// -----------------------------
+// ----------------------------------------------
 function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 {
     // Última terminada
@@ -107,11 +101,31 @@ function obtenerDatosProducto($conexion, $producto)
 
 }
 
+if ($modo === "editar" && $producto === "Sulfato") {
+    $tabla = "sulfato_terminadas";
+     list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+
+     $siguienteFabricacion = ($modo === "crear")
+        ? max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1
+        : max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+    list($reactores, $recetas, $equipos) = obtenerDatosProducto($conexion, $producto);
+
+     echo json_encode([
+        "ultimaAcabada" => $ultimaAcabada,
+        "ultimaEnCurso" => $ultimaEnCurso,
+        "siguienteFabricacion" => $siguienteFabricacion,  
+        "equipos" => $equipos,      
+        "recetas" => $recetas,
+        "reactores" => $reactores        
+     ]); exit;
+}
+
 // -------------------------------------------------------
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR
 // -------------------------------------------------------
 if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
-    $tabla = "p18_terminadas";
+    $tabla = "p18_terminadas";    
 
     list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =
         obtenerUltimasFabricaciones($conexion, $producto, $tabla);
@@ -119,20 +133,9 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     // EDITAR y TRANSFERIR no usan sin filtrar
     $siguienteFabricacion = ($modo === "crear")
         ? max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1
-        : max($ultimaAcabada, $ultimaEnCurso) + 1;
-
-    // FORZAR QUE SIEMPRE DEVUELVA EL MISMO NÚMERO EN MODO CREAR
-    if ($modo === "crear") {
-        $siguienteFabricacion = max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1;
-    }
+        : max($ultimaAcabada, $ultimaEnCurso) + 1;   
 
     list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
-
-/*echo json_encode([
-    "equipos" => $equipos,
-    "recetas" => $recetas,
-    "reactores" => $reactores
-]); exit;*/
 
 
 echo json_encode([
@@ -148,10 +151,7 @@ echo json_encode([
         "reactores" => $reactores,
         "tabla" => $tabla
 ]); exit;
-}
-
-if ($modo === "crear" && $producto === "Sulfato") {
-    $tabla = "sulfato_terminadas";
+}   
     
     list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
     
@@ -176,7 +176,8 @@ echo json_encode([
     "equipos" => $equipos
 ]); exit;
 
-}
+
+
 
 
 if ($modo === "transferenciafinal") {
