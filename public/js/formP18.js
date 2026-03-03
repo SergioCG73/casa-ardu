@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("modal");
         modal.hidden = true;
         modal.style.display = "none";
-        window.location.href = "/HTML/public/index.php";
+        //window.location.href = "/HTML/public/index.php";
+        window.location.href = "index.php";
+        
     }
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
@@ -266,8 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-
     function inicializarFormulario(modo, producto, datosEdicion = null) {
         const formData = new FormData();
         formData.append("modo", modo);
@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let reactoresDisponibles = [];
 
                 if (modo === "crear") {
-                    //console.log("Data", data.equipos); debugger
+                    console.log("Data", data.equipos); debugger
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
                     mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
