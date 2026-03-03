@@ -268,27 +268,30 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function inicializarFormulario(modo, producto, datosEdicion = null) {
-
-        //console.log(datosEdicion); debugger
+    function inicializarFormulario(modo, producto, datosEdicion = null) {        
+        console.log(datosEdicion); debugger        
         const formData = new FormData();
-        formData.append("modo", modo);
-        //formData.append("producto", producto);        
-        formData.append("producto", datosEdicion.Producto_id);
+        
 
-        /*const objeto = Object.fromEntries(formData.entries());
-        console.log(objeto);  debugger */
+        if (modo === "crear") {
+            formData.append("producto", producto);
+        }
+
+        if (modo === "editar" || modo === "transferir") {
+            formData.append("producto", datosEdicion.Producto_id);
+        }
+
+        formData.append("modo", modo);        
+
+        const objeto = Object.fromEntries(formData.entries());
+        console.log(objeto);  debugger 
         //console.log(datosEdicion); debugger
         //modo = "transferir"; //añadido
-
-        //return fetch("/HTML/app/models/leerV2.php", { method: "POST", body: formData })
-        //return fetch("index.php?c=Leer&a=leerV2", { method: "POST", body: formData })
-        //return fetch("/HTML/public/index.php?c=Leer&a=leerV2", { method: "POST", body: formData })        
-        //return fetch("index.php?c=Leer&a=leerV3", { method: "POST", body: formData })
+        
         return fetch("index.php?c=Leer&a=lectura", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
-                //console.log(data); debugger;
+                console.log(data); debugger;
                 /*numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
                     ? data.ultimaEnCurso
                     : data.siguienteFabricacion;*/
@@ -322,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.log("Puedes crear producción");
                     } else {
                         alert("No se puede crear producción con los equipos disponibles");
-                        window.location.href = "/HTML/public/index.php?c=Home&a=home";
+                        window.location.href = "index.php?c=Home&a=home";
                     }
                 }
 
@@ -558,9 +561,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         const datosTransferenciaMezcladoraReactor = new FormData();
                         datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);
-                        datosTransferenciaMezcladoraReactor.append("mezclador", datosEdicion.Mezclador);
+                        //datosTransferenciaMezcladoraReactor.append("mezclador", datosEdicion.Mezclador);
+                        datosTransferenciaMezcladoraReactor.append("mezclador", datosTransferencia.Mezclador);
                         datosTransferenciaMezcladoraReactor.append("modo", modo);
-                        datosTransferenciaMezcladoraReactor.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                        //datosTransferenciaMezcladoraReactor.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                        datosTransferenciaMezcladoraReactor.append("numeroProduccion", datosTransferencia.NumeroFabricacion);
                         datosTransferenciaMezcladoraReactor.append("pesoFinalMezclador", pesoMF);
                         datosTransferenciaMezcladoraReactor.append("pesoInicialReactor", pesoR);
                         datosTransferenciaMezcladoraReactor.append("producto", datosTransferencia.Producto_id);
@@ -620,20 +625,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     //console.log(datosEdicion); debugger                    
                     const datosTransferenciaFinal = new FormData();
-                    datosTransferenciaFinal.append("fechaHoraInicio", datosEdicion.FechaInicio);
-                    datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);
-                    datosTransferenciaFinal.append("fechaInicioReaccion", datosEdicion.FechaInicioReaccion);
-                    datosTransferenciaFinal.append("mezclador", datosEdicion.Mezclador);
+                    /*datosTransferenciaFinal.append("mezclador", datosEdicion.Mezclador);
                     datosTransferenciaFinal.append("modo", modo);
-                    datosTransferenciaFinal.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+                    datosTransferenciaFinal.append("fechaHoraInicio", datosEdicion.FechaInicio);                    
+                    datosTransferenciaFinal.append("fechaInicioReaccion", datosEdicion.FechaInicioReaccion);
+                    datosTransferenciaFinal.append("numeroProduccion", datosEdicion.NumeroFabricacion);                    
+                    datosTransferenciaFinal.append("pesoInicialReactor", datosEdicion.PesoInicialReactor);
+                    datosTransferenciaFinal.append("producto", datosTransferencia.Producto_id);
+                    datosTransferenciaFinal.append("reactor", reactorSeleccionado);
+                    datosTransferenciaFinal.append("receta", recetaSeleccionada);*/
+
+                    datosTransferenciaFinal.append("fechaHoraInicio", datosTransferencia.FechaInicio);
+                    datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);                    
+                    datosTransferenciaFinal.append("fechaInicioReaccion", datosTransferencia.FechaInicioReaccion);
+                    datosTransferenciaFinal.append("mezclador", datosTransferencia.Mezclador);
+                    datosTransferenciaFinal.append("numeroProduccion", datosTransferencia.NumeroFabricacion);
                     datosTransferenciaFinal.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
                     datosTransferenciaFinal.append("pesoFinalReactor", peso_final_reactor.value.replace(/\./g, ""));
                     datosTransferenciaFinal.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
-                    datosTransferenciaFinal.append("pesoInicialReactor", datosEdicion.PesoInicialReactor);
-                    datosTransferenciaFinal.append("producto", producto);
+                    datosTransferenciaFinal.append("pesoInicialReactor", datosTransferencia.PesoInicialReactor);
+                    datosTransferenciaFinal.append("producto", datosTransferencia.Producto_id);
+                    datosTransferenciaFinal.append("modo", modo);
                     datosTransferenciaFinal.append("reactor", reactorSeleccionado);
                     datosTransferenciaFinal.append("receta", recetaSeleccionada);
-
+                                        
                     /*const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
                     console.log(objeto); debugger*/
 
