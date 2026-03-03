@@ -98,10 +98,10 @@ function obtenerDatosProducto($conexion, $producto)
     $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     return [$equipos, $recetas, $reactores];
-
 }
 
-if ($modo === "editar" && $producto === "Sulfato") {
+
+if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
     $tabla = "sulfato_terminadas";
      list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
 
