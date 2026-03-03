@@ -8,4 +8,4 @@ Crear P18 con una producción en el reactor                  OK
 Editar la fabricación                                       OK
 Intentar fabricar otra con mezclador "En uso"               OK
 Transferir a reactor                                        OK
-Editar la fabricacación                                     OK
+Editar la fabricacación                                     OKG
