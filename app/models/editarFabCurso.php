@@ -1,8 +1,13 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . "/miconexion.php";
+//require_once __DIR__ . "/miconexion.php";
+require_once("miconexion.php");
 $pdo = $conexion;
+
+/*echo json_encode([
+    "mensaje" => "editarFabCurso"
+]); exit;*/
 
 // ===========================
 // 1. Recoger datos del POST

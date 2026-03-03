@@ -38,6 +38,14 @@ if (!$numeroProduccion) {
     exit;
 }
 
+/*echo json_encode([
+    "fichero" => "transferirFabCurso.php",
+    "modo" => $modo,
+    "producto" => $producto,
+    "pesoRf" => $pesoRF,
+    "fechaInicioReaccion" => $fechaInicioReaccion
+]); exit;*/
+
 if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
     // Actualizar tabla fabricaciones_en_curso
     $sqlUpdate = $pdo->prepare("
@@ -91,7 +99,6 @@ if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
 
 
 if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
-
     // Semana
     $semana = (int)(new DateTime($fechaHoraInicio))->format("W");
 

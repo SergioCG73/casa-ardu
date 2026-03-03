@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 }
 
-echo json_encode([
+/*echo json_encode([
         "ok" => true,
         "numeroProduccion" => $numeroProduccion,
         "fechaHoraInicio" => $fechaHoraInicio,
@@ -20,7 +20,7 @@ echo json_encode([
         "pesoInicialReactor" => $pesoInicialReactor,
         "receta" => $receta,
         "producto" => $producto
-]); exit;
+]); exit;*/
 
 
 
