@@ -13,21 +13,17 @@ function init() {
     
     btnP18.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "P18");
-        //window.location.href = "/HTML/public/index.php?c=Formulario&a=mostrar";
-        //window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+        localStorage.setItem("producto", "P18");        
         window.location.href = "index.php?c=Formulario&a=p18";
     });    
 
     btnSulfato.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Sulfato");        
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=sulfato";
+        window.location.href = "index.php?c=Formulario&a=sulfato";
     });
 
-    btnFerrico.addEventListener("click", () => {
-        //localStorage.removeItem("editarFerrico"); //ATENTO AL RESULTADO DE HACER ESTO
-        //localStorage.removeItem("modoFerrico");
+    btnFerrico.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
         window.location.href = "/HTML/public/index.php?c=Formulario&a=ferrico";
