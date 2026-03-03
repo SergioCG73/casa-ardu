@@ -28,9 +28,7 @@
 
             <div id="botonera" class="botonera">
                 <button id="btnRetroceder" name="btnRetroceder">Retroceder</button>                
-                <button id="btnValidar" name="btnValidar">Crear</button>
-                <!--<button id="btnTransferir" name="btnTransferir">Transferir</button>-->
-
+                <button id="btnValidar" name="btnValidar">Crear</button>                
             </div>
         </div>
 
@@ -47,7 +45,6 @@
 </div>
     </div>    
     </div>
-</body>
-    <!--<script src="/html/public/js/formulario.js"></script>-->
-    <script src="/html/public/js/formSulfatoV2.js"></script>
+</body>    
+    <script src="/html/public/js/formSulfato.js"></script>
 </html>
