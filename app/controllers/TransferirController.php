@@ -2,7 +2,7 @@
 
 class TransferirController {
 
-    public function mezclarAReactor() {
+    public function mezclaAReactor() {
         require_once __DIR__ . "/../models/transferirFabCurso.php";
     }
 
