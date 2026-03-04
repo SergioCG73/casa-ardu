@@ -88,10 +88,11 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 
 function obtenerDatosProducto($conexion, $producto)
 {
-    // Equipos    
+    // Equipos        
     $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
+    //$sql = "SELECT Equipo_id, Estado, Tipo FROM equipos";
     $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(":producto", $producto);
+    $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
     $stmt->execute();
     $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -128,7 +129,8 @@ echo json_encode([
     "ultimaSinFiltrar" => $ultimaSinFiltrar,
     "reactores" => $reactores,
     "recetas" => $recetas,
-    "equipos" => $equipos
+    "equipos" => $equipos,
+    "linea" => __LINE__
 ]); exit;
 
 }
@@ -150,7 +152,8 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
         "siguienteFabricacion" => $siguienteFabricacion,  
         "equipos" => $equipos,      
         "recetas" => $recetas,
-        "reactores" => $reactores        
+        "reactores" => $reactores,
+        "linea" => __LINE__        
      ]); exit;
 }
 
@@ -182,7 +185,8 @@ echo json_encode([
         "equipos" => $equipos,
         "recetas" => $recetas,
         "reactores" => $reactores,
-        "tabla" => $tabla
+        "tabla" => $tabla,
+        "linea" => __LINE__
 ]); exit;
 }   
     
@@ -206,7 +210,8 @@ echo json_encode([
     "Fabricacion" => $siguienteFabricacion,
     "recetas" => $recetas,
     "reactores" => $reactores,
-    "equipos" => $equipos
+    "equipos" => $equipos,
+    "linea" => __LINE__
 ]); exit;
 
 /*if ($modo === "transferenciafinal") {
@@ -241,7 +246,8 @@ if ($modo === "filtrar") {
         "ok" => true,
         "modo" => $modo,
         "fabricaciones" => $fabricaciones,
-        "depositos" => $depositos
+        "depositos" => $depositos,
+        "linea" => __LINE__
     ]);
     exit;
 }
