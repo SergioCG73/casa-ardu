@@ -3,9 +3,11 @@ Crear P18 con todo vacío                                    OK
 Crear P18 con una mezcla en mezclador                       OK
 Editar fabricación en curso                                 OK
 Transferir a reactor                                        OK
-Editar fabricación en curso con reactor                     OK
+Editar fabricación en curso en reactor                     OK
 Crear P18 con una producción en el reactor                  OK
 Editar la fabricación                                       OK
 Intentar fabricar otra con mezclador "En uso"               OK
 Transferir a reactor                                        OK
-Editar la fabricacación                                     OKG
+Editar la fabricacación 
+Crear Sulfato                                   OK
+Editar Sulfato      
