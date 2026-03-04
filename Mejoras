@@ -1,0 +1,8 @@
+Condicionar la creación producción de P18 a si R202 está "En uso"
+---------------------------------------------------------------------
+Para hacer esto hay que cambiar en lectura.php la condición de búsqueda de equipos en  obtenerDatosProducto(). Esta función habría que llamarla obtenerEquiposProducto()
+
+Condicionar la creación de Sulfato a si hay mezcladores "En  uso"
+------------------------------------------------------------------
+
+
