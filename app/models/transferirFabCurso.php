@@ -13,6 +13,11 @@ require_once("miconexion.php");
 $pdo = $conexion;
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+
+/*echo json_encode([
+    "fichero"  => "transferirFabCurso.php"
+]); exit;*/
+
 // ===========================
 // 1. Recoger datos del POST =
 // ===========================
@@ -39,14 +44,10 @@ if (!$numeroProduccion) {
 }
 
 /*echo json_encode([
-    "fichero" => "transferirFabCurso.php",
-    "modo" => $modo,
-    "producto" => $producto,
-    "pesoRf" => $pesoRF,
-    "fechaInicioReaccion" => $fechaInicioReaccion
+    "fichero" => "transferirFabCurso.php",    
 ]); exit;*/
 
-if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
+if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {
     // Actualizar tabla fabricaciones_en_curso
     $sqlUpdate = $pdo->prepare("
         UPDATE fabricaciones_en_curso
@@ -65,19 +66,19 @@ if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
         ':pesoR'              => $pesoR,
         ':numerofabricacion'  => $numeroProduccion,
     ]);
-
+    
     // Mezclador → Vacío
     $sqlUpdateMezclador = $pdo->prepare("
         UPDATE equipos SET Estado = 'Vacio'
-        WHERE Equipo_id = :mezclador
-    ");
-    $sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);
+            WHERE Equipo_id = :mezclador
+        ");
+    $sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);      
 
     // Reactor → En uso
     $sqlUpdateReactor = $pdo->prepare("
         UPDATE equipos SET Estado = 'En uso'
-        WHERE Equipo_id = :reactor
-    ");
+            WHERE Equipo_id = :reactor
+        ");
     $sqlUpdateReactor->execute([':reactor' => $reactorNuevo]);
 
     echo json_encode([
@@ -98,7 +99,23 @@ if ($modo === "transferir" && $producto === "P18" && $pesoRF === null) {
 }
 
 
-if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
+if ($modo === "transferir" && ($producto === "P18" || $producto === "Sulfato") && $pesoRF != "") {
+
+    switch ($producto) {
+    case "P18":
+        $tabla = "p18_terminadas";
+        break;
+
+    case "Sulfato":
+        $tabla = "sulfato_terminadas";
+        break;
+
+    default:
+        $tabla = null; // o lo que quieras usar como valor por defecto
+        break;
+}
+
+
     // Semana
     $semana = (int)(new DateTime($fechaHoraInicio))->format("W");
 
@@ -110,8 +127,11 @@ if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
     // Tiempo parado
     $numeroPrevio = $numeroProduccion - 1;
 
-    $sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
+    /*$sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
                                 FROM p18_terminadas
+                                WHERE NumeroFabricacion = :num");*/
+    $sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
+                                FROM $tabla
                                 WHERE NumeroFabricacion = :num");
     $sqlStoped->execute(['num' => $numeroPrevio]);
     $Stoped = $sqlStoped->fetchColumn();
@@ -141,8 +161,10 @@ if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
     ]);
 
     // Insertar en mezclador_216
-    $sqlInsert = $pdo->prepare("INSERT INTO mezclador_216 (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
-    $sqlInsert->execute([":nf" => $numeroProduccion, ":fecha" => $fechaHoraFinal]);
+    if ($producto === "P18") {
+        $sqlInsert = $pdo->prepare("INSERT INTO mezclador_216 (NumeroFabricacion, Fecha) VALUES (:nf, :fecha)");
+        $sqlInsert->execute([":nf" => $numeroProduccion, ":fecha" => $fechaHoraFinal]);
+    }    
 
     // Borrar fabricación en curso
     $sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
@@ -152,62 +174,86 @@ if ($modo === "transferir" && $producto === "P18" && $pesoRF != "") {
     $sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
     $sqlUpdate->execute([":reactor" => $reactorNuevo]);
 
-    // Insertar en p18_terminadas
-    $sqlInsert = $pdo->prepare("
-    INSERT INTO p18_terminadas (
-        Hora_Inicio,
-        Hora_Finalizacion,
-        Hora_Inicio_Reaccion,
-        Semana,
-        NumeroFabricacion,
-        Mezclador,
-        Peso_Inicial,
-        Peso_Final_Mezclador,
-        Peso_Inicial_Reactor,
-        Peso_Final,
-        Duracion,
-        Reactor,
-        Receta,
-        Tiempo_Parado,
-        Notas
-    ) VALUES (
-        :hi,
-        :hf,
-        :hir,
-        :semana,
-        :nf,
-        :mezclador,
-        :pM,
-        :pMF,
-        :pR,
-        :pRF,
-        :duracion,
-        :reactor,
-        :receta,
-        :parado,
-        :notas
-    )
+    // Definir columnas y parámetros según el producto
+if ($producto === "P18") {
+    $columnas = [
+        "Hora_Inicio",
+        "Hora_Finalizacion",
+        "Hora_Inicio_Reaccion",
+        "Semana",
+        "NumeroFabricacion",
+        "Mezclador",
+        "Peso_Inicial",
+        "Peso_Final_Mezclador",
+        "Peso_Inicial_Reactor",
+        "Peso_Final",
+        "Duracion",
+        "Reactor",
+        "Receta",
+        "Tiempo_Parado",
+        "Notas"
+    ];
+
+    $valores = [
+        ":hi"       => $fechaHoraInicio,
+        ":hf"       => $fechaHoraFinal,
+        ":hir"      => $fechaInicioReaccion,
+        ":semana"   => $semana,
+        ":nf"       => $numeroProduccion,
+        ":mezclador"=> $mezcladorNuevo,
+        ":pM"       => $pesoM,
+        ":pMF"      => $pesoMF,
+        ":pR"       => $pesoR,
+        ":pRF"      => $pesoRF,
+        ":duracion" => $segundosTotales,
+        ":reactor"  => $reactorNuevo,
+        ":receta"   => $receta,
+        ":parado"   => $segundosDesdePrevio,
+        ":notas"    => null
+    ];
+
+} elseif ($producto === "Sulfato") {
+
+    $columnas = [
+        "Hora_Inicio",
+        "Hora_Finalizacion",
+        "Receta",
+        "Semana",
+        "NumeroFabricacion",
+        "Peso_Inicial",
+        "Peso_Final",
+        "Duracion",
+        "Reactor",
+        "Tiempo_Parado",
+        "Notas"
+    ];
+
+    $valores = [
+        ":hi"       => $fechaHoraInicio,
+        ":hf"       => $fechaHoraFinal,
+        ":receta"   => $receta,
+        ":semana"   => $semana,
+        ":nf"       => $numeroProduccion,
+        ":pR"       => $pesoR,
+        ":pRF"      => $pesoRF,
+        ":duracion" => $segundosTotales,
+        ":reactor"  => $reactorNuevo,
+        ":parado"   => $segundosDesdePrevio,
+        ":notas"    => null
+    ];
+}
+
+// Construir SQL automáticamente
+$listaColumnas = implode(", ", $columnas);
+$listaMarcadores = implode(", ", array_keys($valores));
+
+$sqlInsert = $pdo->prepare("
+    INSERT INTO $tabla ($listaColumnas)
+    VALUES ($listaMarcadores)
 ");
 
 
-$sqlInsert->execute([
-    ":hi"       => $fechaHoraInicio,
-    ":hf"       => $fechaHoraFinal,
-    ":hir"      => $fechaInicioReaccion,
-    ":semana"   => $semana,
-    ":nf"       => $numeroProduccion,
-    ":mezclador"=> $mezcladorNuevo,
-    ":pM"       => $pesoM,
-    ":pMF"      => $pesoMF,
-    ":pR"       => $pesoR,
-    ":pRF"      => $pesoRF,
-    ":duracion" => $segundosTotales,
-    ":reactor"  => $reactorNuevo,
-    ":receta"   => $receta,
-    ":parado"   => $segundosDesdePrevio,
-    ":notas"    => null   // o lo que corresponda
-]);
-
+$sqlInsert->execute($valores);
 
     echo json_encode([
         "ok" => true,
@@ -227,7 +273,7 @@ $sqlInsert->execute([
         "duracion" => $segundosTotales,
         "parado" => $segundosDesdePrevio,
         "receta" => $receta,
+        "tabla" => $tabla,
         "HoraPrevia" => $HoraPreviaStr
-    ]);
-    exit;
+    ]); exit;
 }

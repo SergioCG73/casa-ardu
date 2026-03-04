@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(response => response.json())
         .then(data => {                        
-            console.log(data);  debugger
+            //console.log(data);  debugger
             //==== Nº FABRICACION ====
             /*if(modo === "editar" || modo ==="transferir") {
                 numeroProduccion = datosEdicion.NumeroFabricacion;
@@ -150,9 +150,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             //==== VALORES INICIALES EN EDITAR ====
-            if ((modo === "editar" || modo === "transferir") && datosEdicion) {
+
+            //console.log("datosEdicion", datosEdicion);
+            //console.log("datosTransferir", datosTransferir); debugger
+            if ((modo === "editar" || modo === "transferir") && datosTransferir) {
                 peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
-                formatearNumero(peso_inicial_reactor);
+                formatearNumero(peso_inicial_reactor);                
             }
 
             return data;
@@ -299,11 +302,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==== MODO TRANSFERIR ====
-
     if (modo === "transferir") {
     console.log("Estamos en modo transferir...");
     datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
-                                console.log(datosTransferir);
+    //console.log(datosTransferir); debugger
     btnCrear.textContent = "Transferir";        
 
     inicializarFormulario(modo, producto, datosTransferir)
@@ -337,13 +339,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.append("producto", producto);
                 data.append("modo", modo);
 
-                fetch("../../app/models/transferirFabCurso.php", {
+                //fetch("../../app/models/transferirFabCurso.php", {
+                fetch("index.php?c=Transferir&a=reactorADeposito111", {
                     method: "POST",
                     body: data
                 })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json); return;
+                    //console.log(json); return;
                     if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                     else alert("Error: " + json.error);                    
                 })

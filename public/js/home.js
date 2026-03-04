@@ -186,9 +186,9 @@ function activarEventosTabla(tabla) {
 
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {
-            const datos = JSON.parse(iconoTransferir.dataset.info);
+            //const datos = JSON.parse(iconoTransferir.dataset.info);  //Probar a a eliminar esta
             const datosTransferir = JSON.parse(iconoTransferir.dataset.info);            
-            localStorage.setItem("datosEditables", JSON.stringify(datos));            
+            //localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
             //console.log("Se ha pulsado transferir");
