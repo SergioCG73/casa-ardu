@@ -26,13 +26,13 @@ function init() {
     btnFerrico.addEventListener("click", () => {        
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=ferrico";
+        window.location.href = "index.php?c=Formulario&a=ferrico";
     })
 
     btnFiltrado.addEventListener("click", () => {
         localStorage.setItem("modo", "filtrar");
         localStorage.setItem("producto", "P18");
-        window.location.href = "/HTML/public/index.php?c=Formulario&a=filtrado";        
+        window.location.href = "index.php?c=Formulario&a=filtrado";        
     })
 
     cargarProducciones(tabla, divProducciones, btnP18);
