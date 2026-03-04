@@ -10,4 +10,8 @@ class TransferirController {
         //require_once __DIR__ . "/../models/transferenciaFinal.php";
         require_once __DIR__ . "/../models/transferirFabCurso.php";
     }
+
+    public function reactorADeposito111() {
+        require_once __DIR__ . "/../models/transferirFabCurso.php";
+    }
 }
