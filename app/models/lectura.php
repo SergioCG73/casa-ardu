@@ -1,5 +1,9 @@
 <?php
 
+/*echo json_encode([
+    "file" => __FILE__
+]); exit;*/
+
 //ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
@@ -11,13 +15,6 @@ require_once("miconexion.php");
 $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
-
-/*echo json_encode([
-    "ok" => true,
-    "modo" => $modo,
-    "producto" => $producto
-]); exit;*/
-
 
 // -----------------------------
 // MODO INICIAL
@@ -88,29 +85,47 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 
 function obtenerDatosProducto($conexion, $producto)
 {
-    // Equipos        
-    $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
-    //$sql = "SELECT Equipo_id, Estado, Tipo FROM equipos";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
-    $stmt->execute();
-    $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Equipos
+    if ($producto === "Ferrico") {
+        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":producto", $producto);
+        $stmt->execute();
+        $mezcladores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Recetas
-    $sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(":producto", $producto);
-    $stmt->execute();
-    $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Recetas
+        $sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":producto", $producto);
+        $stmt->execute();
+        $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Reactores
-    $sql = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = :producto";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(":producto", $producto);
-    $stmt->execute();
-    $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return [$mezcladores, $recetas];
 
-    return [$equipos, $recetas, $reactores];
+    }
+    else {
+        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";    
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+        $stmt->execute();
+        $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Recetas
+        $sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":producto", $producto);
+        $stmt->execute();
+        $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Reactores
+        $sql = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = :producto";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":producto", $producto);
+        $stmt->execute();
+        $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [$equipos, $recetas, $reactores];
+    }    
 }
 
 if ($modo === "transferir" && $producto === "Sulfato") {
@@ -119,9 +134,8 @@ if ($modo === "transferir" && $producto === "Sulfato") {
     
     list($reactores, $recetas, $equipos) = obtenerDatosProducto($conexion, $producto);
 
-
 echo json_encode([
-    "fichero" => "lectura.php",    
+    "fichero" => __FILE__,
     "producto" => $producto,
     "modo" => $modo,
     "ultimaAcabada" => $ultimaAcabada,
@@ -133,7 +147,7 @@ echo json_encode([
     "linea" => __LINE__
 ]); exit;
 
-}
+} //Fin función obtenerDatosProducto()
 
 
 if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
@@ -146,7 +160,7 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
 
     list($reactores, $recetas, $equipos) = obtenerDatosProducto($conexion, $producto);
 
-     echo json_encode([
+    echo json_encode([
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
         "siguienteFabricacion" => $siguienteFabricacion,  
@@ -154,8 +168,42 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
         "recetas" => $recetas,
         "reactores" => $reactores,
         "linea" => __LINE__        
-     ]); exit;
+    ]); exit;
 }
+
+if (($modo === "crear") && $producto === "Ferrico") {
+    $tabla = "ferrico_terminadas";
+
+    list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    $siguienteFabricacion = ($modo === "crear")
+        ? max($ultimaAcabada, $ultimaEnCurso) + 1
+        : max($ultimaAcabada, $ultimaEnCurso) + 1;
+
+list($mezcladores, $recetas) = obtenerDatosProducto($conexion, $producto);
+
+echo json_encode([
+        "ok" => true,
+        "modo" => $modo,
+        "producto" => $producto,
+        "mezcladores" => $mezcladores,
+        "recetas" => $recetas,        
+        "tabla" => $tabla,
+        "ultimaAcabada" => $ultimaAcabada,
+        "ultimaEnCurso" => $ultimaEnCurso,
+        "LINE" => __LINE__
+]); exit;
+
+
+/*echo json_encode([
+        "ultimaAcabada" => $ultimaAcabada,
+        "ultimaEnCurso" => $ultimaEnCurso,
+        "siguienteFabricacion" => $siguienteFabricacion,  
+        "equipos" => $equipos,      
+        "recetas" => $recetas,        
+        "linea" => __LINE__        
+]); exit;*/
+}
+
 
 // -------------------------------------------------------
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR
@@ -172,7 +220,6 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
         : max($ultimaAcabada, $ultimaEnCurso) + 1;   
 
     list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
-
 
 echo json_encode([
         "ok" => true,
@@ -213,18 +260,6 @@ echo json_encode([
     "equipos" => $equipos,
     "linea" => __LINE__
 ]); exit;
-
-/*if ($modo === "transferenciafinal") {
-    list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
-
-    echo json_encode([
-    "modo" => $modo,
-    "equipos" => $equipos,
-    "recetas" => $recetas,
-    "reactores" => $reactores,
-    "mensaje" => "R ---> M216"
-]); exit;
-}*/
 
 // -----------------------------
 // MODO FILTRAR

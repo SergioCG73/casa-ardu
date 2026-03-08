@@ -1,5 +1,9 @@
 <?php
 
+/*echo json_encode([
+    "file" => __FILE__
+]); exit;*/
+
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);

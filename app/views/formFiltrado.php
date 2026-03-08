@@ -54,15 +54,7 @@
     <div id="resultados" class="resultados">
         <p id="displayFiltrado" name="displayFiltrado"></p>
     </div>
-</div>
-    
-  <!--  <div id="modal" class="mi-modal">
-            <div class="mi-modal-contenido">
-                <p id="modalMsg"></p>
-                <button id="btnAceptar" class="mi-boton">Aceptar</button>
-            </div>
-        </div>        -->
-    </div>     
+</div>    
     <script src="/html/public/js/formFiltrado.js"></script>
 </body>
 </html>

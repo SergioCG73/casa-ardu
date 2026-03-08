@@ -42,16 +42,14 @@ function init() {
    CARGAR DATOS DESDE PHP
    ============================================================ */
 function cargarProducciones(tabla, divProducciones) {    
-    //console.log(cargarProducciones); debugger
-    //fetch("index.php?c=Leer&a=leerV3", {
+    //console.log(cargarProducciones); debugger    
     fetch("index.php?c=Leer&a=lectura", {
-
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
     })
     .then(response => response.json())
-    .then(data => {
+    .then(data => { //console.log(data); debugger
         if (!data.ok) return;
         tabla.innerHTML = generarEncabezado() + construirTabla(data);
         activarEventosTabla(tabla);        
@@ -148,10 +146,7 @@ function activarEventosTabla(tabla) {
             if (datos.Producto_id === "Sulfato") {
                 //console.log("Formulario Sulfato"); debugger
                 window.location.href = "index.php?c=Formulario&a=sulfato";
-            } else {
-                //console.log("Formulario P18"); debugger               
-                //window.location.href = "/HTML/app/views/formP18.php";
-                //window.location.href = "/HTML/public/index.php?c=Formulario&a=p18";
+            } else {                
                 window.location.href = "index.php?c=Formulario&a=p18";
             }           
             
@@ -163,18 +158,18 @@ function activarEventosTabla(tabla) {
             if(confirm("¿Estás seguro de que deseas eliminar esta producción?")) {
                 const datos = JSON.parse(iconoBorrar.dataset.info);
                 localStorage.setItem("datosBorrables", JSON.stringify(datos));
-                localStorage.setItem("modo", "borrar");            
+                localStorage.setItem("modo", "borrar");
                 
-                fetch("/HTML/app/models/borrarFabCurso.php", {
+                fetch("index.php?c=Borrar&a=borrarFabricacion", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(datos)
             })
             .then(response => response.json())
-            .then(json => { //console.log(json); debugger
+            .then(json => { console.log(json); debugger
                 if(json.ok) {
-                    alert("Producción eliminada correctamente");                    
-                    window.location.href = "/HTML/public/index.php";
+                    alert("Producción eliminada correctamente");
+                    window.location.href = "index.php";
                 } else alert("ERROR: " + json.error);
             })
             .catch(error => console.log("ERROR", error));                
@@ -185,17 +180,14 @@ function activarEventosTabla(tabla) {
         }
 
         const iconoTransferir = e.target.closest(".icono-transferir");
-        if (iconoTransferir) {
-            //const datos = JSON.parse(iconoTransferir.dataset.info);  //Probar a a eliminar esta
-            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);            
-            //localStorage.setItem("datosEditables", JSON.stringify(datos));
+        if (iconoTransferir) {            
+            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
             //console.log("Se ha pulsado transferir");
             //console.log(datosTransferir); debugger
             
             if (datosTransferir.Producto_id === "P18"){
-                //window.location.href = "/HTML/app/views/formP18.php";
                 window.location.href = "index.php?c=Formulario&a=p18";
 
             } else if (datosTransferir.Producto_id === "Sulfato"){

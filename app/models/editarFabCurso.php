@@ -1,12 +1,11 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
-//require_once __DIR__ . "/miconexion.php";
 require_once("miconexion.php");
 $pdo = $conexion;
 
 /*echo json_encode([
-    "mensaje" => "editarFabCurso"
+    "mensaje" => __FILE__
 ]); exit;*/
 
 // ===========================
@@ -138,11 +137,7 @@ try {
 
     // 4. Si cambia reactor
     if ($reactorNuevo && $reactorNuevo != $reactorAnterior) {
-
-        /*$pdo->prepare("UPDATE equipos SET Estado='Vacio' WHERE Equipo_id=:id")
-            ->execute([":id" => $reactorAnterior]);*/
-
-        //añadido ----
+        
         // Comprobar si otro proceso sigue usando el reactor anterior
         $check = $pdo->prepare("
                                 SELECT COUNT(*) 
@@ -161,10 +156,6 @@ try {
             $pdo->prepare("UPDATE equipos SET Estado='Vacio' WHERE Equipo_id=:id")
                 ->execute([":id" => $reactorAnterior]);
         }
-
-
-
-        //------ fin añadido
 
         $pdo->prepare("UPDATE equipos SET Estado='En uso' WHERE Equipo_id=:id")
             ->execute([":id" => $reactorNuevo]);
