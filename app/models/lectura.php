@@ -51,7 +51,7 @@ echo json_encode([
 
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
-// ----------------------------------------------
+// -----------------------------------------------
 function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 {
     // Última terminada
@@ -216,9 +216,9 @@ echo json_encode([
 }
 
 
-// -------------------------------------------------------
-// MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR
-// -------------------------------------------------------
+// -----------------------------------------------------------
+// MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR P18
+// -----------------------------------------------------------
 if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     $tabla = "p18_terminadas";    
 
@@ -244,6 +244,7 @@ echo json_encode([
         "recetas" => $recetas,
         "reactores" => $reactores,
         "tabla" => $tabla,
+        "pesoInicialMezclador" => $pesoInicialMezclador,
         "linea" => __LINE__
 ]); exit;
 }   
