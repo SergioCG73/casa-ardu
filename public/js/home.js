@@ -108,7 +108,7 @@ function construirTabla(data) {
             claseMezclador = "M311_destacado";            
         }
 
-        console.log("clase", claseMezclador); debugger
+        //console.log("clase", claseMezclador); debugger
 
 
         return `
@@ -205,4 +205,3 @@ function activarEventosTabla(tabla) {
         }
     });
 }
-
