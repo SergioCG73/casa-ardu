@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO TRANSFERIR ====
     if (modo === "transferir") {
         console.log("Estamos en modo transferir...");
-        datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
+        datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));
         //console.log(datosTransferir); debugger
         btnCrear.textContent = "Transferir";
 
@@ -331,15 +331,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoFinalReactor", PesoFinalEditado);
                     data.append("producto", producto);
                     data.append("modo", modo);
-
-                    //fetch("../../app/models/transferirFabCurso.php", {
-                    fetch("index.php?c=Transferir&a=reactorADeposito111", {
+                    
+                    fetch("index.php?c=Transferir&a=transferirSulfato", {
                         method: "POST",
                         body: data
                     })
                         .then(response => response.json())
                         .then(json => {
-                            //console.log(json); return;
+                            console.log(json); debugger;
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })
