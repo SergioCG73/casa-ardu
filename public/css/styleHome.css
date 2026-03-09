@@ -255,6 +255,7 @@ fieldset input[type="radio"] {
 /* DESTACADOS */
 .p18_destacado,
 .ferrico_destacado,
+.M311_destacado,
 .sulfato_destacado {
     color: white;
     font-weight: bold;
@@ -266,6 +267,7 @@ fieldset input[type="radio"] {
 .p18_destacado { background-color: #f2c85b; }
 .ferrico_destacado { background-color: brown; }
 .sulfato_destacado { background-color: #cfe8d5; }
+.M311_destacado { color: green;}
 
 /* ICONOS */
 .icono-borrar,
