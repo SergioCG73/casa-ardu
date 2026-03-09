@@ -1,13 +1,19 @@
-|----------------PRUEBA----------------|----------------RESULTADO----------------|----------------FALLO----------------|
-Crear P18 con todo vacío                                    OK
-Crear P18 con una mezcla en mezclador                       OK
-Editar fabricación en curso                                 OK
-Transferir a reactor                                        OK
-Editar fabricación en curso en reactor                     OK
-Crear P18 con una producción en el reactor                  OK
-Editar la fabricación                                       OK
-Intentar fabricar otra con mezclador "En uso"               OK
-Transferir a reactor                                        OK
-Editar la fabricacación 
-Crear Sulfato                                   OK
-Editar Sulfato      
+|----------------PRUEBA----------------|----------------FORMULARIO----------------|----equipos----|----fab_en_curso----|----mezclador 216----|----fab_terminadas----|
+Crear P18 con todo vacío                                    OK                          OK                 OK                    ---
+Crear P18 con una mezcla en mezclador                       OK                          ---                ---                   ---   
+Crear Sulfato con P18 en mezclador                  NO DEBERÍA PERMITIR                                                          ---
+Editar fabricación en curso  P18                            OK                          ---                 OK                   ---
+Borrar P18                                                  OK                          OK                  OK
+Transferir a reactor p18                                    OK                          OK                  OK
+Editar fabricació P18 en curso en reactor                   OK                          OK                  OK
+Crear Sulfato                                               OK                          OK                  OK
+Editar fabricación en curso en reactor Sulfato              OK                          ---                 OK
+Crear P18 con R200 y R202 = "ocupado"                       OK                          OK                  OK
+Intentar fabricar otra con mezclador "En uso"               OK                          ---                 ---
+Finalizar P18                                               OK                          OK                  OK                     OK                      OK
+Transferir P18 de M A reactor                               OK                          OK                  OK                     ---                     --- 
+Finalizar Sulfato                                           OK                          OK                  OK                     OK                      OK
+Crear Férrico                                               OK                          OK                  OK                     OK                      OK 
+Editar Férrico                                              OK                          OK                  OK                     OK                      OK 
+Dosificar sacas                                             OK                                              OK                                             
+Borrar Férrico                                              OK                          OK                  OK                     OK                      OK 
