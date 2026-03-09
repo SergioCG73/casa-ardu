@@ -21,6 +21,7 @@ $pesoInicialReactor   = $_POST["pesoInicialReactor"] ?? null;
 $producto             = $_POST["producto"] ?? null;
 $modo                 = $_POST["modo"] ?? null;
 $pesoFinalReactor     = $_POST["pesoFinalReactor"] ?? null;
+$sacas                = $_POST["sacas"] ?? null;
 
 if (!$numeroProduccion) {
     echo json_encode(["ok" => false, "error" => "Falta numeroProduccion"]);
@@ -37,7 +38,7 @@ if (!is_numeric($pesoFinalMezclador))   $pesoFinalMezclador = null;
 // =====================================================
 if ($reactorNuevo === null) {
 
-    // Obtener valores anteriores (FALTABA)
+    // Obtener valores anteriores
     $sql = $pdo->prepare("
         SELECT Mezclador, Reactor
         FROM fabricaciones_en_curso
@@ -78,7 +79,8 @@ if ($reactorNuevo === null) {
                 PesoInicialMezclador = :pm,
                 PesoFinalMezclador = :pmf,
                 PesoInicialReactor = :pr,
-                PesoFinalReactor = :prf
+                PesoFinalReactor = :prf,
+                Sacas =:sacas
             WHERE NumeroFabricacion = :num
         ");
 
@@ -90,7 +92,8 @@ if ($reactorNuevo === null) {
             ":pmf" => $pesoFinalMezclador,
             ":pr" => $pesoInicialReactor,
             ":prf" => $pesoFinalReactor,
-            ":num" => $numeroProduccion
+            ":num" => $numeroProduccion,
+            ":sacas" => $sacas
         ]);
 
         $pdo->commit();
@@ -171,7 +174,8 @@ try {
             PesoInicialMezclador = :pm,
             PesoFinalMezclador = :pmf,
             PesoInicialReactor = :pr,
-            PesoFinalReactor = :prf
+            PesoFinalReactor = :prf,
+            Sacas = :sacas
         WHERE NumeroFabricacion = :num
     ");
 
@@ -183,7 +187,8 @@ try {
         ":pmf" => $pesoFinalMezclador,
         ":pr" => $pesoInicialReactor,
         ":prf" => $pesoFinalReactor,
-        ":num" => $numeroProduccion
+        ":num" => $numeroProduccion,
+        ":sacas" => $sacas
     ]);
 
     $pdo->commit();

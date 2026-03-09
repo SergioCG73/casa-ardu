@@ -11,29 +11,43 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ]); exit;
 
 }
+
 require_once("miconexion.php");
 
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
-    $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";    
+    $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
     $mezclador = $_POST["mezclador"] ?? "";
-    $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";    
-    $receta = $_POST["receta"] ?? "";    
+    $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
+    $receta = $_POST["receta"] ?? "";
+    $sacas = $_POST["sacas"] ?? "";
     $producto = "Ferrico";
+
+    if ($sacas === "on") {
+        $sacas = 1;
+    }
+    else {
+        $sacas = 0;
+    }
+
+/*echo json_encode([
+    "sacas" => $sacas
+]); exit;*/
 
     //Validación de datos recibidos
     try {
     //SQL para INSERT datos en fabricaciones_en_curso
         $insertSQL = "INSERT INTO fabricaciones_en_curso
-                      (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id) 
-                      VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto)";
+                      (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id, Sacas) 
+                      VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto, :sacas)";
 
         $insertStmt = $conexion->prepare($insertSQL);
-        $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);        
+        $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
         $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
         $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);
         $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
         $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
-        $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);        
+        $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
+        $insertStmt->bindParam(":sacas", $sacas, PDO::PARAM_INT);
         $insertStmt->execute();
 
     //SQL para UPDATE estados en la tabla equipos

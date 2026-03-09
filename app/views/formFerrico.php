@@ -23,14 +23,13 @@
                         <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador (Kg):</label>                    
                         <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
 
-                        <div class ="peso-final">
+                        <div id="peso-final" class ="peso-final">
                             <label for="peso_final_mezclador" class="input-label">Peso final mezclador (Kg):</label>
                         <input type="text" id="peso_final_mezclador" name="peso_final_mezclador">
-                        </div>
-                        
+                        </div>                        
                     </div>
                 </fieldset>
-            </div>            
+            </div>
 
             <div id="recetas">
                 <fieldset>
@@ -38,8 +37,13 @@
                     <div class="radio-group">
                         <label class="radio-label"><input type="radio" name="sel_receta" value="P18"> P18</label>
                         <label class="radio-label"><input type="radio" name="sel_receta" value="Papilla"> Papilla</label>
-                    </div>
+                    </div>                    
                 </fieldset>
+            </div>
+
+            <div>
+                <label>Sacas dosificadas:
+                <input type="checkbox" class="sacas" name="sacas" value="1">
             </div>
 
             <div id="botonera" class="botonera">
