@@ -86,9 +86,10 @@ function generarEncabezado() {
 }
 
 function construirTabla(data) {                
-        return data.producciones_en_curso.map(p => {
+        return data.producciones_en_curso.map(p => {            
         //Determinamos la clase según el Producto_id
         let claseEspecial = "";
+        let claseMezclador = "";
         if (p.Producto_id === 'P18') {            
             claseEspecial = "p18_destacado";
         }
@@ -99,8 +100,16 @@ function construirTabla(data) {
             claseEspecial = "sulfato_destacado";
         }
         else if (p.Producto_id === "Ferrico") {
-            claseEspecial = "ferrico_destacado";
+            claseEspecial = "ferrico_destacado";            
+        }                
+
+        if (p.Producto_id === "Ferrico" && p.Sacas === 1){            
+            console.log(">>> ENTRA EN EL IF <<<")
+            claseMezclador = "M311_destacado";            
         }
+
+        console.log("clase", claseMezclador); debugger
+
 
         return `
         <tr>
@@ -108,8 +117,8 @@ function construirTabla(data) {
                 ${p.Producto_id}
             </td>
             <td>${p.NumeroFabricacion}</td>
-            <td>${p.FechaInicio}</td>
-            <td>${p.Mezclador}</td>
+            <td>${p.FechaInicio}</td>            
+            <td class="${claseMezclador}">${p.Mezclador}</td>
             <td>${p.Reactor}</td>
             <td>${p.Receta}</td>
             <td>
@@ -182,9 +191,9 @@ function activarEventosTabla(tabla) {
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {            
             const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
+            //console.log(datosTransferir); debugger
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
-
             if (datosTransferir.Producto_id === "P18"){
                 window.location.href = "index.php?c=Formulario&a=p18";
 
