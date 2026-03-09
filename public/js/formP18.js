@@ -269,32 +269,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function inicializarFormulario(modo, producto, datosEdicion = null) {
-        //console.log(datosEdicion); debugger        
+        
         const formData = new FormData();
 
+        switch (modo) {
+            case "crear":
+                formData.append("producto", producto);
+                break;
 
-        if (modo === "crear") {
-            formData.append("producto", producto);
-        }
+            case "editar":
+                formData.append("producto", datosEdicion.Producto_id);
+                break;
 
-        if (modo === "editar" || modo === "transferir") {
-            formData.append("producto", datosEdicion.Producto_id);
+            case "transferir":
+                formData.append("producto", datosTransferencia.Producto_id);
+                break;
         }
+        
+        /*console.log(modo);
+        console.log(datosTransferencia.Producto_id);
+        console.log(datosTransferencia);
+        console.log(datosEdicion); debugger*/
 
         formData.append("modo", modo);
 
-        const objeto = Object.fromEntries(formData.entries());
-        //console.log(objeto);  debugger 
-        //console.log(datosEdicion); debugger
-        //modo = "transferir"; //añadido
-
+        /*const objeto = Object.fromEntries(formData.entries());
+        console.log(objeto);  debugger */
+        
         return fetch("index.php?c=Leer&a=lectura", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
                 //console.log(data); debugger;
-                /*numeroProduccion = ((modo === "editar" || modo === "transferir") && datosEdicion)
-                    ? data.ultimaEnCurso
-                    : data.siguienteFabricacion;*/
+                
                 numeroProduccion = (modo === "editar" || modo === "transferir")
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
@@ -337,6 +343,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         alert("No se puede crear producción con los equipos disponibles"); debugger
                         window.location.href = "index.php?c=Home&a=home";
                     }
+                }
+
+                if (modo === "transferir" && producto === "P18") {
+                    console.log("Modo transferir final P18"); 
+                    datosEdicion = datosTransferencia;                    
+                    /*console.log(datosTransferencia);                    
+                    console.log(datosEdicion);
+                    debugger*/
                 }
 
                 generarRadiosMezcladores(data.equipos, datosEdicion, modo);
@@ -526,15 +540,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO TRANSFERIR ====
 
     if (modo === "transferir") {
-        //console.log(datosTransferencia); debugger        
-        //if (datosEdicion.Mezclador !== "" && datosEdicion.Reactor === "") {            
+        //console.log(datosTransferencia); debugger                
         if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "") {
             console.log("Modo transferencia M a R...");
             btnCrear.textContent = "Transferir ";
             //console.log("520", datosEdicion); debugger
 
             // Creamos el formulario y ESPERAMOS a que termine
-            inicializarFormulario(modo, producto, datosEdicion) //Llama a la línea 109
+            inicializarFormulario(modo, producto, datosTransferencia) //Llama a la línea 109
                 .then(() => {
                     const inputPesoFinalMezclador = document.querySelector("#peso_final_mezclador");
                     const inputPesoInicialReactor = document.querySelector("#peso_inicial_reactor");
