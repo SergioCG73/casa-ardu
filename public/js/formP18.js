@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (modo === "transferir" && producto === "P18") {
-                    console.log("Modo transferir final P18"); 
+                    console.log("Modo transferir P18"); 
                     datosEdicion = datosTransferencia;                    
                     /*console.log(datosTransferencia);                    
                     console.log(datosEdicion);
@@ -392,7 +392,8 @@ document.addEventListener("DOMContentLoaded", () => {
         input.addEventListener("input", () => formatearNumero(input));
     });
 
-    btnRetroceder.addEventListener("click", () => window.location.href = "/HTML/public/");
+    //btnRetroceder.addEventListener("click", () => window.location.href = "/HTML/public/");
+    btnRetroceder.addEventListener("click", () => window.location.href = "index.php");
 
     // ===== MODO CREAR =====
     if (modo === "crear") {
@@ -539,12 +540,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==== MODO TRANSFERIR ====
 
-    if (modo === "transferir") {
-        //console.log(datosTransferencia); debugger                
+    if (modo === "transferir") {        
+        console.log(datosTransferencia); debugger
         if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "") {
             console.log("Modo transferencia M a R...");
-            btnCrear.textContent = "Transferir ";
-            //console.log("520", datosEdicion); debugger
+            btnCrear.textContent = "Transferir ";            
 
             // Creamos el formulario y ESPERAMOS a que termine
             inicializarFormulario(modo, producto, datosTransferencia) //Llama a la línea 109
@@ -614,8 +614,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================================== INICIO TRANSFERENCIA DE REACTOR A M216 *****************************
-    if (modo === "transferir" && datosEdicion.PesoInicialReactor !== null && datosEdicion.Reactor !== null) {
-        console.log("Transferencia Reactor a M216...");
+    //if (modo === "transferir" && datosEdicion.PesoInicialReactor !== null && datosEdicion.Reactor !== null) {
+    if (modo === "transferir" && datosTransferencia.PesoInicialReactor !== null && datosTransferencia.Reactor !== null) {
+        console.log("Transferencia Reactor a M216..."); debugger
         //console.log("datosEdicion 566", datosEdicion); debugger
         btnCrear.textContent = "Finalizar";
 
@@ -648,16 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     //console.log(datosEdicion); debugger                    
                     const datosTransferenciaFinal = new FormData();
-                    /*datosTransferenciaFinal.append("mezclador", datosEdicion.Mezclador);
-                    datosTransferenciaFinal.append("modo", modo);
-                    datosTransferenciaFinal.append("fechaHoraInicio", datosEdicion.FechaInicio);                    
-                    datosTransferenciaFinal.append("fechaInicioReaccion", datosEdicion.FechaInicioReaccion);
-                    datosTransferenciaFinal.append("numeroProduccion", datosEdicion.NumeroFabricacion);                    
-                    datosTransferenciaFinal.append("pesoInicialReactor", datosEdicion.PesoInicialReactor);
-                    datosTransferenciaFinal.append("producto", datosTransferencia.Producto_id);
-                    datosTransferenciaFinal.append("reactor", reactorSeleccionado);
-                    datosTransferenciaFinal.append("receta", recetaSeleccionada);*/
-
+                    
                     datosTransferenciaFinal.append("fechaHoraInicio", datosTransferencia.FechaInicio);
                     datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);
                     datosTransferenciaFinal.append("fechaInicioReaccion", datosTransferencia.FechaInicioReaccion);
