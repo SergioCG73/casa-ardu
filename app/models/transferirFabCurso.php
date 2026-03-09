@@ -13,9 +13,10 @@ require_once("miconexion.php");
 $pdo = $conexion;
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
 /*echo json_encode([
-    "fichero"  => "transferirFabCurso.php"
+    "FILE"  => __FILE__,
+    "LINE" => __LINE__,
+    "producto" => $producto
 ]); exit;*/
 
 // ===========================
@@ -43,9 +44,6 @@ if (!$numeroProduccion) {
     exit;
 }
 
-/*echo json_encode([
-    "fichero" => "transferirFabCurso.php",    
-]); exit;*/
 
 if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {
     // Actualizar tabla fabricaciones_en_curso
@@ -115,7 +113,6 @@ if ($modo === "transferir" && ($producto === "P18" || $producto === "Sulfato") &
         break;
 }
 
-
     // Semana
     $semana = (int)(new DateTime($fechaHoraInicio))->format("W");
 
@@ -127,9 +124,6 @@ if ($modo === "transferir" && ($producto === "P18" || $producto === "Sulfato") &
     // Tiempo parado
     $numeroPrevio = $numeroProduccion - 1;
 
-    /*$sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
-                                FROM p18_terminadas
-                                WHERE NumeroFabricacion = :num");*/
     $sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
                                 FROM $tabla
                                 WHERE NumeroFabricacion = :num");
@@ -214,6 +208,13 @@ if ($producto === "P18") {
 
 } elseif ($producto === "Sulfato") {
 
+/*echo json_encode([
+    "FILE"  => __FILE__,
+    "LINE" => __LINE__,
+    "numeroPrevio" => $numeroPrevio,    
+    "Stoped" => $Stoped    
+]); exit;*/
+
     $columnas = [
         "Hora_Inicio",
         "Hora_Finalizacion",
@@ -241,7 +242,26 @@ if ($producto === "P18") {
         ":parado"   => $segundosDesdePrevio,
         ":notas"    => null
     ];
-}
+
+/*echo json_encode([
+        "ok" => true,
+        "mensaje" => "transferencia Sulfato",
+        "numeroProduccion" => $numeroProduccion,
+        "producto" => $producto,
+        "modo" => $modo,        
+        "fechaInicio" => $fechaHoraInicio,
+        "fechaHoraFinal" => $fechaHoraFinal,
+        "pesoInicialReactor" => $pesoR,
+        "pesoFinalReactor" => $pesoRF,
+        "reactor" => $reactorNuevo,
+        "semana" => $semana,
+        "duracion" => $segundosTotales,
+        "parado" => $segundosDesdePrevio,
+        "receta" => $receta,
+        "tabla" => $tabla,
+        "HoraPrevia" => $HoraPreviaStr
+]);*/    
+} 
 
 // Construir SQL automáticamente
 $listaColumnas = implode(", ", $columnas);
@@ -252,9 +272,9 @@ $sqlInsert = $pdo->prepare("
     VALUES ($listaMarcadores)
 ");
 
-
 $sqlInsert->execute($valores);
 
+if ($producto === "P18") {
     echo json_encode([
         "ok" => true,
         "mensaje" => "2º transferencia",
@@ -276,4 +296,24 @@ $sqlInsert->execute($valores);
         "tabla" => $tabla,
         "HoraPrevia" => $HoraPreviaStr
     ]); exit;
+} else if ($producto === "Sulfato") {
+    echo json_encode([
+        "ok" => true,
+        "mensaje" => "transferencia Sulfato",
+        "numeroProduccion" => $numeroProduccion,
+        "producto" => $producto,
+        "modo" => $modo,        
+        "fechaInicio" => $fechaHoraInicio,
+        "fechaHoraFinal" => $fechaHoraFinal,
+        "pesoInicialReactor" => $pesoR,
+        "pesoFinalReactor" => $pesoRF,
+        "reactor" => $reactorNuevo,
+        "semana" => $semana,
+        "duracion" => $segundosTotales,
+        "parado" => $segundosDesdePrevio,
+        "receta" => $receta,
+        "tabla" => $tabla,
+        "HoraPrevia" => $HoraPreviaStr
+]);    
+}    
 }
