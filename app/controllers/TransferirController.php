@@ -11,7 +11,7 @@ class TransferirController {
         require_once __DIR__ . "/../models/transferirFabCurso.php";
     }
 
-    public function reactorADeposito111() {
+    public function transferirSulfato() {
         require_once __DIR__ . "/../models/transferirFabCurso.php";
     }
 }
