@@ -213,8 +213,6 @@ fieldset input[type="radio"] {
 }
 
 /* DESTACADOS */
-.p18_destacado,
-.papilla_destacado,
 .sulfato_destacado {
     color: white;
     font-weight: bold;
@@ -223,8 +221,6 @@ fieldset input[type="radio"] {
     text-align: center;
 }
 
-.p18_destacado { background-color: #f2c85b; }
-.papilla_destacado { background-color: grey; }
 .sulfato_destacado { background-color: #cfe8d5; }
 
 /* ICONOS */
