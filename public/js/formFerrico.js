@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const pesoLimpio = peso_inicial_mezclador.value.replace(/\./g, "");
 
-                    console.log(sacas.value); debugger
+                    //console.log(sacas.value); debugger
 
                     const datosEnviar = new FormData();
                     datosEnviar.append("numeroProduccion", numeroProduccion);
@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger
+                            //console.log(json); debugger
                             if (json.ok) mostrarModal(json.message);
                             else alert("Error: " + (json.error || "Error desconocido"));
                         });
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger
+                            //console.log(json); debugger
                             if (json.ok) mostrarModal("Producción actualizada correctamente");
                             else alert("Error: " + json.error);
                         })

@@ -242,25 +242,6 @@ if ($producto === "P18") {
         ":parado"   => $segundosDesdePrevio,
         ":notas"    => null
     ];
-
-/*echo json_encode([
-        "ok" => true,
-        "mensaje" => "transferencia Sulfato",
-        "numeroProduccion" => $numeroProduccion,
-        "producto" => $producto,
-        "modo" => $modo,        
-        "fechaInicio" => $fechaHoraInicio,
-        "fechaHoraFinal" => $fechaHoraFinal,
-        "pesoInicialReactor" => $pesoR,
-        "pesoFinalReactor" => $pesoRF,
-        "reactor" => $reactorNuevo,
-        "semana" => $semana,
-        "duracion" => $segundosTotales,
-        "parado" => $segundosDesdePrevio,
-        "receta" => $receta,
-        "tabla" => $tabla,
-        "HoraPrevia" => $HoraPreviaStr
-]);*/    
 } 
 
 // Construir SQL automáticamente

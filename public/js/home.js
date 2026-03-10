@@ -93,7 +93,7 @@ function construirTabla(data) {
         if (p.Producto_id === 'P18') {            
             claseEspecial = "p18_destacado";
         }
-        else if (p.Producto_id === 'PP18') {  //HABÍA UN ERROR
+        else if (p.Producto_id === 'PP18') {
             claseEspecial = "papilla_destacado";
         }
         else if (p.Producto_id === "Sulfato") {            
@@ -175,7 +175,7 @@ function activarEventosTabla(tabla) {
                 body: JSON.stringify(datos)
             })
             .then(response => response.json())
-            .then(json => { console.log(json); debugger
+            .then(json => { //console.log(json); debugger
                 if(json.ok) {
                     alert("Producción eliminada correctamente");
                     window.location.href = "index.php";

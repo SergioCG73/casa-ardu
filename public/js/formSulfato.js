@@ -117,16 +117,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 //console.log(numeroProduccion); debugger            
 
                 //==== REACTORES ====
-                const contenedorReactores = document.querySelector("#reactores fieldset");
-                //contenedorReactores.innerHTML = "";
+                const contenedorReactores = document.querySelector("#reactores fieldset");                
 
                 //console.log(data.equipos); debugger
                 //console.log(datosEdicion); debugger
                 generarRadiosReactores(data.equipos, contenedorReactores, modo, datosEdicion);
 
                 //==== RECETAS ====
-                const contenedorRecetas = document.querySelector("#recetas fieldset");
-                //contenedorRecetas.innerHTML = "";
+                const contenedorRecetas = document.querySelector("#recetas fieldset");                
 
                 //console.log(data.recetas); debugger
                 generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosEdicion);
@@ -171,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== BOTÓN RETROCEDER ====
 
     btnRetroceder.addEventListener("click", () => {
-        //window.location.href = "/HTML/public/";
         window.location.href = "index.php";
     });
 
@@ -194,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const PesoInicialReactor = peso_inicial_reactor.value.replace(/\./g, "");
 
-                    console.log("peso", PesoInicialReactor); debugger
+                    //console.log("peso", PesoInicialReactor); debugger
 
                     if (PesoInicialReactor === "") {
                         alert("Introduzca un peso inicial para el reactor");
@@ -242,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger
+                            //console.log(json); debugger
                             if (json.ok) mostrarModal(json.message);
                             else alert("Error: " + (json.error || "Error desconocido"));
                         });
@@ -276,8 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("producto", producto);
                     data.append("modo", modo);
 
-                    const objeto = Object.fromEntries(data.entries());
-                    console.log(objeto); debugger
+                    /*const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger*/
 
                     fetch("index.php?c=Editar&a=fabCurso", {
                         method: "POST",
@@ -285,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger
+                            //console.log(json); debugger
                             if (json.ok) mostrarModal("Producción actualizada correctamente");
                             else alert("Error: " + json.error);
                         })
@@ -338,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger;
+                            //console.log(json); debugger;
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })

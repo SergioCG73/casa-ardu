@@ -24,10 +24,6 @@ $receta = $_POST["receta"] ?? "";
 $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
 $pesoFinalMezclador = $_POST["pesoFinalMezclador"] ?? "";
 $producto = $_POST["producto"] ?? "";
-//$reactor = $_POST["reactor"] ?? "";
-//$pesoInicialReactor = $_POST["pesoInicialReactor"] ?? "";
-//$fechaFinal = $_POST["fechaFinal"] ?? "";
-//$pesoFinalReactor = $_POST["pesoFinalReactor"] ?? "";
 
 // Validación
 if (empty($fechaHoraInicio) ||
