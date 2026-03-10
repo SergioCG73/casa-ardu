@@ -55,6 +55,7 @@
         <p id="displayFiltrado" name="displayFiltrado"></p>
     </div>
 </div>    
-    <script src="/html/public/js/formFiltrado.js"></script>
+    <!--<script src="/html/public/js/formFiltrado.js"></script>-->
+    <script src="js/formFiltrado.js"></script>
 </body>
 </html>

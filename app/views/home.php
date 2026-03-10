@@ -25,5 +25,6 @@
     </div>
 
 </body>    
-    <script src="/HTML/public/js/home.js"></script>
+    <!--<script src="/HTML/public/js/home.js"></script>-->
+    <script src="js/home.js"></script>
 </html>

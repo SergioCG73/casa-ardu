@@ -75,6 +75,7 @@
         </div>        
     </div> 
     
-    <script src="/html/public/js/formp18.js"></script>
+    <!--<script src="/html/public/js/formp18.js"></script>-->
+    <script src="js/formp18.js"></script>
 </body>
 </html>

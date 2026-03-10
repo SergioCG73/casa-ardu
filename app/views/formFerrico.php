@@ -64,6 +64,7 @@
         </div>        
     </div>
         
-    <script src="/html/public/js/formFerrico.js"></script>
+    <!--<script src="/html/public/js/formFerrico.js"></script>-->
+    <script src="js/formFerrico.js"></script>
 </body>
 </html>

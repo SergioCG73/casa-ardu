@@ -46,5 +46,6 @@
     </div>    
     </div>
 </body>    
-    <script src="/html/public/js/formSulfato.js"></script>
+    <!--<script src="/html/public/js/formSulfato.js"></script>-->
+    <script src="js/formSulfato.js"></script>
 </html>
