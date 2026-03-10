@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/HTML/public/css/styleHome.css" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <link href="css/styleHome.css" rel="stylesheet" type="text/css">
     <title>Index</title>
 </head>
 <body>    

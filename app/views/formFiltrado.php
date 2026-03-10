@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/HTML/public/css/styleFiltrado.css" rel="stylesheet" type="text/css">
+    <!--<link href="/HTML/public/css/styleFiltrado.css" rel="stylesheet" type="text/css">-->
+    <link href="css/styleFiltrado.css" rel="stylesheet" type="text/css">
     <title>FiltradoP18</title>    
 </head>
 <body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <link href="css/styleHome.css" rel="stylesheet" type="text/css">
+    <link href="css/styleP18.css" rel="stylesheet" type="text/css">
     <title>Formulario P18</title>
 </head>
 <body>
