@@ -1,0 +1,288 @@
+/* Fuente */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+/* RESET + BODY */
+body {
+    background-color: #eef2f7;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* CONTENEDOR */
+#contenedor {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    max-width: 1100px;
+    width: 100%;
+    position: relative;
+}
+
+/* TÍTULO */
+#titulo-formulario {
+    color: #1e293b;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    border-left: 5px solid #2563eb;
+    padding-left: 15px;
+    text-transform: uppercase;
+}
+
+/* M216 */
+#displayM216 {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    display: flex;
+    flex-direction: column;   /* M216 arriba, número debajo */
+    align-items: center;
+    gap: 4px;
+
+    font-weight: 700;
+    font-size: 24px;
+    color: #334155;           /* mismo tono gris azulado de tu UI */
+}
+
+/* El número con fondo verde */
+#label_m216 {
+    background-color: #16a34a;  /* verde elegante */
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 20px;            /* ligeramente más pequeño que el título */
+    font-weight: 700;
+}
+
+
+/* DISPLAY PRODUCCIÓN */
+#resultados {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#displayProduccion {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    min-width: 60px;
+    text-align: center;
+}
+
+/* GRID FORMULARIO */
+#formulario {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* FIELDSETS */
+fieldset {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fff;
+    transition: box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+fieldset:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+legend {
+    font-weight: 700;
+    color: #475569;
+    padding: 0 10px;
+}
+
+.oculto { display: none; }
+
+/* LABELS + INPUTS */
+label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    text-align: end;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* CONTENEDOR DE BOTONES SUPERIORES */
+[name="botonera"] {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+
+/* ESTILO BASE PARA TODOS LOS BOTONES */
+.boton {
+    background-color: #334155;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    min-width: 110px;
+}
+
+/* HOVER */
+.boton:hover {
+    background-color: #475569;
+    transform: translateY(-2px);
+}
+
+/* ACTIVO */
+.boton:active {
+    transform: translateY(0);
+    background-color: #0f172a;
+}
+
+/* BOTÓN INICIAR (solo margen) */
+#btnIniciarProduccion {
+    margin-left: 10px;
+}
+
+
+/* RADIOS */
+fieldset input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    color: #334155;
+}
+
+/* Grupos */
+#mezcladores, #reactores, #recetas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Modal */
+.mi-modal,
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-contenido,
+.mi-modal-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 250px;
+    text-align: center;
+}
+
+/* TABLA */
+.producciones_en_curso {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.tabla th,
+.tabla td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla th { border-bottom: 3px solid #ccc; }
+
+.tabla tr:hover { background: #f9f9f9; }
+
+/* DESTACADOS */
+.p18_destacado,
+.ferrico_destacado,
+.M311_destacado,
+.sulfato_destacado {
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.p18_destacado { background-color: #f2c85b; }
+.ferrico_destacado { background-color: brown; }
+.sulfato_destacado { background-color: #cfe8d5; }
+.M311_destacado { color: green;}
+
+/* ICONOS */
+.icono-borrar,
+.icono-editar,
+.icono-transferir {
+    cursor: pointer;
+}
+
+#fabricaciones h2 {
+    background: #f1f5f9;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    border-left: 5px solid #2563eb;
+    margin-bottom: 20px;
+}
