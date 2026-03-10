@@ -104,7 +104,7 @@ function construirTabla(data) {
         }                
 
         if (p.Producto_id === "Ferrico" && p.Sacas === 1){            
-            console.log(">>> ENTRA EN EL IF <<<")
+            //console.log(">>> ENTRA EN EL IF <<<")
             claseMezclador = "M311_destacado";            
         }
 
