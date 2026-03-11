@@ -107,12 +107,6 @@ function obtenerDatosProducto($conexion, $producto)
         $stmt->execute();
         $sacas = $stmt->fetch(PDO::FETCH_ASSOC);
 
-/*echo json_encode([
-    "file" => __FILE__,
-    "line" => __LINE__,
-    "sacas" => $sacas
-]); exit;*/
-
         return [$mezcladores, $recetas, $sacas];
 
     }
@@ -143,8 +137,7 @@ function obtenerDatosProducto($conexion, $producto)
 
 if ($modo === "transferir" && $producto === "Sulfato") {
     $tabla = "sulfato_terminadas";
-    list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);
-    
+    list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);    
     list($reactores, $recetas, $equipos) = obtenerDatosProducto($conexion, $producto);
 
 echo json_encode([
@@ -184,35 +177,32 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
     ]); exit;
 }
 
-if (($modo === "crear" || $modo === "editar") && $producto === "Ferrico") {
+
+
+if ($modo === "transferir" && $producto === "Ferrico") {
     $tabla = "ferrico_terminadas";
-
-list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
-
-$siguienteFabricacion = ($modo === "crear")
-        ? max($ultimaAcabada, $ultimaEnCurso) + 1
-        : max($ultimaAcabada, $ultimaEnCurso) + 1;
-
-list($mezcladores, $recetas, $sacas) = obtenerDatosProducto($conexion, $producto);
+    list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);    
+    list($equipos, $recetas) = obtenerDatosProducto($conexion, $producto);
 
 /*echo json_encode([
-    "file" => __FILE__,
-    "line" => __LINE__
+    "FILE" => __FILE__,
+    "LINE" => __LINE__
 ]); exit;*/
 
 
 echo json_encode([
-        "ok" => true,
-        "modo" => $modo,
-        "producto" => $producto,
-        "mezcladores" => $mezcladores,
-        "recetas" => $recetas,        
-        "tabla" => $tabla,
-        "ultimaAcabada" => $ultimaAcabada,
-        "ultimaEnCurso" => $ultimaEnCurso,
-        "sacas" => $sacas,
-        "LINE" => __LINE__
+    "fichero" => __FILE__,
+    "producto" => $producto,
+    "modo" => $modo,
+    "ultimaAcabada" => $ultimaAcabada,
+    "ultimaEnCurso" => $ultimaEnCurso,
+    "ultimaSinFiltrar" => $ultimaSinFiltrar,
+    "reactores" => $reactores,
+    "recetas" => $recetas,
+    "equipos" => $equipos,
+    "linea" => __LINE__
 ]); exit;
+
 }
 
 
