@@ -114,7 +114,7 @@ echo json_encode([
 
 if ($modo === "transferir") {    
     list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);    
-    list($mezcladores, $recetas) = obtenerDatosProducto($conexion, $producto);
+    list($mezcladores, $recetas, $sacas) = obtenerDatosProducto($conexion, $producto);
 
 echo json_encode([
     "fichero" => __FILE__,
@@ -123,6 +123,7 @@ echo json_encode([
     "ultimaAcabada" => $ultimaAcabada,
     "ultimaEnCurso" => $ultimaEnCurso,    
     "mezcladores" => $mezcladores,
-    "recetas" => $recetas    
+    "recetas" => $recetas,
+    "sacas" => $sacas    
 ]); exit;
 }
