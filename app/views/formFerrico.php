@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="contenedor" class="contenedor">
-        <h1 id="titulo-formulario">Policloruro</h1>
+        <h1 id="titulo-formulario">Cloruro Férrico</h1>
 
         <div id="formulario">
             <div id="mezcladores">
@@ -25,7 +25,7 @@
 
                         <div id="peso-final" class ="peso-final">
                             <label for="peso_final_mezclador" class="input-label">Peso final mezclador (Kg):</label>
-                        <input type="text" id="peso_final_mezclador" name="peso_final_mezclador">
+                            <input type="text" id="peso_final_mezclador" name="peso_final_mezclador">
                         </div>                        
                     </div>
                 </fieldset>
