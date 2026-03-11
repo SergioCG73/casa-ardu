@@ -103,13 +103,9 @@ function construirTabla(data) {
             claseEspecial = "ferrico_destacado";            
         }                
 
-        if (p.Producto_id === "Ferrico" && p.Sacas === 1){            
-            //console.log(">>> ENTRA EN EL IF <<<")
+        if (p.Producto_id === "Ferrico" && p.Sacas === 1){
             claseMezclador = "M311_destacado";            
         }
-
-        //console.log("clase", claseMezclador); debugger
-
 
         return `
         <tr>
@@ -122,19 +118,34 @@ function construirTabla(data) {
             <td>${p.Reactor}</td>
             <td>${p.Receta}</td>
             <td>
-                <img src="/HTML/public/images/editar_azul_icon_20x20.png"
+                <!--<img src="/HTML/public/images/editar_azul_icon_20x20.png"
+                     class="icono-editar"
+                     data-info='${JSON.stringify(p)}'
+                     title="Editar fabricación">-->
+
+                     <img src="images/editar_azul_icon_20x20.png"
                      class="icono-editar"
                      data-info='${JSON.stringify(p)}'
                      title="Editar fabricación">
             </td>
             <td>
-                <img src="/HTML/public/images/flecha_amarilla_icon_15x20.png"
+                <!--<img src="/HTML/public/images/flecha_amarilla_icon_15x20.png"
+                     class="icono-transferir"
+                     data-info='${JSON.stringify(p)}'
+                     title="Transferir fabricación">-->
+
+                     <img src="images/flecha_amarilla_icon_15x20.png"
                      class="icono-transferir"
                      data-info='${JSON.stringify(p)}'
                      title="Transferir fabricación">
             </td>            
             <td>
-                <img src="/HTML/public/images/basura_rojo_icon_15x20.png"
+                <!--<img src="/HTML/public/images/basura_rojo_icon_15x20.png"
+                     class="icono-borrar"
+                     data-info='${JSON.stringify(p)}'
+                     title="Borrar fabricación">-->
+
+                     <img src="images/basura_rojo_icon_15x20.png"
                      class="icono-borrar"
                      data-info='${JSON.stringify(p)}'
                      title="Borrar fabricación">
@@ -155,7 +166,7 @@ function activarEventosTabla(tabla) {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datos.Producto_id === "P18") {                
                 window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datos.Producto_id === "Ferrico") {
+            } else if (datos.Producto_id === "Ferrico") {                
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             }
             
@@ -194,11 +205,12 @@ function activarEventosTabla(tabla) {
             //console.log(datosTransferir); debugger
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
-            if (datosTransferir.Producto_id === "P18"){
+            if (datosTransferir.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
-
-            } else if (datosTransferir.Producto_id === "Sulfato"){
+            } else if (datosTransferir.Producto_id === "Sulfato") {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
+            } else if (datosTransferir.Producto_id === "Ferrico") {
+                window.location.href = "index.php?c=Formulario&a=ferrico";
             }
 
             return;            
