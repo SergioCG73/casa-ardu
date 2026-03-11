@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let recetaSeleccionada;
     let numeroProduccion;
     let fechaHoraInicio;
+    let mezcladorSeleccionado;
 
     let modo = localStorage.getItem("modo");
     producto = "Ferrico";
@@ -37,8 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
-    function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo, /*datosEdicion*/) {
-
+    function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo) {
+        //console.log(listaMezcladores); debugger
         listaMezcladores.forEach(mezclador => {
             const id = "mezclador_" + mezclador.Equipo_id;
 
@@ -52,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
             input.id = id;
             input.value = mezclador.Equipo_id;
 
-            if ((modo === "editar" || modo === "transferir") && datosEdicion.Mezclador == mezclador.Equipo_id) {
+            //console.log(listaMezcladores); debugger
+
+            if (mezclador.Estado === "En uso") {
                 input.checked = true;
                 mezcladorSeleccionado = mezclador.Equipo_id;
             }
@@ -98,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         /*const objeto = Object.fromEntries(datos.entries());        
         console.log(objeto); debugger*/
 
-        return fetch("index.php?c=Leer&a=lectura", {   //Hay que quitar el método de LeerController cuando funcione
+        return fetch("index.php?c=Leer&a=leerferrico", {
             method: "POST",
             body: datos
         })
@@ -131,7 +134,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 [contenedorMezcladores, contenedorPesoFinal].forEach(c => c.innerHTML = "");
 
-                generarRadiosMezcladores(data.mezcladores, contenedorMezcladores, modo, /*datosEdicion*/);
+                //console.log(data); debugger
+
+                generarRadiosMezcladores(data.mezcladores, contenedorMezcladores, modo);
 
                 //==== RECETAS ====
                 //const contenedorRecetas = document.querySelector("#recetas fieldset");                
@@ -145,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.addEventListener("change", function (e) {
                     if (e.target.name === "mezclador") mezcladorSeleccionado = e.target.value;
                     if (e.target.name === "receta") recetaSeleccionada = e.target.value;
-                    if (e.target.name === "sacas") sacas.value = e.target.checked ? 1 : 0;                    
+                    if (e.target.name === "sacas") sacas.value = e.target.checked ? 1 : 0;
                 });                
 
                 //==== VALORES INICIALES EN EDITAR ====
@@ -238,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosEnviar.append("pesoInicialMezclador", pesoLimpio);
                     datosEnviar.append("sacas", sacas.checked ? 1 : 0);
 
-
                     fetch("index.php?c=Crear&a=fabricacionFerrico", {
                         method: "POST",
                         body: datosEnviar
@@ -264,11 +268,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
-
                 btnCrear.addEventListener("click", (e) => {
                     e.preventDefault();
                     const pesoMezcladorEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
-                    const pesoMezcladorFinal = parseInt(peso_final_mezclador.value.replace(/\./g, ""), 10);
+                    const pesoMezcladorFinal = parseInt(peso_final_mezclador.value.replace(/\./g, ""), 10);                   
 
                     const data = new FormData();
                     data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
@@ -303,6 +306,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Estamos en modo transferir...");
         datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
         //console.log(datosTransferir); debugger
+        const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
+        contenedorPesoFinal.style.display = "block";
         btnCrear.textContent = "Transferir";
 
         inicializarFormulario(modo, producto, datosTransferir)
@@ -342,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            //console.log(json); return;
+                            console.log(json); debugger
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })
