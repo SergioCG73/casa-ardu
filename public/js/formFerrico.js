@@ -132,7 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
                 const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
 
-                [contenedorMezcladores, contenedorPesoFinal].forEach(c => c.innerHTML = "");
+                //[contenedorMezcladores, contenedorPesoFinal].forEach(c => c.innerHTML = "");
+
+                contenedorMezcladores.innerHTML = "";
+
+                if (modo !== "transferir") {
+                    contenedorPesoFinal.innerHTML = "";
+                }
 
                 //console.log(data); debugger
 
@@ -151,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (e.target.name === "mezclador") mezcladorSeleccionado = e.target.value;
                     if (e.target.name === "receta") recetaSeleccionada = e.target.value;
                     if (e.target.name === "sacas") sacas.value = e.target.checked ? 1 : 0;
-                });                
+                });
 
                 //==== VALORES INICIALES EN EDITAR ====
 
@@ -271,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnCrear.addEventListener("click", (e) => {
                     e.preventDefault();
                     const pesoMezcladorEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
-                    const pesoMezcladorFinal = parseInt(peso_final_mezclador.value.replace(/\./g, ""), 10);                   
+                    const pesoMezcladorFinal = parseInt(peso_final_mezclador.value.replace(/\./g, ""), 10);
 
                     const data = new FormData();
                     data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
@@ -306,13 +312,15 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Estamos en modo transferir...");
         datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
         //console.log(datosTransferir); debugger
+        /*const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
+        contenedorPesoFinal.style.display = "block";*/
         const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
-        contenedorPesoFinal.style.display = "block";
+
         btnCrear.textContent = "Transferir";
 
         inicializarFormulario(modo, producto, datosTransferir)
             .then(() => {
-
+                contenedorPesoFinal.style.display = "block";
                 btnCrear.addEventListener("click", (e) => {
                     e.preventDefault();
 
@@ -332,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const data = new FormData();
                     data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
-                    data.append("mezcladorr", mezcladorSeleccionado);
+                    data.append("mezclador", mezcladorSeleccionado);
                     data.append("receta", recetaSeleccionada);
                     data.append("fechaHoraInicio", fechaHoraInicio);
                     data.append("fechaHoraFinal", fechaHoraFinal);
@@ -340,6 +348,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoFinalMezclador", PesoFinalEditado);
                     data.append("producto", producto);
                     data.append("modo", modo);
+
+                    /*const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger*/
 
                     fetch("index.php?c=Transferir&a=transferirFerrico", {
                         method: "POST",
