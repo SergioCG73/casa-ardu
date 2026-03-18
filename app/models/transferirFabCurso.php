@@ -5,8 +5,7 @@ header('Content-Type: application/json; charset=utf-8');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-function calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion)
-{
+function calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion) {
 
     $semana = (int)(new DateTime($fechaHoraInicio))->format("W");
 
