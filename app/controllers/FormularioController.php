@@ -2,7 +2,8 @@
 
 class FormularioController {    
     public function p18() {        
-        require_once __DIR__ . "/../views/formP18.php";
+        //require_once __DIR__ . "/../views/formP18.php";
+        require_once __DIR__ . "/../views/P18.php";
     }
 
     public function sulfato() {        
