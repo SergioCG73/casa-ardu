@@ -6,7 +6,7 @@
 
 class CrearController {
 
-    public function fabricacion() {
+    public function fabricacionP18() {
         require_once __DIR__ . "/../models/crearP18.php";
     }
 
