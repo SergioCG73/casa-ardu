@@ -1,7 +1,7 @@
 <?php
 // Este fichero recibe los datos enviados por AJAX desde formP18.js y los inserta en la tabla fabricaciones_en_curso
 
-//ob_clean();
+ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -24,14 +24,14 @@ $receta = $_POST["receta"] ?? "";
 $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
 $pesoFinalMezclador = $_POST["pesoFinalMezclador"] ?? "";
 $producto = $_POST["producto"] ?? "";
+$notas = $_POST["notas"] ?? "";
 
 // Validación
 if (empty($fechaHoraInicio) ||
     empty($numeroProduccion) ||
     empty($mezclador) ||
     empty($receta) ||
-    empty($pesoInicialMezclador) ||    
-    empty($producto)) {
+    empty($pesoInicialMezclador)) {
     echo json_encode([
         'ok' => false,
         'message' => 'Faltan datos'
@@ -42,8 +42,8 @@ if (empty($fechaHoraInicio) ||
 try {
     // INSERT
     $insertSQL = "INSERT INTO fabricaciones_en_curso
-                  (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id)
-                  VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto)";
+                  (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id, Notas)
+                  VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto, :Notas)";
 
     $insertStmt = $conexion->prepare($insertSQL);
     $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
@@ -52,6 +52,7 @@ try {
     $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
     $insertStmt->bindParam(":numeroProduccion", $numeroProduccion, PDO::PARAM_STR);
     $insertStmt->bindParam(":Producto", $producto, PDO::PARAM_STR);
+    $insertStmt->bindParam(":Notas", $notas, PDO::PARAM_STR);
     $insertStmt->execute();
 
     // UPDATE 
