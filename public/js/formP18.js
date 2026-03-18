@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const peso_final_mezclador = document.getElementById("peso_final_mezclador");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     const peso_final_reactor = document.getElementById("peso_final_reactor");
+    const txtNotas = document.getElementById("txtnotas");
 
     // ===== VARIABLES GLOBALES =====
     let datosEdicion;
@@ -236,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let reactoresDisponibles = [];
 
                 if (modo === "crear") {
-                    console.log("data", data.equipos); debugger
+                    //console.log("data", data.equipos); debugger
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
                     mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
@@ -250,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Condición original + verificación de R202
                     if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso <= 0) {
-                        console.log("Puedes crear producción"); debugger
+                        //console.log("Puedes crear producción"); debugger
                     } else {
                         alert("No se puede crear producción con los equipos disponibles"); debugger
                         window.location.href = "index.php?c=Home&a=home";
@@ -324,6 +325,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
                 if (!recetaSeleccionada) return alert("Selecciona una receta");
 
+                const valNotas = txtNotas.value;
+
                 const ahora = new Date();
                 const fechaHoraInicio = ahora.getFullYear() + "-" +
                     String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
@@ -341,11 +344,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
                 datosEnviar.append("producto", producto);
                 datosEnviar.append("modo", modo);
+                datosEnviar.append("notas", valNotas);
 
                 /*const objeto = Object.fromEntries(datosEnviar.entries()); 
                 console.log("objeto", objeto); return; */
                 
-                fetch("index.php?c=Crear&a=fabricacion", { method: "POST", body: datosEnviar })
+                fetch("index.php?c=Crear&a=fabricacionP18", { method: "POST", body: datosEnviar })
                     .then(res => res.json())
                     .then(json => {
                         console.log(json);
