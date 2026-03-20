@@ -2,14 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== ELEMENTOS DEL DOM =====
     const btnRetroceder = document.getElementById("btnRetroceder");
     const btnCrear = document.getElementById("btnCrear");
-    const displayProduccion = document.getElementById("displayProduccion");
-    const contenedorMezcladores = document.querySelector("#mezcladores fieldset");
-    const contenedorPesoFinalMezclador = document.getElementById("peso_final_mezcla");
-    const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
-    const peso_final_mezclador = document.getElementById("peso_final_mezclador");
-    const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
-    const peso_final_reactor = document.getElementById("peso_final_reactor");
-    const txtNotas = document.getElementById("txtnotas");
+    //const displayProduccion = document.getElementById("displayProduccion");   //<p>
+    const parDisplayProduccion = document.getElementById("displayProduccion");
+    //const contenedorMezcladores = document.querySelector("#mezcladores fieldset"); //<div> //no tengo claro que se utilice en ninguna parte del código
+    //const contenedorPesoFinalMezclador = document.getElementById("peso_final_mezcla"); //No captura nada del HTML
+    const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador"); //<input>  9/283/296/306/327/345/421/430/568
+    const peso_final_mezclador = document.getElementById("peso_final_mezclador"); //<input>
+    const peso_inicial_reactor = document.getElementById("peso_inicial_reactor"); //<input>
+    const peso_final_reactor = document.getElementById("peso_final_reactor"); //<input>
+    const txtNotas = document.getElementById("txtnotas"); //<textarea>
 
     // ===== VARIABLES GLOBALES =====
     let datosEdicion;
@@ -189,9 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function inicializarFormulario(modo, producto, datosEdicion = null) {
-        
-        const formData = new FormData();
-
+        const formData = new FormData();        
         switch (modo) {
             case "crear":
                 formData.append("producto", producto);
@@ -208,10 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         /*console.log(modo);
         console.log(datosTransferencia.Producto_id);
-        console.log(datosTransferencia);
-        console.log(datosEdicion); debugger*/
-
+        console.log(datosTransferencia);*/
+        //console.log(datosEdicion); debugger
+        
         formData.append("modo", modo);
+        formData.append("numeroProduccion", datosEdicion.NumeroFabricacion)            ;
 
         /*const objeto = Object.fromEntries(formData.entries());
         console.log(objeto);  debugger */
@@ -225,7 +225,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
 
-                displayProduccion.textContent = numeroProduccion;
+                //displayProduccion.textContent = numeroProduccion;
+                parDisplayProduccion.textContent = numeroProduccion;
                 numeroProduccionActual = numeroProduccion;
 
                 if (modo === "crear") {
@@ -268,13 +269,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 generarRadiosMezcladores(data.equipos, datosEdicion, modo);
                 //console.log(datosEdicion.PesoFinalMezclador);
-
                 const reactoresFiltrados = data.reactores.filter(r => r.Estado !== "Averiado");
                 generarRadiosReactores(reactoresFiltrados, datosEdicion);
-
                 generarRadiosRecetas(data.recetas, datosEdicion, modo);
 
-
+                console.log(datosEdicion); debugger
                 // Rellenar pesos si hay datos de edición
                 if (datosEdicion) {
                     if (datosEdicion.PesoInicialMezclador !== undefined)
@@ -291,11 +290,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         peso_final_reactor.value = datosEdicion.PesoFinalReactor;
                     }
 
+                    if (datosEdicion.Notas !== undefined || datosEdicion !== null) {
+                        txtNotas.textContent = datosEdicion.Notas;
+                    }                    
+
                     formatearNumero(peso_inicial_mezclador);
                     formatearNumero(peso_final_mezclador);
                     formatearNumero(peso_inicial_reactor);
                     formatearNumero(peso_final_reactor);
-                }
+                }    
 
                 return data;
             });
