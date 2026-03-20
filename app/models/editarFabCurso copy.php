@@ -22,7 +22,6 @@ $producto             = $_POST["producto"] ?? null;
 $modo                 = $_POST["modo"] ?? null;
 $pesoFinalReactor     = $_POST["pesoFinalReactor"] ?? null;
 $sacas                = $_POST["sacas"] ?? null;
-$notas                = $_POST["notas"] ?? null;
 
 if (!$numeroProduccion) {
     echo json_encode(["ok" => false, "error" => "Falta numeroProduccion"]);
@@ -81,8 +80,7 @@ if ($reactorNuevo === null) {
                 PesoFinalMezclador = :pmf,
                 PesoInicialReactor = :pr,
                 PesoFinalReactor = :prf,
-                Sacas =:sacas,
-                Notas =:notas
+                Sacas =:sacas
             WHERE NumeroFabricacion = :num
         ");
 
@@ -95,8 +93,7 @@ if ($reactorNuevo === null) {
             ":pr" => $pesoInicialReactor,
             ":prf" => $pesoFinalReactor,
             ":num" => $numeroProduccion,
-            ":sacas" => $sacas,
-            ":notas" => $notas
+            ":sacas" => $sacas
         ]);
 
         $pdo->commit();
@@ -178,8 +175,7 @@ try {
             PesoFinalMezclador = :pmf,
             PesoInicialReactor = :pr,
             PesoFinalReactor = :prf,
-            Sacas = :sacas,
-            Notas = :notas
+            Sacas = :sacas
         WHERE NumeroFabricacion = :num
     ");
 
@@ -192,8 +188,7 @@ try {
         ":pr" => $pesoInicialReactor,
         ":prf" => $pesoFinalReactor,
         ":num" => $numeroProduccion,
-        ":sacas" => $sacas,
-        ":notas" => $notas
+        ":sacas" => $sacas
     ]);
 
     $pdo->commit();

@@ -272,8 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const reactoresFiltrados = data.reactores.filter(r => r.Estado !== "Averiado");
                 generarRadiosReactores(reactoresFiltrados, datosEdicion);
                 generarRadiosRecetas(data.recetas, datosEdicion, modo);
-
-                console.log(datosEdicion); debugger
+                
                 // Rellenar pesos si hay datos de edición
                 if (datosEdicion) {
                     if (datosEdicion.PesoInicialMezclador !== undefined)
@@ -422,6 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
                         data.append("producto", producto);
                         data.append("modo", modo);
+                        data.append("notas", txtNotas.value);
 
                     } else if (datosEdicion.Reactor != "") {
 
@@ -434,12 +434,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         data.append("pesoInicialReactor", peso_inicial_reactor.value.replace(/\./g, ""));
                         data.append("producto", producto);
                         data.append("modo", modo);
+                        data.append("notas", txtNotas.value);
+                    }
 
                         /*const objeto = Object.fromEntries(data.entries());
                         console.log("datosEdicion", datosEdicion);
                         console.log("reactorSeleccionado 526: ", reactorSeleccionado);
-                        console.log(objeto); debugger ///ERROR en el reactor*/
-                    }
+                        console.log(objeto); debugger */
 
                     fetch("index.php?c=Editar&a=fabCurso", { method: "POST", body: data })
                         .then(res => res.json())
