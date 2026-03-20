@@ -48,23 +48,23 @@ function cargarProducciones(tabla, divProducciones) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
     })
-    .then(response => response.json())
-    .then(data => { //console.log(data); debugger
-        if (!data.ok) return;
-        tabla.innerHTML = generarEncabezado() + construirTabla(data);
-        activarEventosTabla(tabla);        
+        .then(response => response.json())
+        .then(data => { //console.log(data); debugger
+            if (!data.ok) return;
+            tabla.innerHTML = generarEncabezado() + construirTabla(data);
+            activarEventosTabla(tabla);
 
-        divProducciones.style.display = "block";
+            divProducciones.style.display = "block";
 
-        if (data.producciones_sin_filtrar === 0) {
-            displayM216.style.display = "none";
-        } else {
-            displayM216.style.display = "block";
-            const textM216 = document.getElementById("label_m216");
-            textM216.innerHTML = data.producciones_sin_filtrar;
-        }        
-    })
-    .catch(err => console.error("Error cargando producciones:", err));
+            if (data.producciones_sin_filtrar === 0) {
+                displayM216.style.display = "none";
+            } else {
+                displayM216.style.display = "block";
+                const textM216 = document.getElementById("label_m216");
+                textM216.innerHTML = data.producciones_sin_filtrar;
+            }
+        })
+        .catch(err => console.error("Error cargando producciones:", err));
 }
 
 /* ============================================================
@@ -79,6 +79,7 @@ function generarEncabezado() {
             <th>Mezclador</th>
             <th>Reactor</th>
             <th>Receta</th>
+            <th>Notas</th>            
             <th></th>
             <th></th>
             <th></th>
@@ -90,22 +91,34 @@ function construirTabla(data) {
         //Determinamos la clase según el Producto_id
         let claseEspecial = "";
         let claseMezclador = "";
-        if (p.Producto_id === 'P18') {            
+        if (p.Producto_id === 'P18') {
             claseEspecial = "p18_destacado";
         }
         else if (p.Producto_id === 'PP18') {
             claseEspecial = "papilla_destacado";
         }
-        else if (p.Producto_id === "Sulfato") {            
+        else if (p.Producto_id === "Sulfato") {
             claseEspecial = "sulfato_destacado";
         }
         else if (p.Producto_id === "Ferrico") {
-            claseEspecial = "ferrico_destacado";            
-        }                
-
-        if (p.Producto_id === "Ferrico" && p.Sacas === 1){
-            claseMezclador = "M311_destacado";            
+            claseEspecial = "ferrico_destacado";
         }
+
+        if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
+            claseMezclador = "M311_destacado";
+        }
+
+        if (p.Notas !== "") {
+            td = `<td>
+                      <img src="images/nota_amarillo_icon_20x20.png"
+                      class="icono-nota"
+                      data-info='${JSON.stringify(p)}'
+                      title="Nota fabricación">
+                  </td>`
+        } else {
+            td = `<td></td>`
+        }
+
 
         return `
         <tr>
@@ -116,35 +129,27 @@ function construirTabla(data) {
             <td>${p.FechaInicio}</td>            
             <td class="${claseMezclador}">${p.Mezclador}</td>
             <td>${p.Reactor}</td>
-            <td>${p.Receta}</td>
-            <td>
-                <!--<img src="/HTML/public/images/editar_azul_icon_20x20.png"
-                     class="icono-editar"
+            <td>${p.Receta}</td>            
+            <!--<td>
+                <img src="images/nota_amarillo_icon_20x20.png"
+                     class="icono-nota"
                      data-info='${JSON.stringify(p)}'
-                     title="Editar fabricación">-->
-
+                     title="Nota fabricación">
+            </td>-->
+                ${td}
+            <td>
                      <img src="images/editar_azul_icon_20x20.png"
                      class="icono-editar"
                      data-info='${JSON.stringify(p)}'
                      title="Editar fabricación">
             </td>
             <td>
-                <!--<img src="/HTML/public/images/flecha_amarilla_icon_15x20.png"
-                     class="icono-transferir"
-                     data-info='${JSON.stringify(p)}'
-                     title="Transferir fabricación">-->
-
                      <img src="images/flecha_amarilla_icon_15x20.png"
                      class="icono-transferir"
                      data-info='${JSON.stringify(p)}'
                      title="Transferir fabricación">
             </td>            
             <td>
-                <!--<img src="/HTML/public/images/basura_rojo_icon_15x20.png"
-                     class="icono-borrar"
-                     data-info='${JSON.stringify(p)}'
-                     title="Borrar fabricación">-->
-
                      <img src="images/basura_rojo_icon_15x20.png"
                      class="icono-borrar"
                      data-info='${JSON.stringify(p)}'
@@ -157,16 +162,16 @@ function construirTabla(data) {
 
 function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
-        const iconoEditar = e.target.closest(".icono-editar");
+        const iconoEditar = e.target.closest(".icono-editar, .icono-nota");
         if (iconoEditar) {
             const datos = JSON.parse(iconoEditar.dataset.info);
             localStorage.setItem("datosEditables", JSON.stringify(datos));
-            localStorage.setItem("modo", "editar");            
-            if (datos.Producto_id === "Sulfato") {                
+            localStorage.setItem("modo", "editar");
+            if (datos.Producto_id === "Sulfato") {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
-            } else if (datos.Producto_id === "P18") {                
+            } else if (datos.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datos.Producto_id === "Ferrico") {                
+            } else if (datos.Producto_id === "Ferrico") {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             }
             
@@ -175,25 +180,25 @@ function activarEventosTabla(tabla) {
 
         const iconoBorrar = e.target.closest(".icono-borrar");
         if (iconoBorrar) {
-            if(confirm("¿Estás seguro de que deseas eliminar esta producción?")) {
+            if (confirm("¿Estás seguro de que deseas eliminar esta producción?")) {
                 const datos = JSON.parse(iconoBorrar.dataset.info);
                 localStorage.setItem("datosBorrables", JSON.stringify(datos));
                 localStorage.setItem("modo", "borrar");
                 
                 fetch("index.php?c=Borrar&a=borrarFabricacion", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(datos)
-            })
-            .then(response => response.json())
-            .then(json => { //console.log(json); debugger
-                if(json.ok) {
-                    alert("Producción eliminada correctamente");
-                    window.location.href = "index.php";
-                } else alert("ERROR: " + json.error);
-            })
-            .catch(error => console.log("ERROR", error));                
-            
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(datos)
+                })
+                    .then(response => response.json())
+                    .then(json => { //console.log(json); debugger
+                        if (json.ok) {
+                            alert("Producción eliminada correctamente");
+                            window.location.href = "index.php";
+                        } else alert("ERROR: " + json.error);
+                    })
+                    .catch(error => console.log("ERROR", error));
+
             } else {
                 console.log("Eliminación cancelada");
             }
@@ -203,7 +208,7 @@ function activarEventosTabla(tabla) {
         if (iconoTransferir) {            
             const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
             //console.log(datosTransferir); debugger
-            localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
+            localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
             localStorage.setItem("modo", "transferir");
             if (datosTransferir.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
