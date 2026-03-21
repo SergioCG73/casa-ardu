@@ -211,7 +211,10 @@ document.addEventListener("DOMContentLoaded", () => {
         //console.log(datosEdicion); debugger
         
         formData.append("modo", modo);
-        formData.append("numeroProduccion", datosEdicion.NumeroFabricacion)            ;
+
+        if (modo !="crear") {
+            formData.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+        }        
 
         /*const objeto = Object.fromEntries(formData.entries());
         console.log(objeto);  debugger */
@@ -459,11 +462,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //console.log(datosTransferencia); debugger
         if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "") {
             console.log("Modo transferencia M a R...");
+            //console.log(datosTransferencia); debugger
             btnCrear.textContent = "Transferir ";            
 
             // Creamos el formulario y ESPERAMOS a que termine
-            inicializarFormulario(modo, producto, datosTransferencia) //Llama a la línea 109
-                .then(() => {
+            inicializarFormulario(modo, producto, datosTransferencia) 
+                .then(() => {                    
                     const inputPesoFinalMezclador = document.querySelector("#peso_final_mezclador");
                     const inputPesoInicialReactor = document.querySelector("#peso_inicial_reactor");
                     const inputPesoFinalReactor = document.querySelector("#peso_final_reactor");
@@ -493,9 +497,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             String(ahora.getDate()).padStart(2, '0') + " " +
                             String(ahora.getHours()).padStart(2, '0') + ":" +
                             String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                            String(ahora.getSeconds()).padStart(2, '0');
+                            String(ahora.getSeconds()).padStart(2, '0');                        
 
-                        //console.log(horaTransferenciaMezcladoraReactor); debugger
+                        const valNotas = txtNotas.value;
+                        //console.log(valNotas); debugger
 
                         const datosTransferenciaMezcladoraReactor = new FormData();
                         datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);
@@ -506,6 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         datosTransferenciaMezcladoraReactor.append("pesoInicialReactor", pesoR);
                         datosTransferenciaMezcladoraReactor.append("producto", datosTransferencia.Producto_id);
                         datosTransferenciaMezcladoraReactor.append("reactor", reactorSeleccionado);
+                        datosTransferenciaMezcladoraReactor.append("notas", valNotas);
 
                         /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
                         console.log(objeto); debugger*/
@@ -557,7 +563,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
                         String(ahora.getSeconds()).padStart(2, '0');
 
-                    //console.log(datosEdicion); debugger                    
+                    //console.log(datosEdicion); debugger
+                    const valNotas = txtNotas.value;
                     const datosTransferenciaFinal = new FormData();
                     
                     datosTransferenciaFinal.append("fechaHoraInicio", datosTransferencia.FechaInicio);
@@ -573,9 +580,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosTransferenciaFinal.append("modo", modo);
                     datosTransferenciaFinal.append("reactor", reactorSeleccionado);
                     datosTransferenciaFinal.append("receta", recetaSeleccionada);
+                    datosTransferenciaFinal.append("notas", valNotas);
 
-                    /*const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
-                    console.log(objeto); debugger*/
+                    const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
+                    console.log(objeto); debugger
 
                     fetch("index.php?c=Transferir&a=reactorAM216", {
                         method: "POST",

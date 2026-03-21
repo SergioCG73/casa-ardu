@@ -3,7 +3,7 @@
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 
 function calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion) {
 
@@ -72,6 +72,7 @@ $producto                   = $_POST["producto"] ?? null;
 $modo                       = $_POST["modo"] ?? null;
 $fechaInicioReaccion        = $_POST["fechaInicioReaccion"] ?? null;
 $fechaHoraFinal             = $_POST["fechaHoraFinal"] ?? null;
+$notas                      = $_POST["notas"] ?? null;
 
 if (!$numeroProduccion) {
     echo json_encode([
@@ -92,7 +93,8 @@ if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {    //
             FechaInicioReaccion = :horaInicioReaccion,
             PesoFinalMezclador = :pesoMF,
             Reactor = :reactor,
-            PesoInicialReactor = :pesoR
+            PesoInicialReactor = :pesoR,
+            Notas = :notas
         WHERE NumeroFabricacion = :numerofabricacion");
 
     $sqlUpdate->execute([
@@ -101,6 +103,7 @@ if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {    //
         ':reactor'            => $reactorNuevo,
         ':pesoR'              => $pesoR,
         ':numerofabricacion'  => $numeroProduccion,
+        ':notas'              => $notas
     ]);
 
     // Mezclador → Vacío
@@ -129,6 +132,7 @@ if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {    //
         "receta" => $receta,
         "numeroProduccion" => $numeroProduccion,
         "producto" => $producto,
+        "notas" => $notas,
         "mensaje" => "Transferencia Mezclador a Reactor"
     ]);
     exit;
@@ -172,8 +176,7 @@ if ($producto === "Ferrico") {
 
     /*echo json_encode([
         "semana" => $semana,
-        "tipo" => gettype($semana)]); exit;*/
-    
+        "tipo" => gettype($semana)]); exit;*/    
 
     $columnas = [
         "NumeroFabricacion",
@@ -217,8 +220,6 @@ if ($producto === "Ferrico") {
     ]);
 }
 
-
-//if ($modo === "transferir" && ($producto === "P18" || $producto === "Sulfato") && $pesoRF != "") {
 if ($modo === "transferir" && $pesoRF != "") {
     //echo json_encode (["producto" => __LINE__]); exit;
 
@@ -237,47 +238,22 @@ if ($modo === "transferir" && $pesoRF != "") {
     }
 
     $tiempos = calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion);
-
-    /*
-    // Semana
-    $semana = (int)(new DateTime($fechaHoraInicio))->format("W");
-
-    // Duración
-    $inicio = new DateTime($fechaHoraInicio);
-    $final  = new DateTime($fechaHoraFinal);
-    $segundosTotales = $final->getTimestamp() - $inicio->getTimestamp();
-
-    // Tiempo parado
-    $numeroPrevio = $numeroProduccion - 1;
-
-    $sqlStoped = $pdo->prepare("SELECT Hora_Finalizacion 
-                                FROM $tabla
-                                WHERE NumeroFabricacion = :num");
-    //$sqlStoped->execute(['num' => $numeroPrevio]);
-    $Stoped = $sqlStoped->fetchColumn();
-
-    if ($Stoped) {
-        $HoraPrevia = new DateTime($Stoped);
-        $segundosDesdePrevio = $inicio->getTimestamp() - $HoraPrevia->getTimestamp();
-        $HoraPreviaStr = $HoraPrevia->format("Y-m-d H:i:s");
-    } else {
-        $segundosDesdePrevio = null;
-        $HoraPreviaStr = null;
-    }
-*/
+   
     // Actualizar fabricación en curso
     $sqlUpdate = $pdo->prepare("
         UPDATE fabricaciones_en_curso
         SET 
             FechaFinal = :horafinal,
-            PesoFinalReactor = :pesofinal        
+            PesoFinalReactor = :pesofinal,
+            Notas = :notas
         WHERE NumeroFabricacion = :numerofabricacion
     ");
 
     $sqlUpdate->execute([
         ':horafinal'         => $fechaHoraFinal,
         ':pesofinal'         => $pesoRF,
-        ':numerofabricacion' => $numeroProduccion
+        ':numerofabricacion' => $numeroProduccion,
+        ':notas'             => $notas
     ]);
 
     // Insertar en mezclador_216
@@ -292,7 +268,7 @@ if ($modo === "transferir" && $pesoRF != "") {
 
     // Reactor → Vacío
     $sqlUpdate = $pdo->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
-    $sqlUpdate->execute([":reactor" => $reactorNuevo]);
+    $sqlUpdate->execute([":reactor" => $reactorNuevo]);    
 
     // Definir columnas y parámetros según el producto
     if ($producto === "P18") {
@@ -329,7 +305,7 @@ if ($modo === "transferir" && $pesoRF != "") {
             ":reactor"  => $reactorNuevo,
             ":receta"   => $receta,
             ":parado"   => $segundosDesdePrevio,
-            ":notas"    => null
+            ":notas"    => $notas
         ];
     } elseif ($producto === "Sulfato") {
         $columnas = [
@@ -357,7 +333,7 @@ if ($modo === "transferir" && $pesoRF != "") {
             ":duracion" => $segundosTotales,
             ":reactor"  => $reactorNuevo,
             ":parado"   => $segundosDesdePrevio,
-            ":notas"    => null
+            ":notas"    => $notas
         ];
     }
 
@@ -367,10 +343,9 @@ if ($modo === "transferir" && $pesoRF != "") {
 
     $sqlInsert = $pdo->prepare("
     INSERT INTO $tabla ($listaColumnas)
-    VALUES ($listaMarcadores)
-");
+    VALUES ($listaMarcadores)");
 
-    $sqlInsert->execute($valores);
+    $sqlInsert->execute($valores); 
 
     if ($producto === "P18") {
         echo json_encode([
@@ -392,7 +367,8 @@ if ($modo === "transferir" && $pesoRF != "") {
             "parado" => $segundosDesdePrevio,
             "receta" => $receta,
             "tabla" => $tabla,
-            "HoraPrevia" => $HoraPreviaStr
+            "HoraPrevia" => $HoraPreviaStr,
+            "Notas" => $notas
         ]);
         exit;
     } else if ($producto === "Sulfato") {
@@ -412,7 +388,8 @@ if ($modo === "transferir" && $pesoRF != "") {
             "parado" => $segundosDesdePrevio,
             "receta" => $receta,
             "tabla" => $tabla,
-            "HoraPrevia" => $HoraPreviaStr
+            "HoraPrevia" => $HoraPreviaStr,
+            "Notas" => $notas
         ]);
-    }
+    } 
 }
