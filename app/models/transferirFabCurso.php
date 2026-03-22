@@ -2,16 +2,11 @@
 
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
-error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
-function calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion) {
-
+function calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion)
+{
     $semana = (int)(new DateTime($fechaHoraInicio))->format("W");
-
-    /*echo json_encode ([
-        "SEMANA" => $semana
-    ]); exit;*/
 
     if ($tabla !== "ferrico_terminadas") {
         $inicio = new DateTime($fechaHoraInicio);
@@ -82,9 +77,7 @@ if (!$numeroProduccion) {
     exit;
 }
 
-if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {    //Mezclador a Reactor
-
-    //echo json_encode(["producto" => __LINE__]); exit;    
+if ($modo === "transferir" && ($producto === "P18") && $pesoRF === null) {    //Mezclador a Reactor    
 
     // Actualizar tabla fabricaciones_en_curso
     $sqlUpdate = $pdo->prepare("
@@ -142,7 +135,7 @@ if ($producto === "Ferrico") {
     /*echo json_encode(["producto" => __LINE__]);
     exit;*/
     $tabla = "ferrico_terminadas";
-    $semana = calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion);    
+    $semana = calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion);
 
     $sqlUpdate = $pdo->prepare("
         UPDATE fabricaciones_en_curso
@@ -167,16 +160,11 @@ if ($producto === "Ferrico") {
         UPDATE equipos
         SET Estado = 'Vacio'
         WHERE Equipo_id = :mezclador");
-    $sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);    
+    $sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);
 
 
-    $fecha = date("Y-m-d", strtotime($fechaHoraInicio));   
-    $semana = (string)$semana["semana"];
-    //$tipo = gettype($semana);
-
-    /*echo json_encode([
-        "semana" => $semana,
-        "tipo" => gettype($semana)]); exit;*/    
+    $fecha = date("Y-m-d", strtotime($fechaHoraInicio));
+    $semana = (string)$semana["semana"];    
 
     $columnas = [
         "NumeroFabricacion",
@@ -185,7 +173,7 @@ if ($producto === "Ferrico") {
         "Volumen_Inicial",
         "Volumen_Final"
     ];
-    
+
     $valores = [
         ":NumeroFabricacion" => $numeroProduccion,
         ":Semana"            => $semana,
@@ -195,17 +183,13 @@ if ($producto === "Ferrico") {
     ];
 
     $listaColumnas = implode(", ", $columnas);
-    $listaMarcadores = implode(", ", array_keys($valores));
-
-   /* echo json_encode ([
-        "semana" => $semana,
-        "fecha" => $fecha]); exit;*/
+    $listaMarcadores = implode(", ", array_keys($valores));    
 
     $sqlInsert = $pdo->prepare("
     INSERT INTO $tabla ($listaColumnas)
-    VALUES ($listaMarcadores)"); 
+    VALUES ($listaMarcadores)");
 
-    $sqlInsert->execute($valores);    
+    $sqlInsert->execute($valores);
 
     echo json_encode([
         "ok" => true,
@@ -221,8 +205,6 @@ if ($producto === "Ferrico") {
 }
 
 if ($modo === "transferir" && $pesoRF != "") {
-    //echo json_encode (["producto" => __LINE__]); exit;
-
     switch ($producto) {
         case "P18":
             $tabla = "p18_terminadas";
@@ -238,7 +220,12 @@ if ($modo === "transferir" && $pesoRF != "") {
     }
 
     $tiempos = calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion);
-   
+
+    $segundosTotales     = $tiempos["duracion"];
+    $segundosDesdePrevio = $tiempos["tiempoParado"];
+    $semana              = $tiempos["semana"];
+    $HoraPreviaStr       = $tiempos["horaPrevio"];
+
     // Actualizar fabricación en curso
     $sqlUpdate = $pdo->prepare("
         UPDATE fabricaciones_en_curso
@@ -254,7 +241,7 @@ if ($modo === "transferir" && $pesoRF != "") {
         ':pesofinal'         => $pesoRF,
         ':numerofabricacion' => $numeroProduccion,
         ':notas'             => $notas
-    ]);
+    ]);    
 
     // Insertar en mezclador_216
     if ($producto === "P18") {
@@ -308,45 +295,46 @@ if ($modo === "transferir" && $pesoRF != "") {
             ":notas"    => $notas
         ];
     } elseif ($producto === "Sulfato") {
+
         $columnas = [
             "Hora_Inicio",
-            "Hora_Finalizacion",
+            "Hora_Finalizacion",            
             "Receta",
             "Semana",
-            "NumeroFabricacion",
+            "NumeroFabricacion",            
             "Peso_Inicial",
             "Peso_Final",
             "Duracion",
-            "Reactor",
+            "Reactor",            
             "Tiempo_Parado",
             "Notas"
         ];
 
         $valores = [
-            ":hi"       => $fechaHoraInicio,
-            ":hf"       => $fechaHoraFinal,
-            ":receta"   => $receta,
-            ":semana"   => $semana,
-            ":nf"       => $numeroProduccion,
-            ":pR"       => $pesoR,
-            ":pRF"      => $pesoRF,
-            ":duracion" => $segundosTotales,
-            ":reactor"  => $reactorNuevo,
-            ":parado"   => $segundosDesdePrevio,
-            ":notas"    => $notas
+            ":hi"        => $fechaHoraInicio,
+            ":hf"        => $fechaHoraFinal,
+            ":receta"    => $receta,
+            ":semana"    => $semana,
+            ":nf"        => $numeroProduccion,                        
+            ":pR"        => $pesoR,
+            ":pRF"       => $pesoRF,
+            ":duracion"  => $segundosTotales,
+            ":reactor"   => $reactorNuevo,            
+            ":parado"    => $segundosDesdePrevio,
+            ":notas"     => $notas
         ];
-    }
+    }    
 
     // Construir SQL automáticamente
     $listaColumnas = implode(", ", $columnas);
     $listaMarcadores = implode(", ", array_keys($valores));
 
     $sqlInsert = $pdo->prepare("
-    INSERT INTO $tabla ($listaColumnas)
-    VALUES ($listaMarcadores)");
+        INSERT INTO $tabla ($listaColumnas)
+        VALUES ($listaMarcadores)");
 
     $sqlInsert->execute($valores); 
-
+    
     if ($producto === "P18") {
         echo json_encode([
             "ok" => true,
@@ -375,21 +363,28 @@ if ($modo === "transferir" && $pesoRF != "") {
         echo json_encode([
             "ok" => true,
             "mensaje" => "transferencia Sulfato",
+            // Datos principales
             "numeroProduccion" => $numeroProduccion,
             "producto" => $producto,
             "modo" => $modo,
+            // Fechas y tiempos
             "fechaInicio" => $fechaHoraInicio,
-            "fechaHoraFinal" => $fechaHoraFinal,
-            "pesoInicialReactor" => $pesoR,
-            "pesoFinalReactor" => $pesoRF,
-            "reactor" => $reactorNuevo,
+            "fechaHoraFinal" => $fechaHoraFinal,            
             "semana" => $semana,
             "duracion" => $segundosTotales,
             "parado" => $segundosDesdePrevio,
+            "horaPrevia" => $HoraPreviaStr,
+            // Pesos            
+            "pesoReactorInicial" => $pesoR,
+            "pesoReactorFinal" => $pesoRF,
+            // Equipos            
+            "reactor" => $reactorNuevo,
+            // Proceso
             "receta" => $receta,
             "tabla" => $tabla,
-            "HoraPrevia" => $HoraPreviaStr,
-            "Notas" => $notas
+            // Notas
+            "notas" => $notas
         ]);
-    } 
+        exit;
+    }        
 }

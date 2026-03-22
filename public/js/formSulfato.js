@@ -6,11 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const divReactores = document.getElementById("reactores");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     const peso_final_reactor = document.getElementById("peso_final_reactor");
+    const txtNotas = document.getElementById("txtnotas"); //<textarea>    
 
     let reactorSeleccionado;
     let recetaSeleccionada;
     let numeroProduccion;
     let fechaHoraInicio;
+    let valNotas = null;
 
     let modo = localStorage.getItem("modo");
     producto = "Sulfato";
@@ -96,17 +98,21 @@ document.addEventListener("DOMContentLoaded", () => {
     function inicializarFormulario(modo, producto, datosEdicion = null) {        
         const datos = new FormData();
         datos.append("modo", modo);
-        datos.append("producto", producto);        
+        datos.append("producto", producto);
 
-        /*const objeto = Object.fromEntries(datos.entries());
-        console.log(objeto); debugger*/
+        if (modo !="crear") {
+            datos.append("numeroProduccion", datosEdicion.NumeroFabricacion);
+        }
+
+       /*const objeto = Object.fromEntries(datos.entries());
+       console.log(objeto); debugger*/
 
         return fetch("index.php?c=Leer&a=lectura", {   //Hay que quitar el método de LeerController cuando funcione
             method: "POST",
             body: datos
         })
             .then(response => response.json())
-            .then(data => {
+            .then(data => { //console.log (data); debugger
                 numeroProduccion = (modo === "editar" || modo === "transferir")
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
@@ -114,10 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 displayProduccion.textContent = numeroProduccion;
                 numeroProduccionActual = numeroProduccion;
 
+                //console.log(data); 
                 //console.log(numeroProduccion); debugger            
 
                 //==== REACTORES ====
-                const contenedorReactores = document.querySelector("#reactores fieldset");                
+                const contenedorReactores = document.querySelector("#reactores fieldset");
 
                 //console.log(data.equipos); debugger
                 //console.log(datosEdicion); debugger
@@ -136,20 +143,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 //==== VALORES INICIALES EN EDITAR ====
-
-                //console.log("datosEdicion", datosEdicion);
-                //console.log("datosTransferir", datosTransferir); debugger
-
+                //console.log(datosEdicion.Notas); debugger
                 if (modo === "editar" && datosEdicion) {
                     peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
+                    txtNotas.textContent = datosEdicion.Notas;
                     formatearNumero(peso_inicial_reactor);
                 }
 
                 if (modo === "transferir" && datosTransferir) {
-                    peso_inicial_reactor.value = datosTransferir.PesoInicialReactor; // ✔️ CORRECTO
+                    peso_inicial_reactor.value = datosTransferir.PesoInicialReactor;
+                    txtNotas.textContent = datosEdicion.Notas;
                     formatearNumero(peso_inicial_reactor);
-                }
-
+                }                
+                
                 return data;
             });
     }
@@ -226,12 +232,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const pesoLimpio = peso_inicial_reactor.value.replace(/\./g, "");
 
+                    valNotas = txtNotas.value;
+
                     const datosEnviar = new FormData();
                     datosEnviar.append("numeroProduccion", numeroProduccion);
                     datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
                     datosEnviar.append("reactor", reactorSeleccionado);
                     datosEnviar.append("receta", recetaMarcada.value);
                     datosEnviar.append("pesoInicialReactor", pesoLimpio);
+                    datosEnviar.append("notas", valNotas);
+
+                    /*const objeto = Object.fromEntries(datosEnviar.entries());
+                    console.log(objeto); debugger*/
 
                     fetch("index.php?c=Crear&a=fabricacionSulfato", {
                         method: "POST",
@@ -272,6 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoFinalReactor", pesoReactorFinal);
                     data.append("producto", producto);
                     data.append("modo", modo);
+                    data.append("notas", txtNotas.value);
 
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/
@@ -327,7 +340,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoInicialReactor", PesoInicialEditado);
                     data.append("pesoFinalReactor", PesoFinalEditado);
                     data.append("producto", producto);
+                    data.append("notas", txtNotas.value);
                     data.append("modo", modo);
+
+                    /*const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger*/
                     
                     fetch("index.php?c=Transferir&a=transferirSulfato", {
                         method: "POST",
@@ -335,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            //console.log(json); debugger;
+                            console.log(json); debugger;
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })

@@ -111,6 +111,8 @@ function obtenerDatosProducto($conexion, $producto)
 
     }
     else {
+        $numeroProduccion = $_POST["numeroProduccion"] ?? null;
+
         $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";    
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
@@ -131,7 +133,21 @@ function obtenerDatosProducto($conexion, $producto)
         $stmt->execute();
         $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return [$equipos, $recetas, $reactores];
+        //Notas
+        $sql = "SELECT Notas FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":nf", $numeroProduccion);
+        $stmt->execute();
+        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        /*echo json_encode([
+            "LINE" => __LINE__,
+            "numeroProduccion" => $numeroProduccion,
+            "notas" => $notas
+            ]); exit;*/
+
+
+        return [$equipos, $recetas, $reactores, $notas];
     }    
 }
 

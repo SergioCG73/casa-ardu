@@ -7,7 +7,8 @@ class FormularioController {
     }
 
     public function sulfato() {        
-        require_once __DIR__ . "/../views/formSulfato.php";
+        //require_once __DIR__ . "/../views/formSulfato.php";
+        require_once __DIR__ . "/../views/viewSulfato.php";
     }
 
     public function ferrico() {        

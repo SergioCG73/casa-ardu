@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (modo !="crear") {
             formData.append("numeroProduccion", datosEdicion.NumeroFabricacion);
-        }        
+        }
 
         /*const objeto = Object.fromEntries(formData.entries());
         console.log(objeto);  debugger */
