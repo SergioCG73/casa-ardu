@@ -17,6 +17,6 @@ class FormularioController {
     }
 
     public function filtrado() {
-        require_once __DIR__ . "/../views/formFiltrado.php";
+        require_once __DIR__ . "/../views/viewFiltrado.php";
     }
 }
