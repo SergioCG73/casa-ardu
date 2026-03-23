@@ -4,7 +4,7 @@
     "file" => __FILE__
 ]); exit;*/
 
-//ob_clean();
+ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -52,8 +52,7 @@ echo json_encode([
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
 // -----------------------------------------------
-function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
-{
+function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     // Última terminada
     $sql = "SELECT NumeroFabricacion FROM $tablaTerminadas ORDER BY NumeroFabricacion DESC LIMIT 1";
     $stmt = $conexion->prepare($sql);
@@ -83,8 +82,7 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
 
-function obtenerDatosProducto($conexion, $producto)
-{
+function obtenerDatosProducto($conexion, $producto) {
     // Equipos
     if ($producto === "Ferrico") {
         $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
@@ -144,8 +142,7 @@ function obtenerDatosProducto($conexion, $producto)
             "LINE" => __LINE__,
             "numeroProduccion" => $numeroProduccion,
             "notas" => $notas
-            ]); exit;*/
-
+        ]); exit;*/
 
         return [$equipos, $recetas, $reactores, $notas];
     }    
@@ -180,7 +177,7 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
         ? max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1
         : max($ultimaAcabada, $ultimaEnCurso) + 1;
 
-    list($reactores, $recetas, $equipos) = obtenerDatosProducto($conexion, $producto);
+    list($reactores, $recetas, $equipos, $notas) = obtenerDatosProducto($conexion, $producto);
 
     echo json_encode([
         "ultimaAcabada" => $ultimaAcabada,
@@ -189,22 +186,16 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
         "equipos" => $equipos,      
         "recetas" => $recetas,
         "reactores" => $reactores,
+        "notas" => $notas,
         "linea" => __LINE__        
     ]); exit;
 }
-
 
 
 if ($modo === "transferir" && $producto === "Ferrico") {
     $tabla = "ferrico_terminadas";
     list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);    
     list($equipos, $recetas) = obtenerDatosProducto($conexion, $producto);
-
-/*echo json_encode([
-    "FILE" => __FILE__,
-    "LINE" => __LINE__
-]); exit;*/
-
 
 echo json_encode([
     "fichero" => __FILE__,
@@ -220,7 +211,6 @@ echo json_encode([
 ]); exit;
 
 }
-
 
 // -----------------------------------------------------------
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR P18

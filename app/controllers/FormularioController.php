@@ -12,7 +12,8 @@ class FormularioController {
     }
 
     public function ferrico() {        
-        require_once __DIR__ . "/../views/formFerrico.php";
+        //require_once __DIR__ . "/../views/formFerrico.php";
+        require_once __DIR__ . "/../views/viewFerrico.php";
     }
 
     public function filtrado() {

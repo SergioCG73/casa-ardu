@@ -162,7 +162,6 @@ if ($producto === "Ferrico") {
         WHERE Equipo_id = :mezclador");
     $sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);
 
-
     $fecha = date("Y-m-d", strtotime($fechaHoraInicio));
     $semana = (string)$semana["semana"];    
 
@@ -171,7 +170,8 @@ if ($producto === "Ferrico") {
         "Semana",
         "Fecha",
         "Volumen_Inicial",
-        "Volumen_Final"
+        "Volumen_Final",
+        "Notas"
     ];
 
     $valores = [
@@ -179,7 +179,8 @@ if ($producto === "Ferrico") {
         ":Semana"            => $semana,
         ":Fecha"             => $fecha,
         ":Volumen_Inicial"   => $pesoM,
-        ":Volumen_Final"     => $pesoMF
+        ":Volumen_Final"     => $pesoMF,
+        ":Notas"             => $notas
     ];
 
     $listaColumnas = implode(", ", $columnas);
@@ -200,7 +201,8 @@ if ($producto === "Ferrico") {
         "fecha" => $fecha,
         "semana" => $semana,
         "receta" => $receta,
-        "tabla" => $tabla
+        "tabla" => $tabla,
+        "notas" => $notas
     ]);
 }
 

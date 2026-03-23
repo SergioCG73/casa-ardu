@@ -85,6 +85,8 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
 function obtenerDatosProducto($conexion, $producto) {
     // Equipos
     if ($producto === "Ferrico") {
+        $numeroProduccion = $_POST["numeroProduccion"] ?? null;
+
         $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
@@ -105,7 +107,20 @@ function obtenerDatosProducto($conexion, $producto) {
         $stmt->execute();
         $sacas = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return [$mezcladores, $recetas, $sacas];
+    //Notas
+        $sql = "SELECT Notas FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":nf", $numeroProduccion);
+        $stmt->execute();
+        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            "LINE" => __LINE__,
+            "numeroProduccion" => $numeroProduccion,
+            "notas" => $notas
+        ]); exit;
+
+        return [$mezcladores, $recetas, $sacas, $notas];
 
     }
     else {
@@ -136,13 +151,7 @@ function obtenerDatosProducto($conexion, $producto) {
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":nf", $numeroProduccion);
         $stmt->execute();
-        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        /*echo json_encode([
-            "LINE" => __LINE__,
-            "numeroProduccion" => $numeroProduccion,
-            "notas" => $notas
-        ]); exit;*/
+        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);        
 
         return [$equipos, $recetas, $reactores, $notas];
     }    
@@ -190,7 +199,6 @@ if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
         "linea" => __LINE__        
     ]); exit;
 }
-
 
 if ($modo === "transferir" && $producto === "Ferrico") {
     $tabla = "ferrico_terminadas";

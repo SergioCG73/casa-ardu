@@ -4,7 +4,7 @@
     "file" => __FILE__
 ]); exit;*/
 
-//ob_clean();
+ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -16,6 +16,9 @@ $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 $tabla = "ferrico_terminadas";
+//$numeroProduccion = $_POST["numeroProduccion "] ?? "";
+
+//echo json_encode(["NºP", $numeroProduccion]); exit;
 
 function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 {
@@ -41,6 +44,8 @@ function obtenerDatosProducto($conexion, $producto)
 {
     // Mezcladores
     if ($producto === "Ferrico") {
+        $numeroProduccion = $_POST["numeroFabricacion"];
+
         $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
@@ -59,9 +64,16 @@ function obtenerDatosProducto($conexion, $producto)
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
-        $sacas = $stmt->fetch(PDO::FETCH_ASSOC);
+        $sacas = $stmt->fetch(PDO::FETCH_ASSOC);    
+    
+    //Notas
+        $sql = "SELECT Notas FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":nf", $numeroProduccion);
+        $stmt->execute();
+        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);        
 
-        return [$mezcladores, $recetas, $sacas];
+        return [$mezcladores, $recetas, $sacas, $notas];
 
     }
     else {
@@ -92,12 +104,6 @@ $siguienteFabricacion = ($modo === "crear")
 
 list($mezcladores, $recetas, $sacas) = obtenerDatosProducto($conexion, $producto);
 
-/*echo json_encode([
-    "file" => __FILE__,
-    "ultimaAcabada" => $ultimaAcabada,
-    "ultimaEnCurso" => $ultimaEnCurso
-]); exit;*/
-
 echo json_encode([
         "ok" => true,
         "LINE" => __LINE__,
@@ -108,13 +114,14 @@ echo json_encode([
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
-        "sacas" => $sacas        
+        "sacas" => $sacas, 
+        "notas" => $notas
 ]); exit;
 }
 
 if ($modo === "transferir") {    
     list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);    
-    list($mezcladores, $recetas, $sacas) = obtenerDatosProducto($conexion, $producto);
+    list($mezcladores, $recetas, $sacas, $notas) = obtenerDatosProducto($conexion, $producto);
 
 echo json_encode([
     "fichero" => __FILE__,
@@ -124,6 +131,7 @@ echo json_encode([
     "ultimaEnCurso" => $ultimaEnCurso,    
     "mezcladores" => $mezcladores,
     "recetas" => $recetas,
-    "sacas" => $sacas    
+    "sacas" => $sacas, 
+    "notas" => $notas   
 ]); exit;
 }
