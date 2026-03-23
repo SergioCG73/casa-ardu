@@ -83,7 +83,7 @@
             </div>
         </div>
     </div>    
-    <script src="js/formp18.js"></script>
+    <script src="js/P18.js"></script>
 </body>
 
 </html>

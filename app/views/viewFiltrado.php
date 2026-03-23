@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<link href="/HTML/public/css/styleFiltrado.css" rel="stylesheet" type="text/css">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <link href="css/styleFiltrado.css" rel="stylesheet" type="text/css">
     <title>FiltradoP18</title>    
 </head>
@@ -30,7 +29,7 @@
                 <input id="volumen_inicial" class="volumen_inicial">
                 <br><br><br>
                 <label>Volumen de agua</label>
-                <input id="volumen:agua" class="volumen_agua">
+                <input id="volumen_agua" class="volumen_agua">
             </fieldset>
         </div>
 
@@ -47,13 +46,6 @@
             </div>
     </div>
 
-    <!-- NOTAS DEBAJO OCUPANDO EL ANCHO COMPLETO -->
-    <div id="notas">
-        <fieldset><legend>Notas</legend>
-            <textarea id="notasTexto"></textarea>
-        </fieldset>
-    </div>
-
     <div id="botonera">
         <button id="btnRetroceder" class="btnRetroceder">Retroceder</button>
         <button id="btnFiltrar" class="btnFiltrar">Filtrar</button>
@@ -62,8 +54,7 @@
     <div id="resultados" class="resultados">
         <p id="displayFiltrado" name="displayFiltrado"></p>
     </div>
-</div>    
-    <!--<script src="/html/public/js/formFiltrado.js"></script>-->
+</div>        
     <script src="js/Filtrado.js"></script>
 </body>
 </html>

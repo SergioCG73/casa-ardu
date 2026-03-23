@@ -70,6 +70,6 @@
             </div>
         </div>        
     </div>
-    <script src="js/formFerrico.js"></script>
+    <script src="js/Ferrico.js"></script>
 </body>
 </html>
