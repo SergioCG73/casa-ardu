@@ -8,4 +8,8 @@ class LeerController {
     public function leerferrico() {
         include __DIR__ . '/../models/leerFerrico.php';
     }
+
+    public function leerfiltrado() {
+        include __DIR__ . '/../models/leerFiltrado.php';
+    }
 }
