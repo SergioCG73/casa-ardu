@@ -1,6 +1,9 @@
 <?php
-require_once __DIR__ . "/../../config/config.php";
+//require_once __DIR__ . "/../../config/config.php";
 
+    define("DB_DSN", "mysql:host=localhost;dbname=fabricaciones");
+    define("DB_USER", "sergiocg");
+    define("DB_PASS", "1011");
 try {
     // Conexión PDO
     $conexion = new PDO(DB_DSN, DB_USER, DB_PASS);

@@ -119,6 +119,7 @@ function generarEncabezado() {
 function construirTabla(data) {
     return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id
+        const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
         let claseEspecial = "";
         let claseMezclador = "";
         if (p.Producto_id === 'P18') {
@@ -162,7 +163,7 @@ function construirTabla(data) {
             <td>${p.NumeroFabricacion}</td>
             <td>${p.FechaInicio}</td>            
             <td class="${claseMezclador}">${p.Mezclador}</td>
-            <td>${p.Reactor}</td>
+            <td>${reactor}</td>
             <td>${p.Receta}</td>                        
             ${td}
             <td>

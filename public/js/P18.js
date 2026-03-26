@@ -1,11 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ===== ELEMENTOS DEL DOM =====
     const btnRetroceder = document.getElementById("btnRetroceder");
-    const btnCrear = document.getElementById("btnCrear");
-    //const displayProduccion = document.getElementById("displayProduccion");   //<p>
-    const parDisplayProduccion = document.getElementById("displayProduccion");
-    //const contenedorMezcladores = document.querySelector("#mezcladores fieldset"); //<div> //no tengo claro que se utilice en ninguna parte del código
-    //const contenedorPesoFinalMezclador = document.getElementById("peso_final_mezcla"); //No captura nada del HTML
+    const btnCrear = document.getElementById("btnCrear");    
+    const parDisplayProduccion = document.getElementById("displayProduccion");    
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador"); //<input>  9/283/296/306/327/345/421/430/568
     const peso_final_mezclador = document.getElementById("peso_final_mezclador"); //<input>
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor"); //<input>
@@ -122,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 input.id = id;
                 input.value = reactor.Equipo_id;
 
-                // 🔥 1) Si es el reactor anterior → seleccionado + deshabilitado
+                // 1) Si es el reactor anterior → seleccionado + deshabilitado
                 if (datosEdicion && datosEdicion.Reactor == reactor.Equipo_id) {
                     input.checked = true;
                     input.disabled = true;
@@ -130,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     label.classList.add("reactor-disabled");
                 }
 
-                // 🔥 2) Si está en uso → deshabilitado SIEMPRE
+                // 2) Si está en uso → deshabilitado SIEMPRE
                 if (estado === "En uso") { //"en uso"
                     input.disabled = true;
                     label.classList.add("reactor-disabled");
@@ -205,9 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
         }
         
-        /*console.log(modo);
-        console.log(datosTransferencia.Producto_id);
-        console.log(datosTransferencia);*/
+        //console.log(modo);
+        //console.log(datosTransferencia.Producto_id);
+        //console.log(datosTransferencia);
         //console.log(datosEdicion); debugger
         
         formData.append("modo", modo);
@@ -241,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let reactoresDisponibles = [];
 
                 if (modo === "crear") {
-                    //console.log("data", data.equipos); debugger
+                    console.log("data", data.equipos); debugger
                     mezcladoresDisponibles = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Vacio");
                     mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                     mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
@@ -314,9 +311,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO CREAR =====
     if (modo === "crear") {
-        /*console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion); 
-        console.log("datosEdicion", datosEdicion); debugger*/
-        inicializarFormulario(modo, producto).then(() => {  //Aquí hace la llamada a la función y esta a leerV2.php            
+        //console.log("datosEdicion.NumeroFabricacion: ", datosEdicion.NumeroFabricacion); 
+        //console.log("datosEdicion", datosEdicion); debugger
+        inicializarFormulario(modo, producto).then(() => { 
             document.querySelector('#peso_final_mezclador').disabled = true;
 
             const reactores = document.querySelector('#reactores');
@@ -407,9 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     inputPesoFinalMezclador.disabled = true;
                 }
 
-                // === CLICK EDITAR ===
-
-                //console.log("reactorSeleccionado 495: ", reactorSeleccionado); debugger
+                // === CLICK EDITAR ===                
                 btnCrear.addEventListener("click", (e) => {
                     e.preventDefault();
 
@@ -442,7 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         /*const objeto = Object.fromEntries(data.entries());
                         console.log("datosEdicion", datosEdicion);
-                        console.log("reactorSeleccionado 526: ", reactorSeleccionado);
+                        console.log("reactorSeleccionado", reactorSeleccionado);
                         console.log(objeto); debugger */
 
                     fetch("index.php?c=Editar&a=fabCurso", { method: "POST", body: data })

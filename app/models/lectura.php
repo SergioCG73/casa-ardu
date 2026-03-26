@@ -67,8 +67,8 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     $stmt->bindParam(":producto", $producto);
     $stmt->execute();
     $ultimaEnCurso = $stmt->fetchColumn() ?? 0;
-
-    if ($producto === "P18") {  //HAY QUE COMPROBARLO CON EL P18
+    
+    if ($producto === "P18") {  
     
     // Última sin filtrar (solo para CREAR)
     $sql = "SELECT MAX(NumeroFabricacion) FROM mezclador_216";
@@ -78,6 +78,12 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     } else {
         $ultimaSinFiltrar = 0;
     }
+    
+    /*echo json_encode(["LINE" => __LINE__,
+                      "ultimaAcabada" => $ultimaAcabada,
+                      "ultimaEnCurso" => $ultimaEnCurso,
+                      "ultimaSinFiltrar" => $ultimaSinFiltrar
+    ]); exit;*/
         
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
@@ -151,7 +157,15 @@ function obtenerDatosProducto($conexion, $producto) {
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":nf", $numeroProduccion);
         $stmt->execute();
-        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);        
+        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);   
+        
+        /*echo json_encode(["LINE" => __LINE__,
+                      "numeroProduccion" => $numeroProduccion,
+                      "equipos" => $equipos,
+                      "recetas" => $recetas, 
+                      "reactores" => $reactores,
+                      "notas" => $notas
+        ]); exit;*/
 
         return [$equipos, $recetas, $reactores, $notas];
     }    
@@ -224,7 +238,7 @@ echo json_encode([
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR P18
 // -----------------------------------------------------------
 if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
-    $tabla = "p18_terminadas";    
+    $tabla = "p18_terminadas";  
 
     list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =
         obtenerUltimasFabricaciones($conexion, $producto, $tabla);

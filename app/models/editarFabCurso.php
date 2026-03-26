@@ -4,9 +4,7 @@ header('Content-Type: application/json; charset=utf-8');
 require_once("miconexion.php");
 $pdo = $conexion;
 
-/*echo json_encode([
-    "mensaje" => __FILE__
-]); exit;*/
+//echo json_encode(["FILE" => __FILE__]); exit;
 
 // ===========================
 // 1. Recoger datos del POST
@@ -30,9 +28,11 @@ if (!$numeroProduccion) {
 }
 
 // Corregir NaN si llega desde JS
+if (!is_numeric($pesoInicialReactor)) $pesoInicialReactor = null;
 if (!is_numeric($pesoFinalReactor))     $pesoFinalReactor = null;
 if (!is_numeric($pesoFinalMezclador))   $pesoFinalMezclador = null;
 
+//echo json_encode(["pesoInicialReactor" => $pesoInicialReactor]); exit;
 
 // =====================================================
 // RAMA 1: reactorNuevo === null
@@ -118,9 +118,10 @@ if ($reactorNuevo === null) {
     }
 }
 
-// =====================================================
+// ==============================
 // RAMA 2: reactorNuevo !== null
-// =====================================================
+// ==============================
+
 $sql = $pdo->prepare("
     SELECT Mezclador, Reactor
     FROM fabricaciones_en_curso
@@ -182,6 +183,10 @@ try {
             Notas = :notas
         WHERE NumeroFabricacion = :num
     ");
+    
+    /*echo json_encode(["LINE" => __LINE__,
+                      "pesoInicialReactor" => $pesoInicialReactor
+    ]); exit;*/
 
     $update->execute([
         ":mezclador" => $mezcladorNuevo,
