@@ -1,5 +1,7 @@
 <?php
 
+
+
 class LeerController {
     public function lectura() {
         include __DIR__ . '/../models/lectura.php';
@@ -10,6 +12,7 @@ class LeerController {
     }
 
     public function leerfiltrado() {
+        //echo json_encode(["LINE" => __LINE__]); exit;
         include __DIR__ . '/../models/leerFiltrado.php';
     }
 }
