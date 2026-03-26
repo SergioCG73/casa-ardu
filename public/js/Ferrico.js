@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (modo === "transferir" && datosTransferir) {
-                    peso_inicial_mezclador.value = datosTransferir.PesoInicialMezclador; // ✔️ CORRECTO
+                    peso_inicial_mezclador.value = datosTransferir.PesoInicialMezclador;
                     formatearNumero(peso_inicial_mezclador);
                 }
 

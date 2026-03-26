@@ -24,7 +24,6 @@
         <label id="label_m216"></label>            
     </div>
 
-</body>    
-    <!--<script src="/HTML/public/js/home.js"></script>-->
+</body>
     <script src="js/home.js"></script>
 </html>

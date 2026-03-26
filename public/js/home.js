@@ -7,41 +7,50 @@ function init() {
     const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
-    const displayM216 = document.getElementById("label_m216");
-    
-    localStorage.setItem("modo", "inicial");
-    
-    btnP18.addEventListener("click", () => {        
-        localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "P18");        
-        window.location.href = "index.php?c=Formulario&a=p18";
-    });    
+    //const displayM216 = document.getElementById("label_m216");
 
-    btnSulfato.addEventListener("click", () => {        
+    localStorage.setItem("modo", "inicial");
+
+    btnP18.addEventListener("click", () => {
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "Sulfato");        
+        localStorage.setItem("producto", "P18");
+        window.location.href = "index.php?c=Formulario&a=p18";
+    });
+
+    btnSulfato.addEventListener("click", () => {
+        localStorage.setItem("modo", "crear");
+        localStorage.setItem("producto", "Sulfato");
         window.location.href = "index.php?c=Formulario&a=sulfato";
     });
 
-    btnFerrico.addEventListener("click", () => {        
+    btnFerrico.addEventListener("click", () => {
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
         window.location.href = "index.php?c=Formulario&a=ferrico";
     })
 
     btnFiltrado.addEventListener("click", () => {
-        localStorage.setItem("modo", "filtrar");
-        localStorage.setItem("producto", "P18");
-        window.location.href = "index.php?c=Formulario&a=filtrado";        
-    })
+        const existeFiltrado = localStorage.getItem("existeFiltrado") === "1";
 
-    cargarProducciones(tabla, divProducciones, btnP18);
+        if (existeFiltrado) {
+            alert("Ya existe una filtración en curso. No se pueden iniciar más.");
+            return;
+        }
+
+        localStorage.setItem("modo", "crear");
+        localStorage.setItem("producto", "Filtrado");
+        window.location.href = "index.php?c=Formulario&a=filtrado";
+    });
+
+
+    //cargarProducciones(tabla, divProducciones, btnP18);
+    cargarProducciones(tabla, divProducciones);
 }
 
 /* ============================================================
    CARGAR DATOS DESDE PHP
    ============================================================ */
-function cargarProducciones(tabla, divProducciones) {    
+function cargarProducciones(tabla, divProducciones) {
     //console.log(cargarProducciones); debugger    
     fetch("index.php?c=Leer&a=lectura", {
         method: "POST",
@@ -49,12 +58,18 @@ function cargarProducciones(tabla, divProducciones) {
         body: JSON.stringify({ modo: "inicial" })
     })
         .then(response => response.json())
-        .then(data => { //console.log(data); debugger
+        .then(data => {
+            //console.log(data); debugger
             if (!data.ok) return;
             tabla.innerHTML = generarEncabezado() + construirTabla(data);
+            let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
+            localStorage.setItem("existeFiltrado", existeFiltrado ? "1" : "0");
+
             activarEventosTabla(tabla);
 
             divProducciones.style.display = "block";
+
+            let claseEspecial = null;
 
             if (data.producciones_sin_filtrar === 0) {
                 displayM216.style.display = "none";
@@ -62,14 +77,29 @@ function cargarProducciones(tabla, divProducciones) {
                 displayM216.style.display = "block";
                 const textM216 = document.getElementById("label_m216");
                 textM216.innerHTML = data.producciones_sin_filtrar;
+
+                const valorM216 = Number(textM216.innerHTML);
+
+                if (valorM216 > 0 && valorM216 < 3) {
+                    claseEspecial = "M216_Green";
+                }
+                else if (valorM216 === 3) {
+                    claseEspecial = "M216_Yellow";
+                }
+                else if (valorM216 > 3) {
+                    claseEspecial = "M216_Red"
+                }
+
+                textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
+                textM216.classList.add(claseEspecial);
             }
         })
         .catch(err => console.error("Error cargando producciones:", err));
 }
 
-/* ============================================================
+/* =======
    TABLA
-   ============================================================ */
+   ======= */
 function generarEncabezado() {
     return `
         <tr>
@@ -86,8 +116,8 @@ function generarEncabezado() {
         </tr>`;
 }
 
-function construirTabla(data) {                
-        return data.producciones_en_curso.map(p => {            
+function construirTabla(data) {
+    return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id
         let claseEspecial = "";
         let claseMezclador = "";
@@ -106,6 +136,10 @@ function construirTabla(data) {
 
         if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
             claseMezclador = "M311_destacado";
+        }
+
+        if (p.Producto_id === "Filtrado") {
+            claseEspecial = "filtrado"
         }
 
         if (p.Notas !== "") {
@@ -129,14 +163,8 @@ function construirTabla(data) {
             <td>${p.FechaInicio}</td>            
             <td class="${claseMezclador}">${p.Mezclador}</td>
             <td>${p.Reactor}</td>
-            <td>${p.Receta}</td>            
-            <!--<td>
-                <img src="images/nota_amarillo_icon_20x20.png"
-                     class="icono-nota"
-                     data-info='${JSON.stringify(p)}'
-                     title="Nota fabricación">
-            </td>-->
-                ${td}
+            <td>${p.Receta}</td>                        
+            ${td}
             <td>
                      <img src="images/editar_azul_icon_20x20.png"
                      class="icono-editar"
@@ -173,8 +201,10 @@ function activarEventosTabla(tabla) {
                 window.location.href = "index.php?c=Formulario&a=p18";
             } else if (datos.Producto_id === "Ferrico") {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
+            } else if (datos.Producto_id === "Filtrado") {
+                window.location.href = "index.php?c=Formulario&a=filtrado";
             }
-            
+
             return;
         }
 
@@ -184,7 +214,7 @@ function activarEventosTabla(tabla) {
                 const datos = JSON.parse(iconoBorrar.dataset.info);
                 localStorage.setItem("datosBorrables", JSON.stringify(datos));
                 localStorage.setItem("modo", "borrar");
-                
+
                 fetch("index.php?c=Borrar&a=borrarFabricacion", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -205,7 +235,7 @@ function activarEventosTabla(tabla) {
         }
 
         const iconoTransferir = e.target.closest(".icono-transferir");
-        if (iconoTransferir) {            
+        if (iconoTransferir) {
             const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
             //console.log(datosTransferir); debugger
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
@@ -218,7 +248,7 @@ function activarEventosTabla(tabla) {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             }
 
-            return;            
+            return;
         }
     });
 }

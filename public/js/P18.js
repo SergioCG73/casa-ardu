@@ -475,8 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*console.log(inputPesoFinalMezclador);
                     console.log(inputPesoInicialReactor); debugger*/
 
-                    btnCrear.addEventListener("click", (e) => {
-                        //console.log("pulsates Transferir"); debugger
+                    btnCrear.addEventListener("click", (e) => {                        
                         e.preventDefault();
                         const pesoMF = Number(inputPesoFinalMezclador.value.replace(/\./g, ""));
                         //console.log(inputPesoInicialReactor.value); debugger
@@ -485,9 +484,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         if (!pesoMF) return alert("Introduzca peso inicial mezclador");
                         if (!reactorSeleccionado) return alert("Selecciona un reactor");
-                        if (!pesoR) return alert("Introduzca peso inicial reactor");
+                        if (!pesoR) return alert("Introduzca peso inicial reactor");                        
 
+
+                        //console.log(datosTransferencia); debugger
                         datosEdicion.PesoInicialReactor = Number(peso_inicial_reactor.value.replace(/\./g, ""));
+
+                        
+                        //console.log(datosEdicion.PesoFinalMezclador); debugger
 
                         let horaTransferenciaMezcladoraReactor = null;
 
