@@ -17,4 +17,8 @@ class CrearController {
     public function fabricacionFerrico() {
         require_once __DIR__ . "/../models/crearFerrico.php";
     }
+
+    public function filtrado() {
+        require_once __DIR__ . "/../models/crearFiltrado.php";
+    }
 }
