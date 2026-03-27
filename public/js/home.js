@@ -6,8 +6,7 @@ function init() {
     const btnFerrico = document.getElementById("btnFerrico");
     const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
-    const divProducciones = document.getElementById("producciones_en_curso");
-    //const displayM216 = document.getElementById("label_m216");
+    const divProducciones = document.getElementById("producciones_en_curso");    
 
     localStorage.setItem("modo", "inicial");
 
@@ -153,8 +152,7 @@ function construirTabla(data) {
         } else {
             td = `<td></td>`
         }
-
-
+        
         return `
         <tr>
             <td class="${claseEspecial} producto_${p.Producto_id}">
@@ -247,6 +245,8 @@ function activarEventosTabla(tabla) {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datosTransferir.Producto_id === "Ferrico") {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
+            } else if (datosTransferir.Producto_id === "Filtrado") {
+                window.location.href = "index.php?c=Formulario&a=filtrado";
             }
 
             return;
