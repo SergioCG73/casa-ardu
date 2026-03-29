@@ -217,8 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     e => e.Tipo === "Mezclador" &&
                         e.Estado === "Vacio" &&
                         e.Equipo_id !== "M216"
-                );               
-                
+                );
 
                 mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                 mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
@@ -235,11 +234,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if (modo === "editar") {
                     generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);
-                }
-
-                if (modo === "transferir" && producto === "P18") {
+                }                
+                
+                if (modo === "transferir" && producto === "P18") {                    
                     console.log("Modo transferir P18"); 
                     datosEdicion = datosTransferencia;
+                    generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);
                 }
                 
                 const reactoresFiltrados = data.reactores.filter(r => r.Estado !== "Averiado");
@@ -421,8 +421,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO TRANSFERIR ====
 
     if (modo === "transferir") {        
-        //console.log(datosTransferencia); debugger
-        if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "") {
+        //console.log("transferir..."); debugger
+        console.log("-->", datosTransferencia); debugger
+        
+        //if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "") {
+        if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "undefined") {            
             console.log("Modo transferencia M a R...");            
             btnCrear.textContent = "Transferir ";            
 

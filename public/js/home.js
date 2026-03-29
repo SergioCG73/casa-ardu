@@ -117,8 +117,11 @@ function generarEncabezado() {
 
 function construirTabla(data) {
     return data.producciones_en_curso.map(p => {
-        //Determinamos la clase según el Producto_id
+        //Determinamos la clase según el Producto_id        
+        //Control de valores undefined/null con ternario
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
+        const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador; //28/03/26    
+        
         let claseEspecial = "";
         let claseMezclador = "";
         if (p.Producto_id === 'P18') {
@@ -160,7 +163,8 @@ function construirTabla(data) {
             </td>
             <td>${p.NumeroFabricacion}</td>
             <td>${p.FechaInicio}</td>            
-            <td class="${claseMezclador}">${p.Mezclador}</td>
+            <!--<td class="${claseMezclador}">${p.Mezclador}</td> 26/03/2026-->
+            <td class="${claseMezclador}">${mezclador}</td> <!--26/03/2026-->
             <td>${reactor}</td>
             <td>${p.Receta}</td>                        
             ${td}

@@ -1,0 +1,9 @@
+# Activar motor de reescritura
+RewriteEngine On
+
+
+# Redirigir todo a index.php (útil para apps tipo WordPress o routing)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L]
+
