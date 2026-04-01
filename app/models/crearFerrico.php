@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once("miconexion.php");
 
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
-    $fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
+    //$fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
     $mezclador = $_POST["mezclador"] ?? "";
     $pesoInicialMezclador = $_POST["pesoInicialMezclador"] ?? "";
     $receta = $_POST["receta"] ?? "";
@@ -32,12 +32,17 @@ require_once("miconexion.php");
     //Validación de datos recibidos
     try {
     //SQL para INSERT datos en fabricaciones_en_curso
+        /*$insertSQL = "INSERT INTO fabricaciones_en_curso
+                      (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id, Notas, Sacas) 
+                      VALUES (:fechaHoraInicio, :mezclador, :pesoInicialMezclador, :receta, :numeroProduccion, :producto, :notas, :sacas)";*/
+
+
         $insertSQL = "INSERT INTO fabricaciones_en_curso
                       (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id, Notas, Sacas) 
-                      VALUES (:fechaHoraInicio, :mezclador, :pesoInicialMezclador, :receta, :numeroProduccion, :producto, :notas, :sacas)";
-
+                      VALUES (NOW(), :mezclador, :pesoInicialMezclador, :receta, :numeroProduccion, :producto, :notas, :sacas)";
+                      
         $insertStmt = $conexion->prepare($insertSQL);
-        $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
+        //$insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
         $insertStmt->bindParam(":mezclador", $mezclador, PDO::PARAM_STR);
         $insertStmt->bindParam(":pesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);
         $insertStmt->bindParam(":receta", $receta, PDO::PARAM_STR);

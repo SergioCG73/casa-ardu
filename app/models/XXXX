@@ -1,0 +1,122 @@
+/*
+ob_clean();
+header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', 0);
+*/
+
+/*
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["ok" => false, "error" => "Método no permitido"]);
+    exit;
+}
+
+require_once("miconexion.php");
+$conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+// ===========================
+// 1. Recoger datos del POST =
+// ===========================
+$numeroProduccion           = $_POST["numeroProduccion"] ?? null;
+//$fechaHoraInicio            = $_POST["fechaHoraInicio"] ?? null;
+$mezcladorNuevo             = $_POST["mezclador"] ?? null;
+$pesoM                      = $_POST["pesoInicialMezclador"] ?? null;
+$pesoMF                     = $_POST["pesoFinalMezclador"] ?? null;
+//$reactorNuevo               = $_POST["reactor"] ?? null;
+//$pesoR                      = $_POST["pesoInicialReactor"] ?? null;
+//$pesoRF                     = $_POST["pesoFinalReactor"] ?? null;
+$receta                     = $_POST["receta"] ?? null;
+//$producto                   = $_POST["producto"] ?? null;
+//$modo                       = $_POST["modo"] ?? null;
+//$fechaInicioReaccion        = $_POST["fechaInicioReaccion"] ?? null;
+//$fechaHoraFinal             = $_POST["fechaHoraFinal"] ?? null;
+$notas                      = $_POST["notas"] ?? null;
+
+if (!$numeroProduccion) {
+    echo json_encode([
+        "ok" => false,
+        "error" => "Falta numeroProduccion"
+    ]);
+    exit;
+}
+
+
+$sqlInsert ="INSERT INTO ferrico_terminadas2 (NumeroFabricacion) VALUES (:nf)";
+$stmt = $conexion->prepare($sqlInsert);
+$stmt->bindParam(":nf", $numeroProduccion);
+
+echo json_encode(["NumeroFabricacion" => $numeroProduccion]); exit;
+
+    /*echo json_encode(["producto" => __LINE__]); exit;*/
+    //$tabla = "ferrico_terminadas";
+    //$semana = calcularTiempos($tabla, $pdo, $fechaHoraInicio, $fechaHoraFinal, $numeroProduccion);
+
+    /*$sqlUpdate = $pdo->prepare("
+        UPDATE fabricaciones_en_curso
+        SET 
+            FechaFinal = :horafinal,
+            PesoFinalMezclador = :pesofinal
+        WHERE NumeroFabricacion = :numerofabricacion
+    ");
+
+    $sqlUpdate->execute([
+        ':horafinal'         => $fechaHoraFinal,
+        ':pesofinal'         => $pesoMF,
+        ':numerofabricacion' => $numeroProduccion
+    ]);*/
+
+    // Borrar fabricación en curso  
+ //   $sqlDelete = $pdo->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
+    //$sqlDelete->execute([":nf" => $numeroProduccion]);
+
+    // Mezclador → Vacío 
+   /* $sqlUpdateMezclador = $pdo->prepare("
+        UPDATE equipos
+        SET Estado = 'Vacio'
+        WHERE Equipo_id = :mezclador");
+    //$sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);
+
+    //$fecha = date("Y-m-d", strtotime($fechaHoraInicio));
+    //$semana = (string)$semana["semana"];    
+/*
+    $columnas = [
+        "NumeroFabricacion",
+        "Semana",
+        "Fecha",
+        "Volumen_Inicial",
+        "Volumen_Final",
+        "Notas"
+    ];
+
+    $valores = [
+        ":NumeroFabricacion" => $numeroProduccion,
+        ":Semana"            => $semana,
+        ":Fecha"             => $fecha,
+        ":Volumen_Inicial"   => $pesoM,
+        ":Volumen_Final"     => $pesoMF,
+        ":Notas"             => $notas
+    ];
+
+    $listaColumnas = implode(", ", $columnas);
+    $listaMarcadores = implode(", ", array_keys($valores));    
+
+    $sqlInsert = $pdo->prepare("
+    INSERT INTO $tabla ($listaColumnas)
+    VALUES ($listaMarcadores)");
+
+    $sqlInsert->execute($valores);
+
+    echo json_encode([
+        "ok" => true,
+        "mensaje" => "transferencia Ferrico",
+        "numeroProduccion" => $numeroProduccion,
+        "producto" => $producto,
+        "modo" => $modo,
+        "fecha" => $fecha,
+        "semana" => $semana,
+        "receta" => $receta,
+        "tabla" => $tabla,
+        "notas" => $notas
+    ]);*/
+}
+
+

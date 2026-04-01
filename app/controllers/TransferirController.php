@@ -16,6 +16,7 @@ class TransferirController {
     }
 
     public function transferirFerrico() {
-        require_once __DIR__ . "/../models/transferirFabCurso.php";
+        //echo json_encode(["LINE" => __LINE__]); exit;
+        require_once __DIR__ . "/../models/transferirFerrico.php";
     }
 }

@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(response => response.json())
             .then(data => { 
+                //console.log(data); debugger
 
                 if (modo === "editar") {
                     data.notas = datosEdicion.Notas;
@@ -129,9 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (modo === "crear") {
                     numeroProduccion = Math.max(data.ultimaAcabada, data.ultimaEnCurso) + 1;
                 }
-
-                displayProduccion.textContent = numeroProduccion;
-                numeroProduccionActual = numeroProduccion + 1;
+                
+                numeroProduccionActual = Number(numeroProduccion) + 1;
+                displayProduccion.textContent = numeroProduccionActual;                
 
                 //==== MEZCLADORES ====
                 const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
@@ -226,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    const ahora = new Date();
+                    /*const ahora = new Date();
 
                     const fechaHoraInicio =
                         ahora.getFullYear() + "-" +
@@ -234,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                        String(ahora.getSeconds()).padStart(2, '0');*/
 
                     const mezcladorMarcado = document.querySelector("input[name='mezclador']:checked");
                     if (mezcladorMarcado) mezcladorSeleccionado = mezcladorMarcado.value;
@@ -258,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const datosEnviar = new FormData();
                     datosEnviar.append("numeroProduccion", numeroProduccion);
-                    datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
+                    //datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
                     datosEnviar.append("mezclador", mezcladorSeleccionado);
                     datosEnviar.append("receta", recetaMarcada.value);
                     datosEnviar.append("pesoInicialMezclador", pesoLimpio);
@@ -274,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger
+                            //console.log(json); debugger
                             if (json.ok) mostrarModal(json.message);
                             else alert("Error: " + (json.error || "Error desconocido"));
                         });
@@ -286,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO EDITAR ====
     if (modo === "editar") {
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
-        //console.log(datosEdicion); debugger  datosEdicion.Notas
+        console.log(datosEdicion); debugger 
         btnCrear.textContent = "Editar";
         const contenedorPesoFinal = document.querySelector(".peso-final");
         contenedorPesoFinal.innerHTML = "";
@@ -309,8 +310,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("sacas", sacas.checked ? 1 : 0);
                     data.append("modo", modo);
 
-                    const objeto = Object.fromEntries(data.entries());
-                    console.log(objeto); debugger
+                    /*const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger*/
 
                     fetch("index.php?c=Editar&a=fabCurso", {
                         method: "POST",
@@ -348,28 +349,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     // === Fechas de Inicio y Final producción
                     const fechaHoraInicio = datosTransferir.FechaInicio;
 
-                    const ahora = new Date();
+                    /*const ahora = new Date();
                     const fechaHoraFinal = ahora.getFullYear() + "-" +
                         String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                        String(ahora.getSeconds()).padStart(2, '0');*/
 
                     const data = new FormData();
                     data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
                     data.append("mezclador", mezcladorSeleccionado);
                     data.append("receta", recetaSeleccionada);
-                    data.append("fechaHoraInicio", fechaHoraInicio);
-                    data.append("fechaHoraFinal", fechaHoraFinal);
+                    //data.append("fechaHoraInicio", fechaHoraInicio);
+                    //data.append("fechaHoraFinal", fechaHoraFinal);
                     data.append("pesoInicialMezclador", PesoInicialEditado);
                     data.append("pesoFinalMezclador", PesoFinalEditado);
                     data.append("notas", txtNotas.value);
-                    data.append("producto", producto);
-                    data.append("modo", modo);
+                    //data.append("producto", producto);
+                    //data.append("modo", modo);
 
-                    const objeto = Object.fromEntries(data.entries());
-                    console.log(objeto); debugger
+                    /*const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger*/
 
                     fetch("index.php?c=Transferir&a=transferirFerrico", {
                         method: "POST",
@@ -377,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger
+                            //console.log(json); debugger
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })

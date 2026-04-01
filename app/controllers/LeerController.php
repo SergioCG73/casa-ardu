@@ -8,11 +8,11 @@ class LeerController {
     }
 
     public function leerferrico() {
+        //echo json_encode(["LINE" => __LINE__]); exit;
         include __DIR__ . '/../models/leerFerrico.php';
     }
 
-    public function leerfiltrado() {
-        //echo json_encode(["LINE" => __LINE__]); exit;
+    public function leerfiltrado() {        
         include __DIR__ . '/../models/leerFiltrado.php';
     }
 }
