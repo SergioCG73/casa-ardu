@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    const ahora = new Date();
+                    /*const ahora = new Date();
 
                     const fechaHoraInicio =
                         ahora.getFullYear() + "-" +
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                        String(ahora.getSeconds()).padStart(2, '0');*/
 
                     const reactorMarcado = document.querySelector("input[name='reactor']:checked");
                     if (reactorMarcado) reactorSeleccionado = reactorMarcado.value;
@@ -323,25 +323,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     // === Fechas de Inicio y Final producción
                     const fechaHoraInicio = datosTransferir.FechaInicio;
 
-                    const ahora = new Date();
+                    /*const ahora = new Date();
                     const fechaHoraFinal = ahora.getFullYear() + "-" +
                         String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                        String(ahora.getSeconds()).padStart(2, '0');*/
 
                     const data = new FormData();
                     data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
                     data.append("reactor", reactorSeleccionado);
                     data.append("receta", recetaSeleccionada);
                     data.append("fechaHoraInicio", fechaHoraInicio);
-                    data.append("fechaHoraFinal", fechaHoraFinal);
+                    //data.append("fechaHoraFinal", fechaHoraFinal);
                     data.append("pesoInicialReactor", PesoInicialEditado);
                     data.append("pesoFinalReactor", PesoFinalEditado);
-                    data.append("producto", producto);
+                    //data.append("producto", producto);
                     data.append("notas", txtNotas.value);
-                    data.append("modo", modo);
+                    //data.append("modo", modo);
 
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/

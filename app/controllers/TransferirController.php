@@ -10,8 +10,9 @@ class TransferirController {
         require_once __DIR__ . "/../models/transferirFabCurso.php";
     }
 
-    public function transferirSulfato() {
-        require_once __DIR__ . "/../models/transferirFabCurso.php";
+    public function transferirSulfato() {        
+        require_once __DIR__ . "/../models/transferirSulfato.php";        
+        
     }
 
     public function transferirFerrico() {

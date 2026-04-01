@@ -1,5 +1,5 @@
 <?php
-//ob_clean();
+ob_clean();
 header('Content-Type: application/json; charset=utf-8'); //Le dice al navegador que la respuesta es un JSON
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -12,18 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 }
 
-/*echo json_encode([
-        "ok" => true,
-        "numeroProduccion" => $numeroProduccion,
-        "fechaHoraInicio" => $fechaHoraInicio,
-        "reactor" => $reactor,
-        "pesoInicialReactor" => $pesoInicialReactor,
-        "receta" => $receta,
-        "producto" => $producto
-]); exit;*/
-
-
-
 require_once("miconexion.php");
 
     $numeroProduccion = $_POST["numeroProduccion"] ?? "";
@@ -34,26 +22,19 @@ require_once("miconexion.php");
     $notas = $_POST["notas"] ?? "";
     $producto = "Sulfato";
 
-/*echo json_encode([
-        "ok" => true,
-        "numeroProduccion" => $numeroProduccion,
-        "fechaHoraInicio" => $fechaHoraInicio,
-        "reactor" => $reactor,
-        "pesoInicialReactor" => $pesoInicialReactor,
-        "receta" => $receta,
-        "producto" => $producto,
-        "notaS" => $notas
-]); exit;*/
 
     //Validación de datos recibidos
     try {
     //SQL para INSERT datos en fabricaciones_en_curso
-        $insertSQL = "INSERT INTO fabricaciones_en_curso
+        /*$insertSQL = "INSERT INTO fabricaciones_en_curso
                       (FechaInicio, Reactor, PesoInicialReactor, Receta, NumeroFabricacion, Producto_id, Notas) 
-                      VALUES (:fechaHoraInicio, :reactor, :pesoInicialReactor, :receta, :numeroProduccion, :producto, :notas)";
+                      VALUES (:fechaHoraInicio, :reactor, :pesoInicialReactor, :receta, :numeroProduccion, :producto, :notas)";*/
+      $insertSQL = "INSERT INTO fabricaciones_en_curso
+                     (Reactor, PesoInicialReactor, Receta, NumeroFabricacion, Producto_id, Notas) 
+                      VALUES (:reactor, :pesoInicialReactor, :receta, :numeroProduccion, :producto, :notas)";
 
         $insertStmt = $conexion->prepare($insertSQL);
-        $insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);        
+        //$insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);        
         $insertStmt->bindParam(":reactor", $reactor, PDO::PARAM_STR);
         $insertStmt->bindParam(":pesoInicialReactor", $pesoInicialReactor, PDO::PARAM_INT);
         $insertStmt->bindParam(":receta", $receta, PDO::PARAM_STR);

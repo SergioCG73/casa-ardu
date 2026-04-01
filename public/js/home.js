@@ -144,6 +144,8 @@ function construirTabla(data) {
         if (p.Producto_id === "Filtrado") {
             claseEspecial = "filtrado"
         }
+        
+        let td = "";
 
         if (p.Notas !== "") {
             td = `<td>
