@@ -14,11 +14,11 @@ class CrearController {
         require_once __DIR__ . "/../models/crearSulfato.php";
     }
 
-    public function fabricacionFerrico() {
+    public function ferrico() {
         require_once __DIR__ . "/../models/crearFerrico.php";
     }
 
-    public function filtrado() {
+    public function filtrado() {      
         require_once __DIR__ . "/../models/crearFiltrado.php";
     }
 }

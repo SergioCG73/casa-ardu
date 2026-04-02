@@ -6,10 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputRiqueza = document.querySelector("#riqueza"); //<input>
     const inputVolumenInicial = document.querySelector("#volumen_inicial"); //<input>
     const inputVolumenAgua = document.querySelector("#volumen_agua"); //<input>
+    const inputRestos = document.querySelector("#input-restos");
+    const labelRestos = document.querySelector("#label-restos");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>
-    const modo = localStorage.getItem("modo");
-    let datosEdicion;
-    //let datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+    const modo = localStorage.getItem("modo");    
+    let datosEdicion = JSON.parse(localStorage.getItem("datosTransferencia"));
     let depositoSeleccionado;
     let fabricaciones;
     let lista;
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     divfabricaciones.textContent = "Fabricaciones a filtrar: ";
 
     function inicializarFormulario(modo, datosEdicion) {
-        //console.log(datosEdicion); debugger
+        //console.log(datosEdicion); debugger        
         const data = new FormData();
         data.append("modo", modo);
 
@@ -30,24 +31,26 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(response => response.json())
             .then(data => {
                 //console.log(data); debugger
-                if (data.M216.length > 0) {
-                    lista = data.M216.map(f => f.NumeroFabricacion);
-                    const hayRestos = lista.includes("0000");
-                    lista = lista.filter(f => f !== "0000");
 
-                    if (hayRestos) {
-                        lista.push("Restos");
+                if (modo === "crear") {
+                    if (Array.isArray(data.M216) && data.M216.length > 0) {
+                        lista = data.M216.map(f => f.NumeroFabricacion);
+                        const hayRestos = lista.includes("0000");
+                        lista = lista.filter(f => f !== "0000");
+
+                        if (hayRestos) {
+                            lista.push("Restos");
+                        }
+
+                        //divfabricaciones.textContent = `Fabricaciones a filtrar: ${lista.join(" + ")}`;                     
+                        divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;
+
+                    } else {
+                        divfabricaciones.textContent = "Sin fabricaciones que filtrar";
                     }
-
-                    //divfabricaciones.textContent = `Fabricaciones a filtrar: ${lista.join(" + ")}`;                     
-                    divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;
-
-                } else {
-                    divfabricaciones.textContent = "Sin fabricaciones que filtrar";
                 }
 
-                if (modo === "editar") {
-                    //console.log(datosEdicion); debugger
+                if (modo === "editar" || modo === "transferir") {
                     inputDensidad.value = datosEdicion.Densidad;
                     inputRiqueza.value = datosEdicion.Riqueza;
                     inputVolumenInicial.value = formatearMiles(datosEdicion.PesoInicialMezclador) //Es el volumen inicial en el formulario
@@ -55,6 +58,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     txtNotas.value = datosEdicion.Notas;
                 }
 
+                if (modo !== "transferir") {
+                    inputRestos.style.display = "none";
+                    labelRestos.style.display = "none";
+                }
+
+                if (modo === "transferir") {
+                    //Desactivar los input                    
+                    document.querySelectorAll("#contenedor input, #contenedor select, #contenedor input[type='radio']")
+                        .forEach(elemento => elemento.disabled = true);
+
+                    document.getElementById("input-restos").disabled = false;
+                }
+
+                //console.log(data); debugger
                 generarRadiosDepositos(data);
 
                 //---- LISTENER -----
@@ -64,14 +81,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     //console.log(depositoSeleccionado);                    
                 });
 
-                [inputVolumenInicial, inputVolumenAgua].forEach(input => {
+                [inputVolumenInicial, inputVolumenAgua, inputRestos].forEach(input => {
                     input.addEventListener("input", () => formatearNumero(input));
                 });
 
             });
     }
 
-    function generarRadiosDepositos(data) {
+function generarRadiosDepositos(data) {
+        //console.log(data); debugger
         const contenedorDepositos = document.querySelector("#depositos fieldset");
         contenedorDepositos.innerHTML = "<legend>Depósitos</legend>";
         //console.log(data.Depositos); debugger;
@@ -110,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function formatearNumero(input) {
+        //console.log(input); debugger
         let valor = input.value.replace(/\D/g, "");
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         input.value = valor;
@@ -139,21 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
-    /*function ordenarFabricaciones(texto) {
-        fabricaciones = fabricaciones.match(/\d+/g).map(Number);
-        fabricaciones.sort((a, b) => a - b);
-        fabricaciones = fabricaciones.join(" + ");        
-    }*/
-
-    /*function ordenarFabricaciones(texto) {
-        // Extraer números del texto recibido
-        let nums = texto.match(/\d+/g).map(Number);
-        // Ordenarlos
-        nums.sort((a, b) => a - b);
-        // Devolver el string final ordenado
-        return nums.join(" + ");
-    }*/
-
     function ordenarFabricaciones(lista) {
         // Filtrar solo números (evita "Restos")        
         let nums = lista.filter(f => !isNaN(f)).map(Number);
@@ -171,8 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    //---------------------- MODO CREAR ---------------------------------------//
 
+    //---------------------- MODO CREAR ---------------------------------------//
     if (modo === "crear") {
         inicializarFormulario(modo);
 
@@ -184,15 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const vol_inicial_m216 = inputVolumenInicial.value;
             const vol_agua = inputVolumenAgua.value;
             const notas = txtNotas.value;
-
-            //let fabricaciones = divfabricaciones.textContent;            
-            /*fabricaciones = divfabricaciones.textContent;
-            fabricaciones = fabricaciones.match(/\d+/g).map(Number);
-            fabricaciones.sort((a,b) => a - b);
-            fabricaciones = fabricaciones.join(" + ");*/
-            //ordenarFabricaciones(divfabricaciones.textContent);
-            //ordenarFabricaciones(lista);
-
 
             lista = lista.sort((a, b) => a - b)
                 .join(" + ");
@@ -218,13 +213,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(json => {
                     console.log(json)
                     if (json.ok) {
-                        //console.log("json.ok"); debugger
                         mostrarModal("Datos guardados correctamente")
                     } else {
                         console.log("json.no ok"); debugger
                         alert(json.error)
                     }
-
                 })
                 .catch(err => console.log("Error:", err.message))
 
@@ -243,8 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnFiltrar.addEventListener("click", () => {
             datos = new FormData();
 
-            console.log(inputVolumenInicial);
-
+            //console.log(inputVolumenInicial);
             datos.append("densidad", inputDensidad.value);
             datos.append("riqueza", inputRiqueza.value);
             datos.append("notas", txtNotas.value);
@@ -257,35 +249,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
             fetch("index.php?c=Editar&a=filtrado", {
                 method: "POST",
-                body: datos                
+                body: datos
             })
-            .then(response => response.json())
-            .then(json => console.log(json))
-            .catch(err => console.log ("Error:" + err.message))
-        })
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json);
 
+                    if (json.ok) {
+                        mostrarModal("Filtración editada correctamente");
+                    } else {
+                        alert(json.error);
+                    }
+                })
+                .catch(err => console.log("Error:" + err.message));
+        });
     }
 
+    if (modo === "transferir") {
+        console.log("Transferir");
+        //console.log(datosEdicion); debugger
 
+        inicializarFormulario(modo, datosEdicion);
 
+        btnFiltrar.textContent = "Finalizar";
 
+        btnFiltrar.addEventListener("click", () => {
+            datos = new FormData();
+            datos.append("restos", formatearNumero(inputRestos).replace(/\./g, ""));
+            datos.append("id", datosEdicion.NumeroFabricacion);
+            datos.append("fabricaciones", datosEdicion.Mezclador);  //Si lo sé que es Mezclador, pero se usaron campos para recoger datos aunque no tuvieran que ver con el nombre del campo
+            datos.append("volumenInicial", datosEdicion.PesoInicialMezclador);
+            datos.append("volumenAgua", datosEdicion.PesoFinalMezclador);
+            datos.append("deposito", datosEdicion.Reactor);
 
+            /*const objeto = Object.fromEntries(datos.entries());
+            console.log(objeto); debugger*/
 
+            fetch("index.php?c=Transferir&a=filtrado", {
+                method: "POST",
+                body: datos
+            })
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    if (json.ok) {
+                        mostrarModal("Datos guardados correctamente");
+                    } else {
+                        alert(json.error);
+                    }
+                })
+                .catch(err => console.log("Error:" + err.message));            
+        })
+    }
 });

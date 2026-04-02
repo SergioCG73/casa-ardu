@@ -40,9 +40,7 @@ function init() {
         localStorage.setItem("producto", "Filtrado");
         window.location.href = "index.php?c=Formulario&a=filtrado";
     });
-
-
-    //cargarProducciones(tabla, divProducciones, btnP18);
+    
     cargarProducciones(tabla, divProducciones);
 }
 
@@ -137,8 +135,8 @@ function construirTabla(data) {
             claseEspecial = "ferrico_destacado";
         }
 
-        if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
-            claseMezclador = "M311_destacado";
+        if (p.Producto_id === "Ferrico" && p.Sacas === "1") {
+            claseMezclador = "M311_destacado";            
         }
 
         if (p.Producto_id === "Filtrado") {

@@ -22,7 +22,7 @@ require_once("miconexion.php");
     $notas = $_POST["notas"] ?? "";
     $producto = "Ferrico";
 
-    if ($sacas === "on") {
+    if ($sacas === "1") {
         $sacas = 1;
     }
     else {

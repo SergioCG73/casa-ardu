@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*const objeto = Object.fromEntries(datosEnviar.entries());
                     console.log(objeto); debugger*/
 
-                    fetch("index.php?c=Crear&a=fabricacionFerrico", {
+                    fetch("index.php?c=Crear&a=ferrico", {
                         method: "POST",
                         body: datosEnviar
                     })

@@ -1,5 +1,9 @@
 <?php 
 
+/*echo json_encode([
+    "FILE" => __FILE__
+]); exit; */
+
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
@@ -16,16 +20,6 @@ $notas = $_POST["notas"] ?? "";
 $deposito = $_POST["deposito"] ?? "";
 $fabricaciones = $_POST["fabricaciones"] ?? "";
 
-/*echo json_encode(["fabricaciones" => $fabricaciones,
-                "densidad" => $densidad,
-                "riqueza" => $riqueza
-]); exit;*/
-
-//Para quitar el texto que hay antes del número de las fabricaciones
-//if (preg_match('/\d.*/', $fabricaciones, $matches)) {$fabricaciones = $matches[0];}
-
-//--------------------------------------------------------------------
-
 function generarID()
 {
     date_default_timezone_set("Europe/Madrid");
@@ -35,36 +29,59 @@ function generarID()
 }
 
     //Se utiliza el campo NumeroFabricacion para recoger el ID de la filtración
-    //Se utiliza el campo Mezclador para recoger las fabricaciones que se filtran.
+    //Se utiliza el campo Receta para recoger las fabricaciones que se filtran.
     //Se utiliza el campo PesoInicialMezclador para recoger el Volumen inicial del M216
     //Se utiliza el campo PesoFinalMezclador para recoger el Volumen de agua
     //Se utiliza el campo Reactor para recoger el depósito
 
-    $id = generarID();
-    $InsertSQL  = "INSERT INTO fabricaciones_en_curso 
-                  (NumeroFabricacion, Mezclador, Reactor, PesoInicialMezclador, PesoFinalMezclador, Producto_id, Riqueza, Densidad, Notas) 
-                  VALUES (:id, :fab, :de, :vi, :va, :p, :r, :d, :n)";
-
-    $stmt = $conexion->prepare($InsertSQL);
-    $stmt->bindParam(":id", $id);
-    $stmt->bindParam(":fab", $fabricaciones);
-    $stmt->bindParam(":de", $deposito);
-    $stmt->bindValue(":vi", $volumenInicial);
-    $stmt->bindValue(":va", $volumenAgua);
-    $stmt->bindValue(":d", $densidad);
-    $stmt->bindValue(":r", $riqueza);    
-    $stmt->bindParam(":n", $notas);
-    $stmt->bindValue(":p", "Filtrado");
-    $stmt->execute();
+    $id = generarID();   
+    
+    $InsertSQL = "INSERT INTO fabricaciones_en_curso (
+                                NumeroFabricacion, 
+                                Producto_id,
+                                FechaInicio,
+                                Mezclador,
+                                PesoInicialMezclador,
+                                PesoFinalMezclador,
+                                Receta,
+                                Reactor,
+                                Notas,
+                                Riqueza, 
+                                Densidad
+                            )
+                            VALUES (
+                                :id,
+                                'Filtrado',
+                                NOW(),
+                                'M216',
+                                :pesoM,
+                                :pesoMF,
+                                :fab,
+                                :dep,
+                                :notas,
+                                :riqueza,
+                                :densidad
+                                )";
+      
+    $stmt = $conexion->prepare($InsertSQL);    
+    $stmt->bindParam(":id", $id);        
+    $stmt->bindParam(":pesoM", $volumenInicial);
+    $stmt->bindParam(":pesoMF", $volumenAgua);
+    $stmt->bindParam(":fab", $fabricaciones);  
+    $stmt->bindParam(":dep", $deposito);
+    $stmt->bindParam(":notas", $notas);
+    $stmt->bindParam(":riqueza", $riqueza);
+    $stmt->bindParam(":densidad", $densidad);    
+    $stmt->execute();   
 
     $updateSQL ="UPDATE equipos
                  SET Estado = 'En uso'
-                 WHERE Equipo_id IN (:m)
-                 OR Equipo_id IN (:de)";
+                 WHERE Equipo_id IN (:mezclador)
+                 OR Equipo_id IN (:dep)";
 
     $stmt = $conexion->prepare($updateSQL);
-    $stmt->bindValue(":m", "M216");
-    $stmt->bindValue(":de", $deposito);
+    $stmt->bindValue(":mezclador", "M216");
+    $stmt->bindValue(":dep", $deposito);
     $stmt->execute();
 
     echo json_encode([

@@ -33,7 +33,9 @@
                     <input id="volumen_inicial" class="volumen_inicial">
                     <br><br><br>
                     <label>Volumen de agua</label>
-                    <input id="volumen_agua" class="volumen_agua">
+                    <input id="volumen_agua" class="volumen_agua">                    
+                    <label id="label-restos">Restos</label>
+                    <input id="input-restos" class="input-restos">                    
                 </fieldset>
             </div>
 
