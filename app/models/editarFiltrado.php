@@ -7,7 +7,6 @@ require_once("miconexion.php");
 // ===========================
 // 1. Recoger datos del POST
 // ===========================
-//$numeroProduccion     = $_POST["numeroProduccion"] ?? null;
 $densidad             = $_POST["densidad"] ?? "";
 $riqueza              = $_POST["riqueza"] ?? "";
 $volInicialMezclador  = $_POST["vol_inicial_M216"] ?? null;
@@ -25,32 +24,33 @@ $stmt->bindParam(":id", $deposito);
 $stmt->execute();
 
 $sqlUpdate = "UPDATE fabricaciones_en_curso 
-              SET PesoInicialMezclador = :pi,
-                  PesoFinalMezclador   = :pf,
-                  Reactor              = :re,
-                  Notas                = :n,
-                  Densidad             = :d,
-                  Riqueza              = :r
+              SET PesoInicialMezclador  = :pM,
+                  Volumen_Agua          = :agua,
+                  Deposito              = :dep,
+                  Notas                 = :notas,
+                  Densidad              = :densidad,
+                  Riqueza               = :riqueza
               WHERE Producto_id = 'Filtrado'";
 
 $stmt = $conexion->prepare($sqlUpdate);
 
 $stmt->execute([
-    ':pi'      => $volInicialMezclador,
-    ':pf'      => $volAgua,
-    ':re'      => $deposito,
-    ':n'       => $notas,
-    ':d'       => $densidad,
-    ':r'       => $riqueza
+    ':pM'        => $volInicialMezclador,
+    ':agua'      => $volAgua,
+    ':dep'        => $deposito,
+    ':notas'         => $notas,
+    ':densidad'         => $densidad,
+    ':riqueza'         => $riqueza
 ]);
 
 echo json_encode([
-    "densidad" => $densidad,
-    "riqueza" => $riqueza,
-    "volInicialMezclador" => $volInicialMezclador,
-    "volAgua" => $volAgua,
-    "notas" => $notas,
-    "deposito" => $deposito
+    "ok" => true,
+    "densidad"             => $densidad,
+    "riqueza"              => $riqueza,
+    "volInicialMezclador"  => $volInicialMezclador,
+    "volAgua"              => $volAgua,
+    "notas"                => $notas,
+    "deposito"             => $deposito
 ]); exit;
 
 ?>

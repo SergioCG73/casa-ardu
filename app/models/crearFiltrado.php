@@ -1,9 +1,5 @@
 <?php 
 
-/*echo json_encode([
-    "FILE" => __FILE__
-]); exit; */
-
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
@@ -23,18 +19,11 @@ $fabricaciones = $_POST["fabricaciones"] ?? "";
 function generarID()
 {
     date_default_timezone_set("Europe/Madrid");
-    $ahora = date("d") . date("m") . date("Y") . date("H") . date("i");
-    $ID = $ahora;
+    $ID = date("dmYHi");    
     return $ID;
 }
 
-    //Se utiliza el campo NumeroFabricacion para recoger el ID de la filtración
-    //Se utiliza el campo Receta para recoger las fabricaciones que se filtran.
-    //Se utiliza el campo PesoInicialMezclador para recoger el Volumen inicial del M216
-    //Se utiliza el campo PesoFinalMezclador para recoger el Volumen de agua
-    //Se utiliza el campo Reactor para recoger el depósito
-
-    $id = generarID();   
+    $id = generarID();
     
     $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
@@ -42,9 +31,9 @@ function generarID()
                                 FechaInicio,
                                 Mezclador,
                                 PesoInicialMezclador,
-                                PesoFinalMezclador,
-                                Receta,
-                                Reactor,
+                                Volumen_Agua,
+                                Fab_Filtradas,
+                                Deposito,
                                 Notas,
                                 Riqueza, 
                                 Densidad
@@ -55,18 +44,18 @@ function generarID()
                                 NOW(),
                                 'M216',
                                 :pesoM,
-                                :pesoMF,
+                                :agua,
                                 :fab,
                                 :dep,
                                 :notas,
                                 :riqueza,
                                 :densidad
                                 )";
-      
+          
     $stmt = $conexion->prepare($InsertSQL);    
     $stmt->bindParam(":id", $id);        
     $stmt->bindParam(":pesoM", $volumenInicial);
-    $stmt->bindParam(":pesoMF", $volumenAgua);
+    $stmt->bindParam(":agua", $volumenAgua);
     $stmt->bindParam(":fab", $fabricaciones);  
     $stmt->bindParam(":dep", $deposito);
     $stmt->bindParam(":notas", $notas);

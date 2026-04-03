@@ -41,8 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (hayRestos) {
                             lista.push("Restos");
                         }
-
-                        //divfabricaciones.textContent = `Fabricaciones a filtrar: ${lista.join(" + ")}`;                     
+                        
                         divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;
 
                     } else {
@@ -50,11 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
-                if (modo === "editar" || modo === "transferir") {
+                if (modo === "editar" || modo === "transferir") {                    
                     inputDensidad.value = datosEdicion.Densidad;
                     inputRiqueza.value = datosEdicion.Riqueza;
                     inputVolumenInicial.value = formatearMiles(datosEdicion.PesoInicialMezclador) //Es el volumen inicial en el formulario
-                    inputVolumenAgua.value = formatearMiles(datosEdicion.PesoFinalMezclador) //Es el volumen de agua en el formulario
+                    inputVolumenAgua.value = formatearMiles(datosEdicion.Volumen_Agua)
                     txtNotas.value = datosEdicion.Notas;
                 }
 
@@ -88,11 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-function generarRadiosDepositos(data) {
-        //console.log(data); debugger
+function generarRadiosDepositos(data) {        
         const contenedorDepositos = document.querySelector("#depositos fieldset");
-        contenedorDepositos.innerHTML = "<legend>Depósitos</legend>";
-        //console.log(data.Depositos); debugger;
+        contenedorDepositos.innerHTML = "<legend>Depósitos</legend>";        
 
         // Validación correcta
         if (!data.Depositos || data.Depositos.length === 0) {
@@ -115,7 +112,7 @@ function generarRadiosDepositos(data) {
             input.value = dep.Equipo_id;
 
             // ✔ Marcar el depósito que coincide con datosEdicion.Reactor
-            if (datosEdicion.Reactor === dep.Equipo_id) {
+            if (datosEdicion.Deposito === dep.Equipo_id) {
                 input.checked = true;
                 depositoSeleccionado = dep.Equipo_id;
             }
@@ -174,8 +171,6 @@ function generarRadiosDepositos(data) {
         return nums.join(" + ");
     }
 
-
-
     //---------------------- MODO CREAR ---------------------------------------//
     if (modo === "crear") {
         inicializarFormulario(modo);
@@ -202,8 +197,8 @@ function generarRadiosDepositos(data) {
             datos.append("fabricaciones", lista);
             datos.append("deposito", depositoSeleccionado);
 
-            /*const objeto = Object.fromEntries(datos.entries());
-            console.log(objeto); debugger*/
+            const objeto = Object.fromEntries(datos.entries());
+            console.log(objeto); debugger
 
             fetch("index.php?c=Crear&a=filtrado", {
                 method: "POST",
@@ -215,7 +210,7 @@ function generarRadiosDepositos(data) {
                     if (json.ok) {
                         mostrarModal("Datos guardados correctamente")
                     } else {
-                        console.log("json.no ok"); debugger
+                        console.log("json.no ok");
                         alert(json.error)
                     }
                 })
@@ -253,7 +248,7 @@ function generarRadiosDepositos(data) {
             })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json);
+                    console.log(json); debugger
 
                     if (json.ok) {
                         mostrarModal("Filtración editada correctamente");
@@ -277,10 +272,10 @@ function generarRadiosDepositos(data) {
             datos = new FormData();
             datos.append("restos", formatearNumero(inputRestos).replace(/\./g, ""));
             datos.append("id", datosEdicion.NumeroFabricacion);
-            datos.append("fabricaciones", datosEdicion.Mezclador);  //Si lo sé que es Mezclador, pero se usaron campos para recoger datos aunque no tuvieran que ver con el nombre del campo
+            datos.append("fabricaciones", datosEdicion.Fab_Filtradas);  
             datos.append("volumenInicial", datosEdicion.PesoInicialMezclador);
-            datos.append("volumenAgua", datosEdicion.PesoFinalMezclador);
-            datos.append("deposito", datosEdicion.Reactor);
+            datos.append("volumenAgua", datosEdicion.Volumen_Agua);
+            datos.append("deposito", datosEdicion.Deposito);
 
             /*const objeto = Object.fromEntries(datos.entries());
             console.log(objeto); debugger*/
@@ -291,7 +286,7 @@ function generarRadiosDepositos(data) {
             })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json);
+                    //console.log(json); debugger
 
                     if (json.ok) {
                         mostrarModal("Datos guardados correctamente");

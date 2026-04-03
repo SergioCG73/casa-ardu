@@ -117,8 +117,11 @@ function construirTabla(data) {
     return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id        
         //Control de valores undefined/null con ternario
+        //console.log(data); debugger
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
         const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador; //28/03/26    
+        const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta; //03/04/26    
+        const deposito = (p.Deposito === "undefined" || p.Deposito === null) ? "" : p.Deposito; //03/04/26    
         
         let claseEspecial = "";
         let claseMezclador = "";
@@ -144,6 +147,13 @@ function construirTabla(data) {
         }
         
         let td = "";
+        
+        if (reactor === "") {
+             campo = deposito;
+        } else {
+            campo = reactor;
+        }
+
 
         if (p.Notas !== "") {
             td = `<td>
@@ -162,11 +172,11 @@ function construirTabla(data) {
                 ${p.Producto_id}
             </td>
             <td>${p.NumeroFabricacion}</td>
-            <td>${p.FechaInicio}</td>            
-            <!--<td class="${claseMezclador}">${p.Mezclador}</td> 26/03/2026-->
+            <td>${p.FechaInicio}</td>
             <td class="${claseMezclador}">${mezclador}</td> <!--26/03/2026-->
-            <td>${reactor}</td>
-            <td>${p.Receta}</td>                        
+            <!--<td>${reactor}</td>-->
+            <td>${campo}</td>
+            <td>${receta}</td>                        
             ${td}
             <td>
                      <img src="images/editar_azul_icon_20x20.png"

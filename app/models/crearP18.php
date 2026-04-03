@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once("miconexion.php");
 
 // Recoger datos
-//$fechaHoraInicio = $_POST["fechaHoraInicio"] ?? "";
 $numeroProduccion = $_POST["numeroProduccion"] ?? "";
 $mezclador = $_POST["mezclador"] ?? "";
 $receta = $_POST["receta"] ?? "";
@@ -27,8 +26,7 @@ $producto = $_POST["producto"] ?? "";
 $notas = $_POST["notas"] ?? "";
 
 // Validación
-if (/*empty($fechaHoraInicio) ||*/
-    empty($numeroProduccion) ||
+if (empty($numeroProduccion) ||
     empty($mezclador) ||
     empty($receta) ||
     empty($pesoInicialMezclador)) {
@@ -39,18 +37,25 @@ if (/*empty($fechaHoraInicio) ||*/
     exit;
 }
 
-try {
-    // INSERT
-    /*$insertSQL = "INSERT INTO fabricaciones_en_curso
-                  (FechaInicio, Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id, Notas)
-                  VALUES (:fechaHoraInicio, :Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto, :Notas)";*/
-                  
-    $insertSQL = "INSERT INTO fabricaciones_en_curso
-                  (Mezclador, PesoInicialMezclador, Receta, NumeroFabricacion, Producto_id, Notas)
-                  VALUES (:Mezclador, :PesoInicialMezclador, :Receta, :numeroProduccion, :Producto, :Notas)";
+try {                      
+    $insertSQL = "INSERT INTO fabricaciones_en_curso (
+                                Mezclador,
+                                PesoInicialMezclador,
+                                Receta,
+                                NumeroFabricacion,                               
+                                Producto_id,
+                                Notas,
+                                FechaInicio)
+                        VALUES (
+                                :Mezclador,
+                                :PesoInicialMezclador,
+                                :Receta,
+                                :numeroProduccion,
+                                :Producto,
+                                :Notas,
+                                NOW())";
 
-    $insertStmt = $conexion->prepare($insertSQL);
-    //$insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);
+    $insertStmt = $conexion->prepare($insertSQL);    
     $insertStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
     $insertStmt->bindParam(":PesoInicialMezclador", $pesoInicialMezclador, PDO::PARAM_INT);
     $insertStmt->bindParam(":Receta", $receta, PDO::PARAM_STR);
@@ -67,8 +72,7 @@ try {
 
     echo json_encode([
     "ok" => true, 
-    "numeroProduccion" => $numeroProduccion,
-    //"fechaHoraInicio" => $fechaHoraInicio,
+    "numeroProduccion" => $numeroProduccion,    
     "mezclado" => $mezclador,
     "pesoInicial" => $pesoInicialMezclador,
     "receta" => $receta, 

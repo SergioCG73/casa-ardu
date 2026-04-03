@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function inicializarFormulario(modo, producto, datosEdicion = null) {
+    function inicializarFormulario(modo, producto, datosEdicion = null) {        
         const formData = new FormData();        
         switch (modo) {
             case "crear":
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 mezcladoresEnUso = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "En uso");
                 mezcladoresAveriados = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Estado === "Averiado");
-                mezcladoresEditar = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Equipo_id !== "M216");               
+                mezcladoresEditar = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Equipo_id !== "M216");
                 
                 if (modo === "crear") {                    
                     if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso.length <= 0) {                        
@@ -236,8 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);
                 }                
                 
-                if (modo === "transferir" && producto === "P18") {                    
-                    console.log("Modo transferir P18"); 
+                if (modo === "transferir") {                    
                     datosEdicion = datosTransferencia;
                     generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);
                 }
@@ -299,16 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const valNotas = txtNotas.value;
 
-                /*const ahora = new Date();
-                const fechaHoraInicio = ahora.getFullYear() + "-" +
-                    String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
-                    String(ahora.getDate()).padStart(2, '0') + " " +
-                    String(ahora.getHours()).padStart(2, '0') + ":" +
-                    String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                    String(ahora.getSeconds()).padStart(2, '0');*/
-
-                const datosEnviar = new FormData();
-                //datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
+                const datosEnviar = new FormData();                
                 datosEnviar.append("numeroProduccion", numeroProduccionActual); //Añadido y cambiado
                 datosEnviar.append("mezclador", mezcladorSeleccionado);
                 datosEnviar.append("receta", recetaSeleccionada);
@@ -420,13 +410,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==== MODO TRANSFERIR ====
 
-    if (modo === "transferir") {        
-        //console.log("transferir..."); debugger
-        console.log("-->", datosTransferencia); debugger
+    if (modo === "transferir") {   
+        console.log("Modo transferir...");        
         
-        //if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "") {
-        if (datosTransferencia.Mezclador !== "" && datosTransferencia.Reactor === "undefined") {            
-            console.log("Modo transferencia M a R...");            
+        const reactor = (datosTransferencia.Reactor === "undefined" || datosTransferencia.Reactor === "null") ? "" : datosTransferencia.Reactor
+                
+        //console.log(datosTransferencia); debugger
+        //console.log("reactor", reactor);
+        
+        if (datosTransferencia.Mezclador !== null && (reactor ===  "" || reactor === null)) {
+            
+
+            console.log("Modo transferencia M a R..."); 
             btnCrear.textContent = "Transferir ";            
 
             // Creamos el formulario y ESPERAMOS a que termine
@@ -447,22 +442,27 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (!reactorSeleccionado) return alert("Selecciona un reactor");
                         if (!pesoR) return alert("Introduzca peso inicial reactor");
                         
+                        let datosEdicion = {};
                         datosEdicion.PesoInicialReactor = Number(peso_inicial_reactor.value.replace(/\./g, ""));
+                        
+                        //console.log(datosEdicion.PesoInicialReactor); debugger
 
-                        let horaTransferenciaMezcladoraReactor = null;
+                        //let horaTransferenciaMezcladoraReactor = null;
 
-                        const ahora = new Date();
+                        /*const ahora = new Date();
                         horaTransferenciaMezcladoraReactor = ahora.getFullYear() + "-" +
                             String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
                             String(ahora.getDate()).padStart(2, '0') + " " +
                             String(ahora.getHours()).padStart(2, '0') + ":" +
                             String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                            String(ahora.getSeconds()).padStart(2, '0');                        
+                            String(ahora.getSeconds()).padStart(2, '0');                        */
 
+                        //console.log(horaTransferenciaMezcladoraReactor); debugger
+                        
                         const valNotas = txtNotas.value;
 
                         const datosTransferenciaMezcladoraReactor = new FormData();
-                        datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);
+                        //datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);
                         datosTransferenciaMezcladoraReactor.append("mezclador", datosTransferencia.Mezclador);
                         datosTransferenciaMezcladoraReactor.append("modo", modo);
                         datosTransferenciaMezcladoraReactor.append("numeroProduccion", datosTransferencia.NumeroFabricacion);
@@ -474,6 +474,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
                         console.log(objeto); debugger*/
+                        
+                        console.log("fetch"); 
 
                         fetch("index.php?c=Transferir&a=mezclaAReactor", {
                             method: "POST",
@@ -513,21 +515,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log(inputPesoFinalReactor.value);
                     pesoRF = inputPesoFinalReactor.value.replace(/\./g, "");
 
-                    const ahora = new Date();
+                    /*const ahora = new Date();
 
                     fechaHoraFinal = ahora.getFullYear() + "-" +
                         String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
                         String(ahora.getDate()).padStart(2, '0') + " " +
                         String(ahora.getHours()).padStart(2, '0') + ":" +
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                        String(ahora.getSeconds()).padStart(2, '0');
+                        String(ahora.getSeconds()).padStart(2, '0');*/
 
                     const valNotas = txtNotas.value;
                     const datosTransferenciaFinal = new FormData();
                     
                     datosTransferenciaFinal.append("fechaHoraInicio", datosTransferencia.FechaInicio);
-                    datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);
                     datosTransferenciaFinal.append("fechaInicioReaccion", datosTransferencia.FechaInicioReaccion);
+                    //datosTransferenciaFinal.append("fechaHoraFinal", fechaHoraFinal);                    
                     datosTransferenciaFinal.append("mezclador", datosTransferencia.Mezclador);
                     datosTransferenciaFinal.append("numeroProduccion", datosTransferencia.NumeroFabricacion);
                     datosTransferenciaFinal.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
