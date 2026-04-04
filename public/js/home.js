@@ -68,7 +68,7 @@ function cargarProducciones(tabla, divProducciones) {
 
             let claseEspecial = null;
 
-            if (data.producciones_sin_filtrar === 0) {
+            /*if (data.producciones_sin_filtrar === 0) {
                 displayM216.style.display = "none";
             } else {
                 displayM216.style.display = "block";
@@ -89,8 +89,41 @@ function cargarProducciones(tabla, divProducciones) {
 
                 textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
                 textM216.classList.add(claseEspecial);
+            }*/
+            
+            if (data.volumen_M216 === 0) {
+                displayM216.style.display = "none";                
+            } else {
+                displayM216.style.display = "block";
+                const textM216 = document.getElementById("label_m216");
+                volumenMaximoM216 = 60000;
+                volumenUsado = Math.round((data.volumen_M216/volumenMaximoM216)*100);
+                
+                console.log(volumenUsado); debugger
+                        
+                textM216.innerHTML = volumenUsado + "%";
+                
+                const valorM216 = Number(textM216.innerHTML);
+                
+                volumenUsado = 51;
+                textM216.innerHTML = volumenUsado + "%";
+                
+                if (volumenUsado >= 0 && volumenUsado <=50) {
+                    claseEspecial = "M216_Green";
+                } else if (volumenUsado > 50 && volumenUsado <= 70) {
+                    claseEspecial = "M216_Yellow";
+                } else if (volumenUsado > 70 && volumenUsado <= 80) {
+                    claseEspecial = "M216_Orange";                
+                } else if (volumenUsado > 80) {
+                    claseEspecial = "M216_Red";
+                }                                    
+                
+                textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
+                textM216.classList.add(claseEspecial);
             }
-        })
+            
+            })
+            
         .catch(err => console.error("Error cargando producciones:", err));
 }
 
