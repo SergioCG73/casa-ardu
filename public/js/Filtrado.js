@@ -286,7 +286,7 @@ function generarRadiosDepositos(data) {
             })
                 .then(response => response.json())
                 .then(json => {
-                    //console.log(json); debugger
+                    console.log(json); debugger
 
                     if (json.ok) {
                         mostrarModal("Datos guardados correctamente");

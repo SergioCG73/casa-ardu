@@ -27,17 +27,10 @@ if ($modo === "inicial") {
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 2) Producciones sin filtrar
-    /*$sql = "SELECT NumeroFabricacion FROM mezclador_216";
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute();
-    $producciones_sin_filtrar = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
-    
-    // 2) Volumen en M216
     $sql = "SELECT NumeroFabricacion FROM mezclador_216";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $volumen_M216 = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+    $producciones_sin_filtrar = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Filtrar las que NO son "0000"
     $solo_fabricaciones = array_filter(
