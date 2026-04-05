@@ -1,6 +1,14 @@
 <?php
 
-class FormularioController {    
+class FormularioController {  
+    public function home() {
+        require_once "/../views/home.php";
+    }
+    
+    public function login() {
+        require_once "/../views/viewLogin.php";      
+    }    
+      
     public function p18() {
         require_once __DIR__ . "/../views/viewP18.php";
     }
