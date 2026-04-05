@@ -30,8 +30,8 @@ require_once("miconexion.php");
                       (FechaInicio, Reactor, PesoInicialReactor, Receta, NumeroFabricacion, Producto_id, Notas) 
                       VALUES (:fechaHoraInicio, :reactor, :pesoInicialReactor, :receta, :numeroProduccion, :producto, :notas)";*/
       $insertSQL = "INSERT INTO fabricaciones_en_curso
-                     (Reactor, PesoInicialReactor, Receta, NumeroFabricacion, Producto_id, Notas) 
-                      VALUES (:reactor, :pesoInicialReactor, :receta, :numeroProduccion, :producto, :notas)";
+                     (FechaInicio, Reactor, PesoInicialReactor, Receta, NumeroFabricacion, Producto_id, Notas) 
+                      VALUES (NOW(), :reactor, :pesoInicialReactor, :receta, :numeroProduccion, :producto, :notas)";
 
         $insertStmt = $conexion->prepare($insertSQL);
         //$insertStmt->bindParam(":fechaHoraInicio", $fechaHoraInicio, PDO::PARAM_STR);        
