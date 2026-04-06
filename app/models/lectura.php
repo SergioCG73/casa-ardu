@@ -24,9 +24,7 @@ if ($modo === "inicial") {
     $sql = "SELECT * FROM fabricaciones_en_curso";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
-    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);    
-
-    //echo json_encode(["producciones_en_curso", $producciones_en_curso]); exit;
+    $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // 2) Volumen en M216
     $sql = "SELECT SUM(Volumen) AS TotalVolumen FROM mezclador_216";
@@ -35,8 +33,6 @@ if ($modo === "inicial") {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $volumen_M216 = $result["TotalVolumen"] ?? 0;
     $volumen_M216 = intval($volumen_M216);
-
-    //echo json_encode(["volumen_M216", $volumen_M216]); exit;
 
     // Filtrar las que NO son "0000"
     $solo_fabricaciones = array_filter(
