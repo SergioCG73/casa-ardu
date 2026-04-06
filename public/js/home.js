@@ -56,7 +56,7 @@ function cargarProducciones(tabla, divProducciones) {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); debugger
+            //console.log(data); debugger
             if (!data.ok) return;
             tabla.innerHTML = generarEncabezado() + construirTabla(data);
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
@@ -99,7 +99,7 @@ function cargarProducciones(tabla, divProducciones) {
                 volumenMaximoM216 = 60000;
                 volumenUsado = Math.round((data.volumen_M216/volumenMaximoM216)*100);
                 
-                console.log(volumenUsado); debugger
+                //console.log(volumenUsado); debugger
                         
                 textM216.innerHTML = volumenUsado + "%";
                 
