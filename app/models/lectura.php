@@ -21,7 +21,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 // -----------------------------
 if ($modo === "inicial") {
     // 1) Producciones en curso
-    $sql = "SELECT * FROM fabricaciones_en_curso";
+    $sql = "SELECT * FROM fabricaciones_en_curso ORDER BY FechaInicio DESC";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
