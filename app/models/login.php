@@ -7,19 +7,18 @@ require_once("miconexion.php");
 $username = $_POST['usuario'];
 $password = $_POST['clave'];
 
-$consulta = "SELECT * FROM usuarios WHERE usuario='$username' AND clave='$password'";
-$resultado = mysqli_query($miconexion, $consulta);
+$consulta = "SELECT * FROM usuarios WHERE usuario= :usuario AND clave= :clave";
+$stmt = $conexion->prepare($consulta);
+$stmt->bindParam(":usuario", $username);
+$stmt->bindParam(":clave", $password);
+$stmt->execute();
 
-if(mysqli_num_rows($resultado) == 1){
+if ($stmt->rowCount() == 1) {
     session_start();
-    $_SESSION['username']=$username;
-    header('location: portada.html');
+    $_SESSION['username'] = $username;
+    echo "OK"; // fetch lo recibirá
+} else {
+    echo "ERROR";
 }
-else
-{
-    echo "Nombre de usuario o password incorrecto";
-}
-
-mysqli_close($conexion);
 
 ?>

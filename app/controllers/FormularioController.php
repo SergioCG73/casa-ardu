@@ -1,8 +1,9 @@
 <?php
 
 class FormularioController {  
+    
     public function home() {
-        require_once "/../views/home.php";
+        require_once __DIR__ . "/../views/home.php";
     }
     
     public function login() {
