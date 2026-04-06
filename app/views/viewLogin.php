@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
@@ -30,5 +30,5 @@
             </div>
         </div>    
 </body>
-    <script src="js/login.js"></script>
+    <script src="js/Login.js"></script>
 </html>

@@ -1,7 +1,10 @@
 <?php
 
-$c = !empty($_GET['c']) ? $_GET['c'] : 'Home';
-$a = !empty($_GET['a']) ? $_GET['a'] : 'home';
+//$c = !empty($_GET['c']) ? $_GET['c'] : 'Home';
+//$a = !empty($_GET['a']) ? $_GET['a'] : 'home';
+
+$c = !empty($_GET['c']) ? $_GET['c'] : 'Formulario';
+$a = !empty($_GET['a']) ? $_GET['a'] : 'login';
 
 $controllerFile = __DIR__ . '/../app/controllers/' . $c . 'Controller.php';
 

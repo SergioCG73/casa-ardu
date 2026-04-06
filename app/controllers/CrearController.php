@@ -6,6 +6,10 @@
 
 class CrearController {
 
+    public function login() {
+        require_once __DIR__ . "/../models/login.php";
+    }
+
     public function fabricacionP18() {
         require_once __DIR__ . "/../models/crearP18.php";
     }
