@@ -176,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== BOTÓN RETROCEDER ====
 
     btnRetroceder.addEventListener("click", () => {
-        //window.location.href = "index.php";
         window.location.href = "index.php?c=Formulario&a=home";
     });
 
@@ -190,8 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 //console.log(data); debugger
                 if (data.equipos.length > 0 && data.equipos[0].Estado === "En uso") {
-                    alert("No se puede fabricar Sulfato R202 ocupado");                    
-                    //window.location.href = "index.php";
+                    alert("No se puede fabricar Sulfato R202 ocupado");
                     window.location.href = "index.php?c=Formulario&a=home";
                     return;
                 }

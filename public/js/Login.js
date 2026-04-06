@@ -16,12 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
             method: "POST",
             body: datos
         })
-        .then(res => res.text())
+        .then(res => res.json())
         .then(data => {
             console.log("Respuesta del servidor:", data); 
             
-            if (data === "OK") {
-                    console.log("Correcto");
+            if (data.ok) {
+                    console.log("Correcto");                    
+                    //localStorage.setItem("rol", data.rol);
                     window.location.href = "index.php?c=Formulario&a=home";
             } else {
                     alert("Usuario o contraseña incorrectos");

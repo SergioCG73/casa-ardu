@@ -25,5 +25,6 @@
     </div>
 
 </body>
+    <script>const ROL_USUARIO = "<?= $rol ?>";</script>
     <script src="js/home.js"></script>
 </html>

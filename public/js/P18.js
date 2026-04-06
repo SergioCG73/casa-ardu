@@ -278,10 +278,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     [peso_inicial_mezclador, peso_final_mezclador, peso_inicial_reactor, peso_final_reactor].forEach(input => {
         input.addEventListener("input", () => formatearNumero(input));
-    });
-    
-    btnRetroceder.addEventListener("click", () => window.location.href = "index.php?c=Formulario&a=home");
+    });    
 
+    btnRetroceder.addEventListener("click", () => window.location.href = "index.php?c=Formulario&a=home");
+    
+>>>>>>> a6cd404d76bdb351829acfbaacfeed204d60de13
     // ===== MODO CREAR =====
     if (modo === "crear") {
         inicializarFormulario(modo, producto).then(() => { 

@@ -9,6 +9,12 @@ function init() {
     const divProducciones = document.getElementById("producciones_en_curso");    
 
     localStorage.setItem("modo", "inicial");
+    //rol = localStorage.getItem("rol");    
+
+     if (ROL_USUARIO === "operario") {
+        btnP18.disabled = true;
+        btnP18.classList.add("boton-deshabilitado");
+    }
 
     btnP18.addEventListener("click", () => {
         localStorage.setItem("modo", "crear");
@@ -67,29 +73,7 @@ function cargarProducciones(tabla, divProducciones) {
             divProducciones.style.display = "block";
 
             let claseEspecial = null;
-
-            /*if (data.producciones_sin_filtrar === 0) {
-                displayM216.style.display = "none";
-            } else {
-                displayM216.style.display = "block";
-                const textM216 = document.getElementById("label_m216");
-                textM216.innerHTML = data.producciones_sin_filtrar;
-
-                const valorM216 = Number(textM216.innerHTML);
-
-                if (valorM216 > 0 && valorM216 < 3) {
-                    claseEspecial = "M216_Green";
-                }
-                else if (valorM216 === 3) {
-                    claseEspecial = "M216_Yellow";
-                }
-                else if (valorM216 > 3) {
-                    claseEspecial = "M216_Red"
-                }
-
-                textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
-                textM216.classList.add(claseEspecial);
-            }*/
+            
             
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";                
@@ -98,8 +82,6 @@ function cargarProducciones(tabla, divProducciones) {
                 const textM216 = document.getElementById("label_m216");
                 volumenMaximoM216 = 60000;
                 volumenUsado = Math.round((data.volumen_M216/volumenMaximoM216)*100);
-                
-                //console.log(volumenUsado); debugger
                         
                 textM216.innerHTML = volumenUsado + "%";
                 

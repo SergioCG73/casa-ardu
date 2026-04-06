@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "none";
         //window.location.href = "index.php";
         window.location.href = "index.php?c=Formulario&a=home";        
+
     }
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
