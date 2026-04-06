@@ -35,7 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("modal");
         modal.hidden = true;
         modal.style.display = "none";
-        window.location.href = "index.php";
+        //window.location.href = "index.php";
+        window.location.href = "index.php?c=Formulario&a=home";
     }
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
@@ -175,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== BOTÓN RETROCEDER ====
 
     btnRetroceder.addEventListener("click", () => {
-        window.location.href = "index.php";
+        window.location.href = "index.php?c=Formulario&a=home";
     });
 
     // ==== MODO CREAR ====
@@ -189,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 //console.log(data); debugger
                 if (data.equipos.length > 0 && data.equipos[0].Estado === "En uso") {
                     alert("No se puede fabricar Sulfato R202 ocupado");                    
-                    window.location.href = "index.php";
+                    window.location.href = "index.php?c=Formulario&a=home";
                     return;
                 }
 

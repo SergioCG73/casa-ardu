@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let fabricaciones;
     let lista;
 
-    btnRetroceder.addEventListener("click", () => { window.location.href = "index.php"; });
+    //btnRetroceder.addEventListener("click", () => { window.location.href = "index.php"; });
+    btnRetroceder.addEventListener("click", () => { window.location.href = "index.php?c=Formulario&a=home"; });
 
     divfabricaciones.textContent = "Fabricaciones a filtrar: ";
 
@@ -150,7 +151,8 @@ function generarRadiosDepositos(data) {
         const modal = document.getElementById("modal");
         modal.hidden = true;
         modal.style.display = "none";
-        window.location.href = "index.php";
+        //window.location.href = "index.php";
+        window.location.href = "index.php?c=Formulario&a=home";
     }
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
