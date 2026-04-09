@@ -124,7 +124,7 @@ function construirTabla(data) {
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
         const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador; //28/03/26    
         const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta;
-        const deposito = (p.Deposito === "undefined" || p.Deposito === null) ? "" : p.Deposito; //03/04/26    
+        const deposito = (p.Deposito === "undefined" || p.Deposito === null) ? "" : p.Deposito; //03/04/26                
 
         let claseEspecial = "";
         let claseMezclador = "";
@@ -139,9 +139,10 @@ function construirTabla(data) {
         }
         else if (p.Producto_id === "Ferrico") {
             claseEspecial = "ferrico_destacado";
-        }
+        }        
 
-        if (p.Producto_id === "Ferrico" && p.Sacas === "1") {
+        if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
+            
             claseMezclador = "M311_destacado";
         }
 
