@@ -18,8 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(data => {
-            console.log("Respuesta del servidor:", data); 
-            
+            //console.log("Respuesta del servidor:", data); debugger
             if (data.ok) {
                     console.log("Correcto");                    
                     //localStorage.setItem("rol", data.rol);
