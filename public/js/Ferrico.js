@@ -35,7 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("modal");
         modal.hidden = true;
         modal.style.display = "none";
-        window.location.href = "index.php";
+        //window.location.href = "index.php";
+        window.location.href = "index.php?c=Formulario&a=home";        
+
     }
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
@@ -204,7 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== BOTÓN RETROCEDER ====
 
     btnRetroceder.addEventListener("click", () => {
-        window.location.href = "index.php";
+        //window.location.href = "index.php";
+        window.location.href = "index.php?c=Formulario&a=home";
     });
 
     // ==== MODO CREAR ====
