@@ -14,7 +14,7 @@ $stmt->execute();
 
 if ($stmt->rowCount() == 1) {
 
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC); // ← AQUÍ estaba el error
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
     session_start();
     $_SESSION['username'] = $usuario["usuario"];
