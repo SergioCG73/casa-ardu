@@ -16,12 +16,12 @@ $deposito             = $_POST["deposito"] ?? null;
 
 $sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id IN ('D105', 'D106', 'D107')";
 $stmt = $conexion->prepare($sqlUpdate);
-$stmt->execute();
+//$stmt->execute();
 
 $sqlUpdate = "UPDATE equipos SET Estado = 'En uso' WHERE Equipo_id = :id";
 $stmt = $conexion->prepare($sqlUpdate);
 $stmt->bindParam(":id", $deposito);
-$stmt->execute();
+//$stmt->execute();
 
 $sqlUpdate = "UPDATE fabricaciones_en_curso 
               SET PesoInicialMezclador  = :pM,
@@ -35,12 +35,12 @@ $sqlUpdate = "UPDATE fabricaciones_en_curso
 $stmt = $conexion->prepare($sqlUpdate);
 
 $stmt->execute([
-    ':pM'        => $volInicialMezclador,
-    ':agua'      => $volAgua,
-    ':dep'        => $deposito,
-    ':notas'         => $notas,
-    ':densidad'         => $densidad,
-    ':riqueza'         => $riqueza
+    ':pM'           => $volInicialMezclador,
+    ':agua'         => $volAgua,
+    ':dep'          => $deposito,
+    ':notas'        => $notas,
+    ':densidad'     => $densidad,
+    ':riqueza'      => $riqueza
 ]);
 
 echo json_encode([
