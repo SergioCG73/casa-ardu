@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let datosEdicion = JSON.parse(localStorage.getItem("datosTransferencia"));
     let depositoSeleccionado;
     let fabricaciones;
-    let lista;
+    let lista;    
 
     btnRetroceder.addEventListener("click", () => { window.location.href = "index.php?c=Formulario&a=home"; });
 
@@ -52,6 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (modo === "editar" || modo === "transferir") {                    
                     divfabricaciones.textContent = `Fabricaciones a filtrar: ` + datosEdicion.Fab_Filtradas;
+                    inputDensidad.disabled = true;
+                    inputRiqueza.disabled = true;
                     inputDensidad.value = datosEdicion.Densidad;
                     inputRiqueza.value = datosEdicion.Riqueza;
                     //inputVolumenInicial.value = formatearMiles(datosEdicion.PesoInicialMezclador) //Es el volumen inicial en el formulario
