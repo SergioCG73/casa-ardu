@@ -120,7 +120,7 @@ function construirTabla(data) {
     return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id        
         //Control de valores undefined/null con ternario
-        //console.log(data); debugger
+        //console.log(data.producciones_en_curso); debugger
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
         const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador; //28/03/26    
         const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta;
@@ -159,7 +159,7 @@ function construirTabla(data) {
         }
 
 
-        if (p.Notas !== "") {
+        if (p.Notas !== "" && p.Notas !== null) {
             td = `<td>
                       <img src="images/nota_amarillo_icon_20x20.png"
                       class="icono-nota"
