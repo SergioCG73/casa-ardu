@@ -1,7 +1,5 @@
 <?php
 
-
-
 class LeerController {
     public function lectura() {
         include __DIR__ . '/../models/lectura.php';
@@ -14,5 +12,9 @@ class LeerController {
 
     public function leerfiltrado() {        
         include __DIR__ . '/../models/leerFiltrado.php';
+    }
+
+    public function leerfiltradas() {          
+        include __DIR__ . '/../models/leerFiltradas.php';
     }
 }
