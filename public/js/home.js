@@ -4,16 +4,16 @@ function init() {
     const btnP18 = document.getElementById("btnP18");
     const btnSulfato = document.getElementById("btnSulfato");
     const btnFerrico = document.getElementById("btnFerrico");
-    const btnFiltrado = document.getElementById("btnFiltrado");
+    //const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
-    const divProducciones = document.getElementById("producciones_en_curso");    
+    const divProducciones = document.getElementById("producciones_en_curso");
+    const displayM216 = document.getElementById("displayM216");
 
     localStorage.setItem("modo", "inicial");
-    //rol = localStorage.getItem("rol");    
 
-     if (ROL_USUARIO === "operario") {
-        btnP18.disabled = true;
-        btnP18.classList.add("boton-deshabilitado");
+    if (ROL_USUARIO === "LAB") {
+        console.log("MODO LABORATORIO");
+        window.location.href = "index.php?c=Formulario&a=laboratorio";
     }
 
     btnP18.addEventListener("click", () => {
@@ -32,22 +32,14 @@ function init() {
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
         window.location.href = "index.php?c=Formulario&a=ferrico";
-    })
+    })   
 
-    btnFiltrado.addEventListener("click", () => {
-        const existeFiltrado = localStorage.getItem("existeFiltrado") === "1";
-
-        if (existeFiltrado) {
-            alert("Ya existe una filtración en curso. No se pueden iniciar más.");
-            return;
-        }
-
-        localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "Filtrado");
-        window.location.href = "index.php?c=Formulario&a=filtrado";
-    });
-    
     cargarProducciones(tabla, divProducciones);
+
+    setInterval(() => {        
+        console.log("setInterval");
+        cargarProducciones(tabla, divProducciones);
+    }, 600000); //600.000 ms son 10 minutos
 }
 
 /* ============================================================
@@ -73,39 +65,35 @@ function cargarProducciones(tabla, divProducciones) {
             divProducciones.style.display = "block";
 
             let claseEspecial = null;
-            
-            
+
+
             if (data.volumen_M216 === 0) {
-                displayM216.style.display = "none";                
+                displayM216.style.display = "none";
             } else {
                 displayM216.style.display = "block";
                 const textM216 = document.getElementById("label_m216");
                 volumenMaximoM216 = 60000;
-                volumenUsado = Math.round((data.volumen_M216/volumenMaximoM216)*100);
-                        
+                volumenUsado = Math.round((data.volumen_M216 / volumenMaximoM216) * 100);
+
                 textM216.innerHTML = volumenUsado + "%";
-                
-                const valorM216 = Number(textM216.innerHTML);
-                
-                volumenUsado = 51;
+
+                const valorM216 = Number(textM216.innerHTML);                
                 textM216.innerHTML = volumenUsado + "%";
-                
-                if (volumenUsado >= 0 && volumenUsado <=50) {
+
+                if (volumenUsado >= 0 && volumenUsado <= 50) {
                     claseEspecial = "M216_Green";
                 } else if (volumenUsado > 50 && volumenUsado <= 70) {
                     claseEspecial = "M216_Yellow";
                 } else if (volumenUsado > 70 && volumenUsado <= 80) {
-                    claseEspecial = "M216_Orange";                
+                    claseEspecial = "M216_Orange";
                 } else if (volumenUsado > 80) {
                     claseEspecial = "M216_Red";
-                }                                    
-                
+                }
+
                 textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
                 textM216.classList.add(claseEspecial);
             }
-            
-            })
-            
+        })
         .catch(err => console.error("Error cargando producciones:", err));
 }
 
@@ -135,9 +123,9 @@ function construirTabla(data) {
         //console.log(data); debugger
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
         const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador; //28/03/26    
-        const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta; //03/04/26    
+        const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta;
         const deposito = (p.Deposito === "undefined" || p.Deposito === null) ? "" : p.Deposito; //03/04/26    
-        
+
         let claseEspecial = "";
         let claseMezclador = "";
         if (p.Producto_id === 'P18') {
@@ -154,17 +142,17 @@ function construirTabla(data) {
         }
 
         if (p.Producto_id === "Ferrico" && p.Sacas === "1") {
-            claseMezclador = "M311_destacado";            
+            claseMezclador = "M311_destacado";
         }
 
         if (p.Producto_id === "Filtrado") {
             claseEspecial = "filtrado"
         }
-        
+
         let td = "";
-        
+
         if (reactor === "") {
-             campo = deposito;
+            campo = deposito;
         } else {
             campo = reactor;
         }
@@ -180,7 +168,7 @@ function construirTabla(data) {
         } else {
             td = `<td></td>`
         }
-        
+
         return `
         <tr>
             <td class="${claseEspecial} producto_${p.Producto_id}">
@@ -189,8 +177,8 @@ function construirTabla(data) {
             <td>${p.NumeroFabricacion}</td>
             <td>${p.FechaInicio}</td>
             <td class="${claseMezclador}">${mezclador}</td> <!--26/03/2026-->
-            <!--<td>${reactor}</td>-->
-            <td>${campo}</td>
+            <td>${reactor}</td>
+            <!--<td>${campo}</td>-->
             <td>${receta}</td>                        
             ${td}
             <td>
@@ -252,7 +240,7 @@ function activarEventosTabla(tabla) {
                     .then(json => { //console.log(json); debugger
                         if (json.ok) {
                             alert("Producción eliminada correctamente");
-                            window.location.href = "index.php";
+                            window.location.href = "index.php?c=Formulario&a=home";
                         } else alert("ERROR: " + json.error);
                     })
                     .catch(error => console.log("ERROR", error));

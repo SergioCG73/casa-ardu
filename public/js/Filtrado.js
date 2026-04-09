@@ -42,7 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             lista.push("Restos");
                         }
                         
-                        divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;
+                        divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;                        
+                        
 
                     } else {
                         divfabricaciones.textContent = "Sin fabricaciones que filtrar";
@@ -50,10 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (modo === "editar" || modo === "transferir") {                    
+                    divfabricaciones.textContent = `Fabricaciones a filtrar: ` + datosEdicion.Fab_Filtradas;
                     inputDensidad.value = datosEdicion.Densidad;
                     inputRiqueza.value = datosEdicion.Riqueza;
-                    inputVolumenInicial.value = formatearMiles(datosEdicion.PesoInicialMezclador) //Es el volumen inicial en el formulario
-                    inputVolumenAgua.value = formatearMiles(datosEdicion.Volumen_Agua)
+                    //inputVolumenInicial.value = formatearMiles(datosEdicion.PesoInicialMezclador) //Es el volumen inicial en el formulario
+                    //inputVolumenAgua.value = formatearMiles(datosEdicion.Volumen_Agua)
                     txtNotas.value = datosEdicion.Notas;
                 }
 
@@ -149,8 +151,7 @@ function generarRadiosDepositos(data) {
     function cerrarModal() {
         const modal = document.getElementById("modal");
         modal.hidden = true;
-        modal.style.display = "none";
-        //window.location.href = "index.php";
+        modal.style.display = "none";        
         window.location.href = "index.php?c=Formulario&a=home";
     }
 
@@ -198,8 +199,8 @@ function generarRadiosDepositos(data) {
             datos.append("fabricaciones", lista);
             datos.append("deposito", depositoSeleccionado);
 
-            const objeto = Object.fromEntries(datos.entries());
-            console.log(objeto); debugger
+            /*const objeto = Object.fromEntries(datos.entries());
+            console.log(objeto); debugger*/
 
             fetch("index.php?c=Crear&a=filtrado", {
                 method: "POST",
