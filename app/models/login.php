@@ -18,12 +18,12 @@ if ($stmt->rowCount() == 1) {
 
     session_start();
     $_SESSION['username'] = $usuario["usuario"];
-    $_SESSION['rol'] = $usuario["rol"];    
+    $_SESSION['rol'] = $usuario["rol_id"];    
 
     echo json_encode([
         "ok" => true,
         "username" => $usuario["usuario"],
-        "rol" => $usuario["rol"]
+        "rol" => $usuario["rol_id"]
     ]);
     exit;
 
