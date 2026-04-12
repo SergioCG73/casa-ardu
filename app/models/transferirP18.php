@@ -34,9 +34,7 @@ $fechaHoraFinal             = $_POST["fechaHoraFinal"] ?? null;
 $notas                      = $_POST["notas"] ?? null;
 $tabla = "p18_terminadas";
 
-
-//echo json_encode(["numeroProduccion" => $numeroProduccion]); exit;      
-
+//echo json_encode(["receta" => $receta]); exit;      
 
 if (!$numeroProduccion) {
     echo json_encode([
@@ -48,24 +46,10 @@ if (!$numeroProduccion) {
 
 //=== 1ª TRANSFERENCIA (MEZCLADOR A REACTOR) ====
 
-/*echo json_encode([        
-        "mezclador" => $mezcladorNuevo,
-        "pesoInicialMezclador" => $pesoM,
-        "pesoFinalMezclador" => $pesoMF,
-        "reactor" => $reactorNuevo,
-        "pesoInicialReactor" => $pesoR,
-        "receta" => $receta,
-        "numeroProduccion" => $numeroProduccion,
-        "producto" => $producto,
-        "notas" => $notas        
-    ]);
-    exit;*/
-
 if ($pesoRF === null) {
-    
     //echo json_encode(["LINE" => __LINE__]); exit;
- // Actualizar tabla fabricaciones_en_curso
-    $sqlUpdate = $conexion->prepare("
+    // Actualizar tabla fabricaciones_en_curso
+    /* $sqlUpdate = $conexion->prepare("
         UPDATE fabricaciones_en_curso
         SET 
             FechaInicioReaccion = NOW(),
@@ -81,27 +65,55 @@ if ($pesoRF === null) {
         ':pesoR'              => $pesoR,
         ':nf'                 => $numeroProduccion,
         ':notas'              => $notas
+    ]);*/
+
+    $sqlUpdate = $conexion->prepare("
+        UPDATE fabricaciones_en_curso
+        SET 
+            Mezclador = :mezclador,
+            PesoInicialMezclador = :pesoM,
+            PesoFinalMezclador = :pesoMF,
+            Reactor = :reactor,
+            PesoInicialReactor = :pesoR,
+            Receta = :receta,            
+            Notas = :notas,
+            FechaInicioReaccion = COALESCE(FechaInicioReaccion, NOW())
+        WHERE NumeroFabricacion = :nf
+    ");
+
+    $sqlUpdate->execute([
+        ':mezclador' => $mezcladorNuevo,
+        ':pesoM'     => $pesoM,
+        ':pesoMF'    => $pesoMF,
+        ':reactor'   => $reactorNuevo,
+        ':pesoR'     => $pesoR,
+        ':receta'    => $receta,
+        ':notas'     => $notas,
+        ':nf'        => $numeroProduccion
     ]);
 
-    // Mezclador → Vacío
-    $sqlUpdateMezclador = $conexion->prepare("
-        UPDATE equipos SET Estado = 'Vacio'
-            WHERE Equipo_id = :mezclador
-        ");
-    $sqlUpdateMezclador->execute([':mezclador' => $mezcladorNuevo]);
+    //Actualizar mezcladores
+
+    $sqlVaciarMezcladores = $conexion->prepare("
+    UPDATE equipos 
+    SET Estado = 'Vacio'
+    WHERE Equipo_id IN ('M214', 'M215')
+");
+    $sqlVaciarMezcladores->execute();
 
     // Reactor → En uso
     $sqlUpdateReactor = $conexion->prepare("
         UPDATE equipos SET Estado = 'En uso'
             WHERE Equipo_id = :reactor
         ");
+
     $sqlUpdateReactor->execute([':reactor' => $reactorNuevo]);
-    
+
 } else if ($pesoRF !== null) {
     //echo json_encode(["LINE" => __LINE__]); exit;     
-    
+
     //Insertar en P18_terminadas    
-   $sqlInsert = $conexion->prepare("
+    $sqlInsert = $conexion->prepare("
     INSERT INTO p18_terminadas (
         NumeroFabricacion,
         Hora_Inicio,
@@ -163,18 +175,19 @@ if ($pesoRF === null) {
         :notas
     )
 ");
-    $sqlInsert->execute([':nf' => $numeroProduccion, 
-                         ':mezclador' => $mezcladorNuevo,
-                         ':pesoM' => $pesoM,
-                         ':pesoMF' => $pesoMF,
-                         ':pesoR' => $pesoR,
-                         ':pesoRF' => $pesoRF, 
-                         ':reactor' => $reactorNuevo,
-                         ':receta' => $receta,
-                         ':notas' => $notas    
-                        ]);
-                        
-                  
+    $sqlInsert->execute([
+        ':nf' => $numeroProduccion,
+        ':mezclador' => $mezcladorNuevo,
+        ':pesoM' => $pesoM,
+        ':pesoMF' => $pesoMF,
+        ':pesoR' => $pesoR,
+        ':pesoRF' => $pesoRF,
+        ':reactor' => $reactorNuevo,
+        ':receta' => $receta,
+        ':notas' => $notas
+    ]);
+
+
     // Insertar en mezclador_216
     $sqlInsert = $conexion->prepare("INSERT INTO mezclador_216 (
                                                  NumeroFabricacion,
@@ -185,37 +198,29 @@ if ($pesoRF === null) {
                                             
                                                    )");
 
-                                            
-    $sqlInsert->execute([":nf" => $numeroProduccion]);   
-    
+
+    $sqlInsert->execute([":nf" => $numeroProduccion]);
+
     // Reactor → Vacío
     $sqlUpdate = $conexion->prepare("UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor");
     $sqlUpdate->execute([":reactor" => $reactorNuevo]);
-    
+
     // Borrar fabricación en curso
     $sqlDelete = $conexion->prepare("DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf");
     $sqlDelete->execute([":nf" => $numeroProduccion]);
-    
 }
 
 echo json_encode([
-        "ok" => true,        
-        "mezclador" => $mezcladorNuevo,
-        "pesoInicialMezclador" => $pesoM,
-        "pesoFinalMezclador" => $pesoMF,
-        "reactor" => $reactorNuevo,
-        "pesoInicialReactor" => $pesoR,
-        "pesoFinalReactor" => $pesoRF,
-        "receta" => $receta,
-        "numeroProduccion" => $numeroProduccion,        
-        "notas" => $notas,
-        "mensaje" => "Transferencia Mezclador a Reactor"
-]);  exit;
-
-?>
-
-
-
-
-
-
+    "ok" => true,
+    "mezclador" => $mezcladorNuevo,
+    "pesoInicialMezclador" => $pesoM,
+    "pesoFinalMezclador" => $pesoMF,
+    "reactor" => $reactorNuevo,
+    "pesoInicialReactor" => $pesoR,
+    "pesoFinalReactor" => $pesoRF,
+    "receta" => $receta,
+    "numeroProduccion" => $numeroProduccion,
+    "notas" => $notas,
+    "mensaje" => "Transferencia Mezclador a Reactor"
+]);
+exit;
