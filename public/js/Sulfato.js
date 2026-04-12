@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== INICIO ZONA DE FUNCIONES ======
 
-    function desactivarValidaciones() {
+    /*function desactivarValidaciones() {
         peso_inicial_reactor.required = false;
     }
 
@@ -38,6 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //window.location.href = "index.php";
         window.location.href = "index.php?c=Formulario&a=home";
     }
+
+    function formatearNumero(input) {
+        let valor = input.value.replace(/\D/g, "");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        input.value = valor;
+    }*/
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
@@ -96,17 +102,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function inicializarFormulario(modo, producto, datosEdicion = null) {        
+    function inicializarFormulario(modo, producto, datosEdicion = null) {
         const datos = new FormData();
         datos.append("modo", modo);
         datos.append("producto", producto);
 
-        if (modo !="crear") {
+        if (modo != "crear") {
             datos.append("numeroProduccion", datosEdicion.NumeroFabricacion);
         }
 
-       /*const objeto = Object.fromEntries(datos.entries());
-       console.log(objeto); debugger*/
+        /*const objeto = Object.fromEntries(datos.entries());
+        console.log(objeto); debugger*/
 
         return fetch("index.php?c=Leer&a=lectura", {   //Hay que quitar el método de LeerController cuando funcione
             method: "POST",
@@ -132,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 generarRadiosReactores(data.equipos, contenedorReactores, modo, datosEdicion);
 
                 //==== RECETAS ====
-                const contenedorRecetas = document.querySelector("#recetas fieldset");                
+                const contenedorRecetas = document.querySelector("#recetas fieldset");
 
                 //console.log(data.recetas); debugger
                 generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosEdicion);
@@ -155,17 +161,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     peso_inicial_reactor.value = datosTransferir.PesoInicialReactor;
                     txtNotas.textContent = datosEdicion.Notas;
                     formatearNumero(peso_inicial_reactor);
-                }                
-                
+                }
+
                 return data;
             });
     }
 
-    function formatearNumero(input) {
+    /*function formatearNumero(input) {
         let valor = input.value.replace(/\D/g, "");
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         input.value = valor;
-    }
+    }*/
 
     // ===== FIN ZONA DE FUNCIONES ======
 
@@ -346,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/
-                    
+
                     fetch("index.php?c=Transferir&a=transferirSulfato", {
                         method: "POST",
                         body: data

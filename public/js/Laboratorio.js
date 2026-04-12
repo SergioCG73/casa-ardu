@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     lblFabricaciones.style.visibility = "hidden";
 
     // ===== FUNCIONES =====
-    function mostrarModal(mensaje) {
+    /*function mostrarModal(mensaje) {
         modalMsg.textContent = mensaje;
         inputModal.style.display = "flex";
     }
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function cerrarModal() {
         inputModal.style.display = "none";
         window.location.href = "index.php?c=Formulario&a=home";
-    }
+    }*/
 
     function mostrarRegistros() {
         if (registros.length === 0) return;
@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         lblFabricaciones.innerHTML = "Fabricaciones: " + fab;
     }
-
 
     function limpiarFormulario() {
         inputDensidad.value = "";

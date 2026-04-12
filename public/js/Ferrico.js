@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== INICIO ZONA DE FUNCIONES ======
 
-    function desactivarValidaciones() {
+    /*function desactivarValidaciones() {
         peso_inicial_mezclador.required = false;
     }
 
@@ -39,6 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "index.php?c=Formulario&a=home";        
 
     }
+        
+    function formatearNumero(input) {
+        let valor = input.value.replace(/\D/g, "");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        input.value = valor;
+    }*/
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
@@ -191,11 +197,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    function formatearNumero(input) {
+    /*function formatearNumero(input) {
         let valor = input.value.replace(/\D/g, "");
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         input.value = valor;
-    }
+    }*/
 
     // ===== FIN ZONA DE FUNCIONES ======
 

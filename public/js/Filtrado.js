@@ -128,7 +128,7 @@ function generarRadiosDepositos(data) {
         });
     }
 
-    function formatearNumero(input) {
+    /*function formatearNumero(input) {
         //console.log(input); debugger
         let valor = input.value.replace(/\D/g, "");
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -155,7 +155,7 @@ function generarRadiosDepositos(data) {
         modal.hidden = true;
         modal.style.display = "none";        
         window.location.href = "index.php?c=Formulario&a=home";
-    }
+    }*/
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
