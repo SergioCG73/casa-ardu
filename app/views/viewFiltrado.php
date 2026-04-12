@@ -70,6 +70,7 @@
         </div>
     </div>
     <script src="js/Filtrado.js"></script>
+    <script src="js/utils.js"></script>
 </body>
 
 </html>

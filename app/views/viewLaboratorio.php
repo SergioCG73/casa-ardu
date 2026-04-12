@@ -43,6 +43,6 @@
 
 
 </body>
-<script src="js/Laboratorio.js"></script>
-
+    <script src="js/Laboratorio.js"></script>
+    <script src="js/utils.js"></script>
 </html>
