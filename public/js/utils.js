@@ -47,15 +47,32 @@ async function sePuedeFabricar(producto, data) {
     const dd = String(mañana.getDate()).padStart(2, "0");
 
     const fechaMañana = `${yyyy}-${mm}-${dd}`;
-    const esVisperaFestivo = festivos.includes(fechaMañana);    
+    const esVisperaFestivo = festivos.includes(fechaMañana);
 
     // 4. Equipos disponibles
     const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio");
     const reactoresDisponibles = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
+    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso");
+    const reactoresDisponiblesSulfato = data.equipos.filter(r =>r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
+
+    console.log (reactoresDisponiblesSulfato); debugger
 
     // 5. Condiciones de bloqueo
-    const viernesTarde = (dia === 5 && (horaActual > 11 || (horaActual === 1&& minActual > 0)));
-    const visperaFestivoTarde = (esVisperaFestivo && (horaActual > 11 || (horaActual === 11 && minActual > 0)));
+    let tmargen;
+    switch (producto) {
+        case "P18":
+            tmargen = 11;
+            break;
+        case "sulfato":
+            tmargen = 5
+            break;
+        default:
+            tmargen = 0; // por si llega un producto inesperado
+            break;
+    }
+
+    const viernesTarde = (dia === 5 && (horaActual > tmargen || (horaActual === tmargen && minActual > 0)));
+    const visperaFestivoTarde = (esVisperaFestivo && (horaActual > tmargen || (horaActual === tmargen && minActual > 0)));
     const noHayEquipos = (mezcladoresDisponibles.length === 0 || reactoresDisponibles.length === 0);
 
     // 6. Resultado final
