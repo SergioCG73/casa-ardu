@@ -25,3 +25,47 @@ function formatearMiles(num) {
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
+
+async function sePuedeFabricar(producto, data) {
+    // 1. Cargar festivos.json
+    const res = await fetch("data/festivos.json");
+    const json = await res.json();
+    const festivos = json.festivos; // array YYYY-MM-DD
+
+    // 2. Fecha y hora actual
+    const ahora = new Date();
+    const dia = ahora.getDay(); // 5 = viernes
+    const horaActual = ahora.getHours();
+    const minActual = ahora.getMinutes();
+
+    // 3. Calcular si mañana es festivo
+    const mañana = new Date(ahora);
+    mañana.setDate(ahora.getDate() + 1);
+
+    const yyyy = mañana.getFullYear();
+    const mm = String(mañana.getMonth() + 1).padStart(2, "0");
+    const dd = String(mañana.getDate()).padStart(2, "0");
+
+    const fechaMañana = `${yyyy}-${mm}-${dd}`;
+    const esVisperaFestivo = festivos.includes(fechaMañana);    
+
+    // 4. Equipos disponibles
+    const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio");
+    const reactoresDisponibles = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
+
+    // 5. Condiciones de bloqueo
+    const viernesTarde = (dia === 5 && (horaActual > 11 || (horaActual === 1&& minActual > 0)));
+    const visperaFestivoTarde = (esVisperaFestivo && (horaActual > 11 || (horaActual === 11 && minActual > 0)));
+    const noHayEquipos = (mezcladoresDisponibles.length === 0 || reactoresDisponibles.length === 0);
+
+    // 6. Resultado final
+    if (viernesTarde || visperaFestivoTarde || noHayEquipos) {
+        console.log("NO se puede fabricar vispera festivo");
+        mostrarModal("NO se puede fabricar");
+        return false;
+    }
+
+    console.log("SÍ se puede fabricar");
+    mostrarModal("SÍ se puede fabricar");
+    return true;
+}
