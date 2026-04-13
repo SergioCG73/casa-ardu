@@ -82,11 +82,11 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
         $ultimaSinFiltrar = 0;
     }
 
-    /*echo json_encode(["LINE" => __LINE__,
+    echo json_encode(["LINE" => __LINE__,
                       "ultimaAcabada" => $ultimaAcabada,
                       "ultimaEnCurso" => $ultimaEnCurso,
                       "ultimaSinFiltrar" => $ultimaSinFiltrar
-    ]); exit;*/
+    ]); exit;
 
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
