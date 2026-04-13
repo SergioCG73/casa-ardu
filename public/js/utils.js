@@ -26,7 +26,7 @@ function formatearMiles(num) {
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-async function sePuedeFabricar(producto, data) {
+async function sePuedeFabricar(producto, data) {    
     // 1. Cargar festivos.json
     const res = await fetch("data/festivos.json");
     const json = await res.json();
@@ -49,13 +49,12 @@ async function sePuedeFabricar(producto, data) {
     const fechaMañana = `${yyyy}-${mm}-${dd}`;
     const esVisperaFestivo = festivos.includes(fechaMañana);
 
-    // 4. Equipos disponibles
-    const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio");
-    const reactoresDisponibles = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
-    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso");
-    const reactoresDisponiblesSulfato = data.equipos.filter(r =>r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
-
-    console.log (reactoresDisponiblesSulfato); debugger
+    // 4. Equipos disponibles    
+    const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");    
+    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id === "P18");
+    const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
+    const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");    
+   
 
     // 5. Condiciones de bloqueo
     let tmargen;
@@ -63,26 +62,33 @@ async function sePuedeFabricar(producto, data) {
         case "P18":
             tmargen = 11;
             break;
-        case "sulfato":
-            tmargen = 5
+        case "Sulfato":
+            tmargen = 14;
             break;
         default:
             tmargen = 0; // por si llega un producto inesperado
             break;
-    }
+    }    
 
-    const viernesTarde = (dia === 5 && (horaActual > tmargen || (horaActual === tmargen && minActual > 0)));
-    const visperaFestivoTarde = (esVisperaFestivo && (horaActual > tmargen || (horaActual === tmargen && minActual > 0)));
-    const noHayEquipos = (mezcladoresDisponibles.length === 0 || reactoresDisponibles.length === 0);
+    const viernesTarde = (dia === 5 && (horaActual > tmargen || (horaActual === tmargen && minActual > 0))); 
+    const visperaFestivoTarde = (esVisperaFestivo && (horaActual > tmargen || (horaActual === tmargen && minActual > 0))); 
+    const noHayEquipos = (mezcladoresDisponibles.length === 0 || reactoresDisponiblesP18.length === 0 || mezcladoresUsados.length != 0); 
 
     // 6. Resultado final
-    if (viernesTarde || visperaFestivoTarde || noHayEquipos) {
+    if (producto === "P18" && (viernesTarde || visperaFestivoTarde || noHayEquipos)) {
         console.log("NO se puede fabricar vispera festivo");
         mostrarModal("NO se puede fabricar");
         return false;
     }
 
-    console.log("SÍ se puede fabricar");
-    mostrarModal("SÍ se puede fabricar");
+    if (producto === "Sulfato" && (viernesTarde ||        
+        visperaFestivoTarde ||
+        reactoresDisponiblesSulfato.length === 0 ||
+        mezcladoresUsados.length != 0)) {
+        console.log("NO se puede fabricar vispera festivo");
+        mostrarModal("NO se puede fabricar");
+        return false;
+    }
+
     return true;
 }
