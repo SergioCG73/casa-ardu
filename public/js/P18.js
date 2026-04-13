@@ -25,30 +25,30 @@ document.addEventListener("DOMContentLoaded", () => {
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
 
     // ===== FUNCIONES =====
-   /* function mostrarModal(mensaje) {
-        const modal = document.getElementById("modal");
-        document.getElementById("modalMsg").textContent = mensaje;
-        modal.hidden = false;
-        modal.style.display = "flex";
-    }
-
-    function cerrarModal() {
-        const modal = document.getElementById("modal");
-        modal.hidden = true;
-        modal.style.display = "none";
-        //window.location.href = "index.php";
-        window.location.href = "index.php?c=Formulario&a=home";
-    }    
-
-    document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
-
-    function formatearNumero(input) {
-        let valor = input.value;
-        if (valor == null) return;
-        valor = String(valor).replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        input.value = valor;
-        return valor;
-    }*/
+    /* function mostrarModal(mensaje) {
+         const modal = document.getElementById("modal");
+         document.getElementById("modalMsg").textContent = mensaje;
+         modal.hidden = false;
+         modal.style.display = "flex";
+     }
+ 
+     function cerrarModal() {
+         const modal = document.getElementById("modal");
+         modal.hidden = true;
+         modal.style.display = "none";
+         //window.location.href = "index.php";
+         window.location.href = "index.php?c=Formulario&a=home";
+     }    
+ 
+     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
+ 
+     function formatearNumero(input) {
+         let valor = input.value;
+         if (valor == null) return;
+         valor = String(valor).replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+         input.value = valor;
+         return valor;
+     }*/
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
@@ -227,12 +227,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 mezcladoresEditar = data.equipos.filter(e => e.Tipo === "Mezclador" && e.Equipo_id !== "M216");
 
                 if (modo === "crear") {
-                    if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso.length <= 0) {
+                    /*if (mezcladoresDisponibles.length > 0 && mezcladoresEnUso.length <= 0) {
                         generarRadiosMezcladores(mezcladoresDisponibles, datosEdicion, modo);
                     } else {
                         alert("No se puede crear producción con los equipos disponibles");
                         //window.location.href = "index.php?c=Home&a=home";
                         alert("No se puede crear otra producción");
+                        window.location.replace("index.php?c=Formulario&a=home");
+                    }*/
+
+                    const ok = sePuedeFabricar(producto, data);
+
+                    if (ok) {
+                        generarRadiosMezcladores(mezcladoresDisponibles, datosEdicion, modo);
+                    }
+                    else {
+                        alert("No se puede crear producción con los equipos disponibles");
+                        //alert("No se puede crear otra producción");
                         window.location.replace("index.php?c=Formulario&a=home");
                     }
                 }
@@ -243,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (modo === "transferir") {
                     datosEdicion = datosTransferencia;
-                    generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);                    
+                    generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);
                     generarRadiosRecetas(data.recetas, datosEdicion, modo);
                 }
 
@@ -433,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const inputPesoFinalMezclador = document.querySelector("#peso_final_mezclador");
                     const inputPesoInicialReactor = document.querySelector("#peso_inicial_reactor");
                     const inputPesoFinalReactor = document.querySelector("#peso_final_reactor");
-                    inputPesoFinalReactor.disabled = true;                    
+                    inputPesoFinalReactor.disabled = true;
 
                     btnCrear.addEventListener("click", (e) => {
                         e.preventDefault();
@@ -462,9 +473,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         //console.log(horaTransferenciaMezcladoraReactor); debugger
 
-                        const valNotas = txtNotas.value;                        
+                        const valNotas = txtNotas.value;
 
-                        const datosTransferenciaMezcladoraReactor = new FormData();                        
+                        const datosTransferenciaMezcladoraReactor = new FormData();
                         //datosTransferenciaMezcladoraReactor.append("fechaInicioReaccion", horaTransferenciaMezcladoraReactor);
                         //datosTransferenciaMezcladoraReactor.append("mezclador", datosTransferencia.Mezclador);
                         datosTransferenciaMezcladoraReactor.append("mezclador", mezcladorSeleccionado);
@@ -478,8 +489,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         datosTransferenciaMezcladoraReactor.append("notas", valNotas);
                         datosTransferenciaMezcladoraReactor.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
 
-                       /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
-                        console.log(objeto); debugger*/
+                        /*const objeto = Object.fromEntries(datosTransferenciaMezcladoraReactor.entries());
+                         console.log(objeto); debugger*/
 
                         console.log("fetch");
 

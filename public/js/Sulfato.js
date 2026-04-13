@@ -43,6 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
         let valor = input.value.replace(/\D/g, "");
         valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         input.value = valor;
+    }
+        
+    function formatearNumero(input) {
+        let valor = input.value.replace(/\D/g, "");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        input.value = valor;
     }*/
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
@@ -114,18 +120,32 @@ document.addEventListener("DOMContentLoaded", () => {
         /*const objeto = Object.fromEntries(datos.entries());
         console.log(objeto); debugger*/
 
-        return fetch("index.php?c=Leer&a=lectura", {   //Hay que quitar el método de LeerController cuando funcione
+        //return fetch("index.php?c=Leer&a=lectura", {
+        return fetch("index.php?c=Leer&a=leerSulfato", {
             method: "POST",
             body: datos
         })
             .then(response => response.json())
-            .then(data => { //console.log (data); debugger
+            .then(datos => {
+                const data = {
+                    reactores: datos.reactores || [],
+                    notas: datos.notas || [],
+                    recetas: datos.recetas || [],
+                    siguienteFabricacion: datos.siguienteFabricacion,
+                    equipos: datos.equipos || [],
+                    linea: datos.linea
+                };                
+
                 numeroProduccion = (modo === "editar" || modo === "transferir")
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
 
                 displayProduccion.textContent = numeroProduccion;
                 numeroProduccionActual = numeroProduccion;
+
+                if (modo === "crear") {
+                    sePuedeFabricar(producto, data);
+                }
 
                 //console.log(data); 
                 //console.log(numeroProduccion); debugger            
@@ -135,7 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 //console.log(data.equipos); debugger
                 //console.log(datosEdicion); debugger
-                generarRadiosReactores(data.equipos, contenedorReactores, modo, datosEdicion);
+                //generarRadiosReactores(data.equipos, contenedorReactores, modo, datosEdicion);
+                generarRadiosReactores(data.reactores, contenedorReactores, modo, datosEdicion);
 
                 //==== RECETAS ====
                 const contenedorRecetas = document.querySelector("#recetas fieldset");
@@ -167,12 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    /*function formatearNumero(input) {
-        let valor = input.value.replace(/\D/g, "");
-        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        input.value = valor;
-    }*/
-
     // ===== FIN ZONA DE FUNCIONES ======
 
     [peso_inicial_reactor, peso_final_reactor].forEach(input => {
@@ -194,7 +209,15 @@ document.addEventListener("DOMContentLoaded", () => {
         inicializarFormulario(modo, producto)
             .then(data => {
                 //console.log(data); debugger
-                if (data.equipos.length > 0 && data.equipos[0].Estado === "En uso") {
+                /*if (data.equipos.length > 0 && data.equipos[0].Estado === "En uso") {
+                    alert("No se puede fabricar Sulfato R202 ocupado");
+                    window.location.href = "index.php?c=Formulario&a=home";
+                    return;
+                }*/
+
+                const ok = sePuedeFabricar(producto, data);
+
+                if (!ok) {
                     alert("No se puede fabricar Sulfato R202 ocupado");
                     window.location.href = "index.php?c=Formulario&a=home";
                     return;
