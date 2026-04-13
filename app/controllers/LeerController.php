@@ -5,6 +5,10 @@ class LeerController {
         include __DIR__ . '/../models/lectura.php';
     }
 
+    public function leerP18() {
+        include __DIR__ . '/../models/leerP18.php';
+    }
+
      public function leersulfato() {
         //echo json_encode(["LINE" => __LINE__]); exit;
         include __DIR__ . '/../models/leerSulfato.php';
