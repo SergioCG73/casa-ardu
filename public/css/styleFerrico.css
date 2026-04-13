@@ -53,6 +53,18 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 30px;
+    align-items: stretch;
+}
+
+/* Mezcladores y Recetas con misma altura */
+#mezcladores,
+#recetas {
+    display: flex;
+}
+
+#mezcladores fieldset,
+#recetas fieldset {
+    flex: 1;
 }
 
 fieldset {
@@ -141,6 +153,7 @@ input[type="radio"] {
     gap: 10px;
 }
 
+/* Modal */
 .mi-modal {
     position: fixed;
     inset: 0;
@@ -157,4 +170,62 @@ input[type="radio"] {
     border-radius: 8px;
     min-width: 250px;
     text-align: center;
+}
+
+/* Notas ocupa todo el ancho */
+#notas {
+    grid-column: 1 / -1;
+}
+
+#notas textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 16px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+#notas textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Checkbox sacas dosificadas */
+.sacas-container {
+    grid-column: 1 / -1;
+}
+
+.sacas-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1px solid #d4dbe6;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.sacas-label:hover {
+    background-color: #eef2f7;
+    transform: translateY(-1px);
+}
+
+.sacas-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Tick verde */
+.sacas {
+    accent-color: #22c55e;
 }
