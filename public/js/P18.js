@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
         /*const objeto = Object.fromEntries(formData.entries());
         console.log(objeto);  debugger */
 
-        return fetch("index.php?c=Leer&a=lectura", { method: "POST", body: formData })
+        return fetch("index.php?c=Leer&a=leerP18", { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
                 //console.log(data); debugger;                
@@ -206,8 +206,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
 
-                parDisplayProduccion.textContent = numeroProduccion;
-                numeroProduccionActual = numeroProduccion;
+
+                //console.log(numeroProduccionActual); debugger
+                
+                if (modo === "crear") {
+                    parDisplayProduccion.textContent = numeroProduccion;
+                } else {
+                    parDisplayProduccion.textContent = data.ultimaEnCurso;
+                }                
+                
+                numeroProduccionActual = numeroProduccion;                
 
                 if (modo === "crear") {
                     datosEdicion = datosEdicion || {};
