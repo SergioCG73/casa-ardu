@@ -108,12 +108,11 @@ if ($pesoRF === null) {
         ");
 
     $sqlUpdateReactor->execute([':reactor' => $reactorNuevo]);
-
 } else if ($pesoRF !== null) {
     //echo json_encode(["LINE" => __LINE__]); exit;     
 
     //Insertar en P18_terminadas    
-    $sqlInsert = $conexion->prepare("
+       $sqlInsert = $conexion->prepare("
     INSERT INTO p18_terminadas (
         NumeroFabricacion,
         Hora_Inicio,
@@ -174,7 +173,8 @@ if ($pesoRF === null) {
         :receta,
         :notas
     )
-");
+");    
+
     $sqlInsert->execute([
         ':nf' => $numeroProduccion,
         ':mezclador' => $mezcladorNuevo,
@@ -186,7 +186,6 @@ if ($pesoRF === null) {
         ':receta' => $receta,
         ':notas' => $notas
     ]);
-
 
     // Insertar en mezclador_216
     $sqlInsert = $conexion->prepare("INSERT INTO mezclador_216 (
