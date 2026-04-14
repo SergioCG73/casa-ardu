@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once("miconexion.php");
 
-
 // ===========================
 // 1. Recoger datos del POST =
 // ===========================
@@ -21,9 +20,11 @@ $fechaHoraInicio            = $_POST["fechaHoraInicio"] ?? null;
 $reactorNuevo               = $_POST["reactor"] ?? null;
 $pesoR                      = $_POST["pesoInicialReactor"] ?? null;
 $pesoRF                     = $_POST["pesoFinalReactor"] ?? null;
+$volumenD112                = $_POST["volumenD112"] ?? null;
 $receta                     = $_POST["receta"] ?? null;
 $fechaHoraFinal             = $_POST["fechaHoraFinal"] ?? null;
 $notas                      = $_POST["notas"] ?? null;
+$modo                       = $_POST["modo"] ?? null;
 $tabla                      = "sulfato_terminadas";
 
 if (!$numeroProduccion) {
@@ -34,65 +35,105 @@ if (!$numeroProduccion) {
     exit;
 }
 
-//echo json_encode(["receta" => $receta]); exit;
-$sqlInsert = "INSERT INTO sulfato_terminadas (
-                     Hora_Inicio, 
-                     Hora_Finalizacion,
-                     Receta,
-                     Semana,
-                     NumeroFabricacion,
-                     Peso_Inicial, 
-                     Peso_Final,
-                     Duracion,
-                     Reactor,
-                     Tiempo_Parado,
-                     Notas)
-              SELECT FechaInicio,
-                     NOW(),
-                     :receta,
-                     WEEK(DATE_ADD(FechaInicio, INTERVAL 1 DAY), 1),
-                     :nf,
-                     :pesoR,
-                     :pesoRF,
-                     TIMESTAMPDIFF(SECOND, FechaInicio, NOW()),
-                     :reactor,
-                     TIMESTAMPDIFF(
-                     SECOND,(
-                        SELECT Hora_Finalizacion
-                        FROM sulfato_terminadas
-                        WHERE NumeroFabricacion < :nf
-                        ORDER BY NumeroFabricacion DESC
-                        LIMIT 1
+if ($modo === "transferir") {
+    //echo json_encode(["modo" => $modo]); exit;   
+
+    $sqlUpdate = "UPDATE fabricaciones_en_curso
+              SET 
+                  PesoInicialReactor = :pesoR,
+                  PesoFinalReactor = :pesoRF,
+                  FechaFinal = NOW(),
+                  Notas = :notas,
+                  Receta = :receta
+              WHERE NumeroFabricacion = :nf";
+
+
+    $stmt = $conexion->prepare($sqlUpdate);
+    $stmt->bindParam(":pesoR", $pesoR);
+    $stmt->bindParam(":pesoRF", $pesoRF);
+    $stmt->bindParam(":notas", $notas);
+    $stmt->bindParam(":receta", $receta);
+    $stmt->bindParam("nf", $numeroProduccion);
+    $stmt->execute();
+
+    echo json_encode([
+        "ok" => true,
+        "PesoInicialReactor" => $pesoR,
+        "PesoFinalReactor" => $pesoRF,
+        "Notas" => $notas,
+        "Receta" => $receta
+    ]);
+    exit;
+}
+
+if ($modo === "terminar") {
+    $sqlInsert = "INSERT INTO sulfato_terminadas (
+                    Hora_Inicio, 
+                    Hora_Finalizacion,
+                    Receta,
+                    Semana,
+                    NumeroFabricacion,
+                    Peso_Inicial, 
+                    Peso_Final,
+                    Duracion,
+                    Reactor,
+                    Tiempo_Parado,
+                    Notas
+                )
+                SELECT 
+                    FechaInicio,
+                    FechaFinal, 
+                    :receta,
+                    WEEK(DATE_ADD(FechaInicio, INTERVAL 1 DAY), 1),
+                    :nf,
+                    :pesoR,
+                    :pesoRF,
+                    TIMESTAMPDIFF(SECOND, FechaInicio, FechaFinal),
+                    :reactor,
+                    TIMESTAMPDIFF(
+                        SECOND,
+                        (
+                            SELECT Hora_Finalizacion
+                            FROM sulfato_terminadas
+                            WHERE NumeroFabricacion < :nf
+                            ORDER BY NumeroFabricacion DESC
+                            LIMIT 1
+                        ),
+                        FechaInicio
                     ),
-                    FechaInicio),
-                     :notas
-              FROM fabricaciones_en_curso
-              WHERE NumeroFabricacion = :nf
-              ";
-$stmt = $conexion->prepare($sqlInsert);
-$stmt->bindParam(":receta", $receta);
-$stmt->bindParam(":nf", $numeroProduccion);
-$stmt->bindParam(":pesoR", $pesoR);
-$stmt->bindParam(":pesoRF", $pesoRF);
-$stmt->bindParam(":reactor", $reactorNuevo);
-$stmt->bindParam(":notas", $notas);
-$stmt->execute();
+                    :notas
+                FROM fabricaciones_en_curso
+                WHERE NumeroFabricacion = :nf";
 
-// Reactor → Vacío
-$sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor";
-$stmt = $conexion->prepare($sqlUpdate);
-$stmt->execute([":reactor" => $reactorNuevo]);
+    $stmt = $conexion->prepare($sqlInsert);
+    $stmt->bindParam(":receta", $receta);
+    $stmt->bindParam(":nf", $numeroProduccion);
+    $stmt->bindParam(":pesoR", $pesoR);
+    $stmt->bindParam(":pesoRF", $pesoRF);
+    $stmt->bindParam(":reactor", $reactorNuevo);
+    $stmt->bindParam(":notas", $notas);
+    $stmt->execute();
 
-// Borrar fabricación en curso
-$sqlDelete = "DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
-$stmtDelete = $conexion->prepare($sqlDelete);
-$stmtDelete->bindParam(":nf", $numeroProduccion);
-$stmtDelete->execute();
+    // Reactor → Vacío
+    $sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :reactor";
+    $stmt = $conexion->prepare($sqlUpdate);
+    $stmt->execute([":reactor" => $reactorNuevo]);
 
+    // Borrar fabricación en curso
+    $sqlDelete = "DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+    $stmtDelete = $conexion->prepare($sqlDelete);
+    $stmtDelete->bindParam(":nf", $numeroProduccion);
+    $stmtDelete->execute();
 
+    // Actualizar depósito D112
+    $sqlUpdate = "UPDATE equipos SET Volumen = :volumen WHERE Equipo_id = 'D112'";
+    $stmt = $conexion->prepare($sqlUpdate);
+    $stmt->bindParam(":volumen", $volumenD112);
+    $stmt->execute();
 
-echo json_encode([
-    "ok" => true,
-    "mensaje" => "transferencia Sulfato"
-]);
-exit;
+    echo json_encode([
+        "ok" => true,
+        "Volumen" => $volumenD112
+    ]);
+    exit;
+}

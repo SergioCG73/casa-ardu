@@ -4,9 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnTransferir = document.getElementById("btnTransferir");
     const displayProduccion = document.getElementById("displayProduccion");
     const divReactores = document.getElementById("reactores");
+    const divCantidadFiltrada = document.getElementById("contenedor_cantidad_filtrada");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     const peso_final_reactor = document.getElementById("peso_final_reactor");
+    const volumen_D112 = document.getElementById("volumen_D112");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>    
+
+    divCantidadFiltrada.style.display = "none";
 
     let reactorSeleccionado;
     let recetaSeleccionada;
@@ -45,11 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         input.value = valor;
     }
         
-    function formatearNumero(input) {
-        let valor = input.value.replace(/\D/g, "");
-        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        input.value = valor;
-    }*/
+    */
 
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
             input.id = id;
             input.value = reactor.Equipo_id;
 
-            if ((modo === "editar" || modo === "transferir") && datosEdicion.Reactor == reactor.Equipo_id) {
+            if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.Reactor == reactor.Equipo_id) {
                 input.checked = true;
                 reactorSeleccionado = reactor.Equipo_id;
             }
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
             input.id = id;
             input.value = receta.NombreReceta;
 
-            if ((modo === "editar" || modo === "transferir") && datosEdicion.Receta == receta.NombreReceta) {
+            if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.Receta == receta.NombreReceta) {
                 input.checked = true;
                 recetaSeleccionada = receta.NombreReceta;
             }
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
             body: datos
         })
             .then(response => response.json())
-            .then(datos => {
+            .then(datos => {                
                 const data = {
                     reactores: datos.reactores || [],
                     notas: datos.notas || [],
@@ -134,9 +134,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     siguienteFabricacion: datos.siguienteFabricacion,
                     equipos: datos.equipos || [],
                     linea: datos.linea
-                };                
+                };
 
-                numeroProduccion = (modo === "editar" || modo === "transferir")
+                numeroProduccion = (modo === "editar" || modo === "transferir" || modo === "terminar")
                     ? datosEdicion.NumeroFabricacion
                     : data.siguienteFabricacion;
 
@@ -147,22 +147,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     sePuedeFabricar(producto, data);
                 }
 
-                //console.log(data); 
                 //console.log(numeroProduccion); debugger            
 
                 //==== REACTORES ====
                 const contenedorReactores = document.querySelector("#reactores fieldset");
+                //generarRadiosReactores(data.reactores, contenedorReactores, modo, datosEdicion);
 
-                //console.log(data.equipos); debugger
-                //console.log(datosEdicion); debugger
-                //generarRadiosReactores(data.equipos, contenedorReactores, modo, datosEdicion);
-                generarRadiosReactores(data.reactores, contenedorReactores, modo, datosEdicion);
+                if (modo === "terminar") {                    
+                    generarRadiosReactores(data.reactores, contenedorReactores, modo, datosTransferir);
+                } else {
+                    generarRadiosReactores(data.reactores, contenedorReactores, modo, datosEdicion);
+                }
 
                 //==== RECETAS ====
-                const contenedorRecetas = document.querySelector("#recetas fieldset");
+                const contenedorRecetas = document.querySelector("#recetas fieldset");            
+                //generarRadiosRecetas(data.recetas, contenedorReactores, modo, datosEdicion);    
 
-                //console.log(data.recetas); debugger
-                generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosEdicion);
+                if (modo === "terminar") {                    
+                    generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosTransferir);
+                } else {
+                    generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosEdicion);
+                }                
 
                 //==== LISTENERS ====
                 document.addEventListener("change", function (e) {
@@ -170,18 +175,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (e.target.name === "receta") recetaSeleccionada = e.target.value;
                 });
 
-                //==== VALORES INICIALES EN EDITAR ====
-                //console.log(datosEdicion.Notas); debugger
+                //==== VALORES INICIALES EN EDITAR ====                
                 if (modo === "editar" && datosEdicion) {
                     peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
                     txtNotas.textContent = datosEdicion.Notas;
                     formatearNumero(peso_inicial_reactor);
                 }
 
-                if (modo === "transferir" && datosTransferir) {
+                if ((modo === "transferir" || modo === "terminar") && datosTransferir) {
                     peso_inicial_reactor.value = datosTransferir.PesoInicialReactor;
                     txtNotas.textContent = datosEdicion.Notas;
                     formatearNumero(peso_inicial_reactor);
+                }
+
+                if (modo === "terminar" && datosTransferir) {                    
+                    peso_final_reactor.value = datosTransferir.PesoFinalReactor;
+                    formatearNumero(peso_final_reactor);
                 }
 
                 return data;
@@ -190,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== FIN ZONA DE FUNCIONES ======
 
-    [peso_inicial_reactor, peso_final_reactor].forEach(input => {
+    [peso_inicial_reactor, peso_final_reactor, volumen_D112].forEach(input => {
         input.addEventListener("input", () => formatearNumero(input));
     });
 
@@ -371,7 +380,56 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoFinalReactor", PesoFinalEditado);
                     //data.append("producto", producto);
                     data.append("notas", txtNotas.value);
-                    //data.append("modo", modo);
+                    data.append("modo", modo);
+
+                    /*const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger*/
+
+                    fetch("index.php?c=Transferir&a=transferirSulfato", {
+                        method: "POST",
+                        body: data
+                    })
+                        .then(response => response.json())
+                        .then(json => {
+                            console.log(json); debugger;
+                            if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
+                            else alert("Error: " + json.error);
+                        })
+                        .catch(error => console.log("ERROR", error));
+                });
+            });
+    }
+
+    // ==== MODO TERMINAR ====
+    if (modo === "terminar") {
+        console.log("Estamos en modo terminar...");
+        datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));        
+
+        divCantidadFiltrada.style.display = "block";
+
+        btnCrear.textContent = "Terminar";
+        inicializarFormulario(modo, producto, datosTransferir)
+            .then(() => {
+
+                btnCrear.addEventListener("click", (e) => {
+                    e.preventDefault();
+
+                    const PesoInicialEditado = parseInt(peso_inicial_reactor.value.replace(/\./g, ""), 10);
+                    const PesoFinalEditado = parseInt(peso_final_reactor.value.replace(/\./g, ""), 10);
+                    const VolumenD112Editado = parseInt(volumen_D112.value.replace(/\./g, ""), 10);                    
+
+                    // === Fechas de Inicio y Final producción
+                    const fechaHoraInicio = datosTransferir.FechaInicio;
+                    const data = new FormData();
+                    data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
+                    data.append("reactor", reactorSeleccionado);
+                    data.append("receta", recetaSeleccionada);
+                    data.append("fechaHoraInicio", fechaHoraInicio);                    
+                    data.append("pesoInicialReactor", PesoInicialEditado);
+                    data.append("pesoFinalReactor", PesoFinalEditado);  
+                    data.append("volumenD112", VolumenD112Editado);
+                    data.append("notas", txtNotas.value);
+                    data.append("modo", modo);
 
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/

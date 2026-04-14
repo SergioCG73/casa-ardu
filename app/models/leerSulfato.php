@@ -109,21 +109,19 @@ if (($modo === "editar" || $modo === "crear")) {
     exit;
 }
 
-if ($modo === "transferir") {
+if ($modo === "transferir" || $modo === "terminar") {
     $tabla = "sulfato_terminadas";
     list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);
-    list($reactores, $recetas, $equipos) = obtenerDatosProducto($conexion, $producto);
+    list($equiposs, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
 
     echo json_encode([
-        "fichero" => __FILE__,        
         "modo" => $modo,
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
         "ultimaSinFiltrar" => $ultimaSinFiltrar,
         "reactores" => $reactores,
         "recetas" => $recetas,
-        "equipos" => $equipos,
-        "linea" => __LINE__
+        "equipos" => $equipos
     ]);
     exit;
 }
