@@ -32,11 +32,11 @@ function init() {
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
         window.location.href = "index.php?c=Formulario&a=ferrico";
-    })   
+    })
 
     cargarProducciones(tabla, divProducciones);
 
-    setInterval(() => {        
+    setInterval(() => {
         console.log("setInterval");
         cargarProducciones(tabla, divProducciones);
     }, 600000); //600.000 ms son 10 minutos
@@ -77,7 +77,7 @@ function cargarProducciones(tabla, divProducciones) {
 
                 textM216.innerHTML = volumenUsado + "%";
 
-                const valorM216 = Number(textM216.innerHTML);                
+                const valorM216 = Number(textM216.innerHTML);
                 textM216.innerHTML = volumenUsado + "%";
 
                 if (volumenUsado >= 0 && volumenUsado <= 50) {
@@ -139,10 +139,10 @@ function construirTabla(data) {
         }
         else if (p.Producto_id === "Ferrico") {
             claseEspecial = "ferrico_destacado";
-        }        
+        }
 
         if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
-            
+
             claseMezclador = "M311_destacado";
         }
 
@@ -188,12 +188,20 @@ function construirTabla(data) {
                      data-info='${JSON.stringify(p)}'
                      title="Editar fabricación">
             </td>
-            <td>
+            <!--<td>
                      <img src="images/flecha_amarilla_icon_15x20.png"
                      class="icono-transferir"
                      data-info='${JSON.stringify(p)}'
                      title="Transferir fabricación">
-            </td>            
+            </td>-->
+            
+            <td>
+                    <img src="images/${p.FechaFinal ? 'flecha_negra_icon_15x20.png' : 'flecha_amarilla_icon_15x20.png'}"
+                    class="icono-transferir"
+                    data-info='${JSON.stringify(p)}'
+                    title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">
+            </td>
+
             <td>
                      <img src="images/basura_rojo_icon_15x20.png"
                      class="icono-borrar"
@@ -221,7 +229,6 @@ function activarEventosTabla(tabla) {
             } else if (datos.Producto_id === "Filtrado") {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
             }
-
             return;
         }
 
@@ -253,13 +260,13 @@ function activarEventosTabla(tabla) {
 
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {
-            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);            
+            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
             //console.log(datosTransferir); debugger
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
             localStorage.setItem("modo", "transferir");
             if (datosTransferir.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {                
+            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datosTransferir.Producto_id === "Ferrico") {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
@@ -267,7 +274,7 @@ function activarEventosTabla(tabla) {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
             } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal) {
                 localStorage.setItem("modo", "terminar")
-                window.location.href = "index.php?c=Formulario&a=sulfato";                
+                window.location.href = "index.php?c=Formulario&a=sulfato";
             }
 
             return;
