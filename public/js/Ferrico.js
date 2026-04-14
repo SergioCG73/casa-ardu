@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let datosEdicion;
     let valNotas;
 
+    //const datosTransferencia = localStorage.getItem("datosTransferencia"); 
+    //console.log(datosTransferencia); debugger
+
     producto = "Ferrico";
 
     // ===== INICIO ZONA DE FUNCIONES ======
@@ -179,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (modo === "transferir" && datosTransferir) {
+                    console.log(datosTransferir); debugger
                     peso_inicial_mezclador.value = datosTransferir.PesoInicialMezclador;
                     formatearNumero(peso_inicial_mezclador);
                 }
@@ -340,8 +344,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO TRANSFERIR ====
     if (modo === "transferir") {
         console.log("Estamos en modo transferir...");
-        datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
-        //console.log(datosTransferir); debugger        
+        //datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
+        datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));
+        console.log(datosTransferir); debugger        
         const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
 
         btnCrear.textContent = "Transferir";
