@@ -418,6 +418,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     const PesoFinalEditado = parseInt(peso_final_reactor.value.replace(/\./g, ""), 10);
                     const VolumenD112Editado = parseInt(volumen_D112.value.replace(/\./g, ""), 10);                    
 
+                    if (isNaN(VolumenD112Editado)) {
+                        alert("Introduzca un volumen para el depósito");
+                        return;
+                    }                    
+
                     // === Fechas de Inicio y Final producción
                     const fechaHoraInicio = datosTransferir.FechaInicio;
                     const data = new FormData();
@@ -440,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            console.log(json); debugger;
+                            //console.log(json); debugger;
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })
