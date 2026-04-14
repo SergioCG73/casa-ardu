@@ -22,6 +22,11 @@
                         <label for="peso_final_reactor" class="input-label">Peso final reactor (Kg):</label>
                         <input type="text" id="peso_final_reactor" name="peso_final_reactor"> 
                     </div>
+
+                    <div id="contenedor_cantidad_filtrada" class="cantidad_filtrada">
+                        <label for="cantidad_filtrada" class="input-label">Volumen D112 (lts):</label>
+                        <input type="text" id="volumen_D112" name="volumen_D112">
+                    </div>
                 </fieldset>
             </div>
 
@@ -58,5 +63,6 @@
     </div> 
     <script src="js/utils.js"></script>
     <script src="js/Sulfato.js"></script>
+    <!--<script type="module" src="js/Sulfato.js"></script>-->
 </body>
 </html>
