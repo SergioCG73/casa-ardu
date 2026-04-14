@@ -253,18 +253,21 @@ function activarEventosTabla(tabla) {
 
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {
-            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
+            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);            
             //console.log(datosTransferir); debugger
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
             localStorage.setItem("modo", "transferir");
             if (datosTransferir.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datosTransferir.Producto_id === "Sulfato") {
+            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {                
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datosTransferir.Producto_id === "Ferrico") {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             } else if (datosTransferir.Producto_id === "Filtrado") {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
+            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal) {
+                localStorage.setItem("modo", "terminar")
+                window.location.href = "index.php?c=Formulario&a=sulfato";                
             }
 
             return;
