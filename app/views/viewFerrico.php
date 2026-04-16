@@ -25,9 +25,14 @@
                         <label for="peso_inicial_mezclador" class="input-label">Peso inicial mezclador (Kg):</label>
                         <input type="text" id="peso_inicial_mezclador" name="peso_inicial_mezclador">
 
-                        <div id="peso-final" class="peso-final">
+                        <div id="peso_final" class="peso_final">
                             <label for="peso_final_mezclador" class="input-label">Peso final mezclador (Kg):</label>
                             <input type="text" id="peso_final_mezclador" name="peso_final_mezclador">
+                        </div>
+
+                        <div id="contenedor_cantidad_transferida" class="cantidad_transferida">
+                            <label for="cantidad_transferida" class="input-label">Volumen D111 (lts):</label>
+                            <input type="text" id="volumen_D111" name="volumen_D111">
                         </div>
                     </div>
                 </fieldset>
@@ -39,6 +44,14 @@
                     <div class="radio-group">
                         <label class="radio-label"><input type="radio" name="sel_receta" value="P18"> P18</label>
                         <label class="radio-label"><input type="radio" name="sel_receta" value="Papilla"> Papilla</label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div id="depositos">
+                <fieldset>
+                    <legend>Depósitos</legend>
+                    <div class="radio-group">                        
                     </div>
                 </fieldset>
             </div>

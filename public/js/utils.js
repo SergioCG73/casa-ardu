@@ -26,32 +26,6 @@ function formatearMiles(num) {
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-/*export function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
-    listaRecetas.forEach((receta, index) => {
-        const id = `R${index + 1}_p18`;
-
-        const label = document.createElement("label");
-        label.className = "radio-label";
-        label.htmlFor = id;
-
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "receta";
-        input.id = id;
-        input.value = receta.NombreReceta;
-
-        if ((modo === "editar" || modo === "transferir") && datosEdicion.Receta == receta.NombreReceta) {
-            input.checked = true;
-            recetaSeleccionada = receta.NombreReceta;
-        }
-
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(receta.NombreReceta));
-
-        contenedorRecetas.appendChild(label);
-    });
-}*/
-
 async function sePuedeFabricar(producto, data) {
     // 1. Cargar festivos.json
     const res = await fetch("data/festivos.json");
@@ -77,10 +51,9 @@ async function sePuedeFabricar(producto, data) {
 
     // 4. Equipos disponibles    
     const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");
-    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id === "P18");
+    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.ProductoFabricado === "P18");
     const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
     const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
-
 
     // 5. Condiciones de bloqueo
     let tmargen;
@@ -101,13 +74,17 @@ async function sePuedeFabricar(producto, data) {
     const noHayEquipos = (mezcladoresDisponibles.length === 0 || reactoresDisponiblesP18.length === 0 || mezcladoresUsados.length != 0);
 
     // 6. Resultado final
-    if (producto === "P18" && (viernesTarde || visperaFestivoTarde || noHayEquipos)) {
+    if (producto === "P18" && (
+        viernesTarde ||
+        visperaFestivoTarde ||
+        noHayEquipos)) {
         console.log("NO se puede fabricar vispera festivo");
         mostrarModal("NO se puede fabricar");
         return false;
     }
 
-    if (producto === "Sulfato" && (viernesTarde ||
+    if (producto === "Sulfato" && (
+        viernesTarde ||
         visperaFestivoTarde ||
         reactoresDisponiblesSulfato.length === 0 ||
         mezcladoresUsados.length != 0)) {

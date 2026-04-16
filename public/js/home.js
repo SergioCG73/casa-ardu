@@ -45,8 +45,7 @@ function init() {
 /* ============================================================
    CARGAR DATOS DESDE PHP
    ============================================================ */
-function cargarProducciones(tabla, divProducciones) {
-    //console.log(cargarProducciones); debugger    
+function cargarProducciones(tabla, divProducciones) {    
     fetch("index.php?c=Leer&a=lectura", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,7 +64,6 @@ function cargarProducciones(tabla, divProducciones) {
             divProducciones.style.display = "block";
 
             let claseEspecial = null;
-
 
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";
@@ -158,7 +156,6 @@ function construirTabla(data) {
             campo = reactor;
         }
 
-
         if (p.Notas !== "" && p.Notas !== null) {
             td = `<td>
                       <img src="images/nota_amarillo_icon_20x20.png"
@@ -196,10 +193,15 @@ function construirTabla(data) {
             </td>-->
             
             <td>
-                    <img src="images/${p.FechaFinal ? 'flecha_negra_icon_15x20.png' : 'flecha_amarilla_icon_15x20.png'}"
+                    <!--<img src="images/${p.FechaFinal ? 'flecha_negra_icon_15x20.png' : 'flecha_amarilla_icon_15x20.png'}"-->
+                    <img src="images/${p.FechaFinal ? 'flag_finish.png' : 'flecha_amarilla_icon_15x20.png'}"
                     class="icono-transferir"
                     data-info='${JSON.stringify(p)}'
                     title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">
+                    <!--<img src="images/${p.FechaFinal ? 'flag_finish.png' : 'flag_finish.png'}"
+                    class="icono-transferir"
+                    data-info='${JSON.stringify(p)}'
+                    title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">-->
             </td>
 
             <td>
@@ -218,6 +220,7 @@ function activarEventosTabla(tabla) {
         const iconoEditar = e.target.closest(".icono-editar, .icono-nota");
         if (iconoEditar) {
             const datos = JSON.parse(iconoEditar.dataset.info);
+            //console.log(datos); debugger
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
             if (datos.Producto_id === "Sulfato") {
@@ -260,21 +263,23 @@ function activarEventosTabla(tabla) {
 
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {
-            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
-            //console.log(datosTransferir); debugger
-            localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
+            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);            
+            localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));            
             localStorage.setItem("modo", "transferir");
             if (datosTransferir.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
             } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
-            } else if (datosTransferir.Producto_id === "Ferrico") {
+            } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal === null) {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             } else if (datosTransferir.Producto_id === "Filtrado") {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
             } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal) {
                 localStorage.setItem("modo", "terminar")
                 window.location.href = "index.php?c=Formulario&a=sulfato";
+            } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal) {                
+                localStorage.setItem("modo", "terminar");
+                window.location.href = "index.php?c=Formulario&a=ferrico";
             }
 
             return;

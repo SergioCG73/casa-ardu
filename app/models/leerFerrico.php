@@ -18,7 +18,7 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 $tabla = "ferrico_terminadas";
 //$numeroProduccion = $_POST["numeroProduccion "] ?? "";
 
-//echo json_encode(["NºP", $numeroProduccion]); exit;
+//echo json_encode(["modo", $modo]); exit;
 
 function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 {
@@ -50,34 +50,39 @@ function obtenerDatosProducto($conexion, $producto)
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
-        $mezcladores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Recetas
+        //Depósitos
+        /*$sqlDep = "SELECT * FROM equipos WHERE ProductoFabricado = :producto AND Tipo = 'Deposito'";
+        $stmt = $conexion->prepare($sqlDep);
+        $stmt->bindParam(":producto", $producto);
+        $stmt->execute();
+        $depositos = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
+
+        // Recetas
         $sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
-        $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);        
-    
-    // Sacas
+        $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Sacas
         $sql = "SELECT Sacas FROM fabricaciones_en_curso WHERE Producto_id = :producto";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
-        $sacas = $stmt->fetch(PDO::FETCH_ASSOC);    
-    
-    //Notas
+        $sacas = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        //Notas
         $sql = "SELECT Notas FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":nf", $numeroProduccion);
         $stmt->execute();
-        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);        
+        $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return [$mezcladores, $recetas, $sacas, $notas];
-
-    }
-    else {
-        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";    
+        return [$equipos, $recetas, $sacas, $notas];
+    } else {
+        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
         $stmt->execute();
@@ -88,50 +93,52 @@ function obtenerDatosProducto($conexion, $producto)
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
-        $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);        
+        $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return [$equipos, $recetas];
-    }    
+    }
 }
+
 
 if (($modo === "crear" || $modo === "editar")) {
 
-list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
 
-$siguienteFabricacion = ($modo === "crear")
+    $siguienteFabricacion = ($modo === "crear")
         ? max($ultimaAcabada, $ultimaEnCurso) + 1
         : max($ultimaAcabada, $ultimaEnCurso) + 1;
 
-list($mezcladores, $recetas, $sacas) = obtenerDatosProducto($conexion, $producto);
+    list($equipos, $recetas, $sacas) = obtenerDatosProducto($conexion, $producto);
 
-echo json_encode([
+    echo json_encode([
         "ok" => true,
         "LINE" => __LINE__,
         "modo" => $modo,
         "producto" => $producto,
-        "mezcladores" => $mezcladores,
-        "recetas" => $recetas,        
+        "equipos" => $equipos,
+        "recetas" => $recetas,
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
-        "sacas" => $sacas, 
+        "sacas" => $sacas,
         "notas" => $notas
-]); exit;
+    ]);
+    exit;
 }
 
-if ($modo === "transferir") {    
-    list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);    
-    list($mezcladores, $recetas, $sacas, $notas) = obtenerDatosProducto($conexion, $producto);
+if ($modo === "transferir" || $modo === "terminar") {
+    list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    list($equipos, $recetas, $sacas, $notas) = obtenerDatosProducto($conexion, $producto);
 
-echo json_encode([
-    "fichero" => __FILE__,
-    "producto" => $producto,
-    "modo" => $modo,
-    "ultimaAcabada" => $ultimaAcabada,
-    "ultimaEnCurso" => $ultimaEnCurso,    
-    "mezcladores" => $mezcladores,
-    "recetas" => $recetas,
-    "sacas" => $sacas, 
-    "notas" => $notas   
-]); exit;
+    echo json_encode([
+        "producto" => $producto,
+        "modo" => $modo,
+        "ultimaAcabada" => $ultimaAcabada,
+        "ultimaEnCurso" => $ultimaEnCurso,
+        "equipos" => $equipos,
+        "recetas" => $recetas,
+        "sacas" => $sacas,
+        "notas" => $notas
+    ]);
+    exit;
 }

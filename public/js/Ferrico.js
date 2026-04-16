@@ -4,22 +4,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnTransferir = document.getElementById("btnTransferir");
     const displayProduccion = document.getElementById("displayProduccion");
     const peso_inicial_mezclador = document.getElementById("peso_inicial_mezclador");
+    const divPesoFinalMezclador = document.getElementById("peso_final");
+    const divCantidadTransferida = document.getElementById("contenedor_cantidad_transferida");
+    const divDepositos = document.getElementById("depositos");
     const peso_final_mezclador = document.getElementById("peso_final_mezclador");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>    
+    const volumen_D111 = document.getElementById("volumen_D111");
     let sacas = document.querySelector(".sacas");
 
     let recetaSeleccionada;
+    let depositoSeleccionado;
     let numeroProduccion;
     let fechaHoraInicio;
     let mezcladorSeleccionado;
     let modo = localStorage.getItem("modo");
     let datosEdicion;
-    let valNotas;
+    let sacasEstado = null;
+
+    divCantidadTransferida.style.display = "none";
+    divDepositos.style.display = "none";
+    divPesoFinalMezclador.style.display = "none";
+    producto = "Ferrico";
 
     //const datosTransferencia = localStorage.getItem("datosTransferencia"); 
-    //console.log(datosTransferencia); debugger
-
-    producto = "Ferrico";
+    //console.log(datosTransferencia); debugger    
 
     // ===== INICIO ZONA DE FUNCIONES ======
 
@@ -94,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
             input.id = id;
             input.value = receta.NombreReceta;
 
-            if ((modo === "editar" || modo === "transferir") && datosEdicion.Receta == receta.NombreReceta) {
+            if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.Receta == receta.NombreReceta) {
                 input.checked = true;
                 recetaSeleccionada = receta.NombreReceta;
             }
@@ -103,6 +111,36 @@ document.addEventListener("DOMContentLoaded", () => {
             label.appendChild(document.createTextNode(receta.NombreReceta));
 
             contenedorRecetas.appendChild(label);
+        });
+    }
+
+    function generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion) {
+        //console.log(listaDepositos); debugger
+        const radioGroup = divDepositos.querySelector(".radio-group");
+        radioGroup.innerHTML = "";
+
+        listaDepositos.forEach((depositos, index) => {
+            const id = `Dep${index + 1}_Ferrico`;
+
+            const label = document.createElement("label");
+            label.className = "radio-label";
+            label.htmlFor = id;
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "deposito";
+            input.id = id;
+            input.value = depositos.Equipo_id;
+
+            if (listaDepositos.length === 1) {
+                input.checked = true;
+                depositoSeleccionado = depositos.Equipo_id;  // ← SOLUCIÓN
+            }
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(depositos.Equipo_id));
+
+            radioGroup.appendChild(label);
         });
     }
 
@@ -116,20 +154,35 @@ document.addEventListener("DOMContentLoaded", () => {
             body: datos
         })
             .then(response => response.json())
-            .then(data => { 
+            .then(data => {
                 //console.log(data); debugger
-
-                if (modo === "editar") {
+                sacasEstado = data.sacas ? Number(data.sacas.Sacas) : null;
+                /*if (modo === "editar") {
                     data.notas = datosEdicion.Notas;
+                } */
+
+
+                /*if (modo === "crear") {
+                    numeroProduccion = Math.max(data.ultimaAcabada, data.ultimaEnCurso) + 1;
                 }
 
-                //console.log(datosEdicion); debugger
-                
-                numeroProduccion = (modo === "editar" || modo === "transferir")
+                numeroProduccion = (modo === "editar" || modo === "transferir" || modo === "terminar")
                     ? data.ultimaAcabada
-                    : data.siguienteFabricacion;
+                    : data.siguienteFabricacion;*/
+
+                if (modo === "crear") {
+                    numeroProduccion = Math.max(data.ultimaAcabada, data.ultimaEnCurso) + 1;
+                }
+                else if (modo === "editar" || modo === "transferir" || modo === "terminar") {
+                    numeroProduccion = data.ultimaAcabada;
+                }
+                else {
+                    numeroProduccion = data.siguienteFabricacion;
+                }
+
 
                 //data.ultimaEnCurso = Number(data.ultimaEnCurso);
+
 
                 // ==== VALOR INICIAL DEL CHECKBOX ====
                 if (data.sacas && data.sacas.Sacas == 1) {
@@ -138,32 +191,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     sacas.checked = false;
                 }
 
-                if (modo === "crear") {
-                    numeroProduccion = Math.max(data.ultimaAcabada, data.ultimaEnCurso) + 1;
-                }
-                
                 numeroProduccionActual = Number(numeroProduccion) + 1;
-                displayProduccion.textContent = numeroProduccionActual;                
+                displayProduccion.textContent = numeroProduccionActual;
 
                 //==== MEZCLADORES ====
                 const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
                 const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
-
-                //[contenedorMezcladores, contenedorPesoFinal].forEach(c => c.innerHTML = "");
-
                 contenedorMezcladores.innerHTML = "";
 
-                if (modo !== "transferir") {
-                    contenedorPesoFinal.innerHTML = "";
-                }
+                listaMezcladores = data.equipos.filter(m => m.Tipo === "Mezclador");
+                listaDepositos = data.equipos.filter(d => d.Tipo === "Deposito");
 
-                //console.log(data); debugger
-
-                generarRadiosMezcladores(data.mezcladores, contenedorMezcladores, modo);
-
+                generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo);
                 //==== RECETAS ====                
                 const contenedorRecetas = document.querySelector("#recetas .radio-group");
-                contenedorRecetas.innerHTML = "";                
+                contenedorRecetas.innerHTML = "";
 
                 generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosEdicion);
 
@@ -171,45 +213,66 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.addEventListener("change", function (e) {
                     if (e.target.name === "mezclador") mezcladorSeleccionado = e.target.value;
                     if (e.target.name === "receta") recetaSeleccionada = e.target.value;
-                    if (e.target.name === "sacas") sacas.value = e.target.checked ? 1 : 0;
+                    if (e.target.name === "deposito") {
+                        depositoSeleccionado = e.target.value;
+                        console.log(depositoSeleccionado);
+                    }
+                    if (e.target.name === "sacas") {
+                        sacasEstado = e.target.checked ? 1 : 0;
+                        sacas.value = sacasEstado;
+                    }
                 });
 
-                //==== VALORES INICIALES EN EDITAR ====
-
-                if (modo === "editar" && datosEdicion) {
+                //==== VALORES INICIALES FORMULARIO ====
+                if (modo === "editar" && datosEdicion.FechaFinal === null) {
+                    console.log("editar SIN FechaFinal");
                     peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+                    txtNotas.textContent = datosEdicion.Notas;
                     formatearNumero(peso_inicial_mezclador);
                 }
 
-                if (modo === "transferir" && datosTransferir) {
-                    console.log(datosTransferir); debugger
+                if (modo === "editar" && datosEdicion.FechaFinal !== null) {
+                    console.log("editar CON FechaFinal");
+                    peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+                    peso_final_mezclador.value = datosEdicion.PesoFinalMezclador;
+                    txtNotas.textContent = datosEdicion.Notas;
+                    divPesoFinalMezclador.style.display = "block";
+                    divDepositos.style.display = "block";
+                    generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion);
+                    formatearNumero(peso_inicial_mezclador);
+                    formatearNumero(peso_final_mezclador);
+                }
+
+                if (modo === "transferir" && datosEdicion) {
+                    console.log("transferir");
                     peso_inicial_mezclador.value = datosTransferir.PesoInicialMezclador;
+                    peso_final_mezclador.value = datosTransferir.PesoFinalMezclador;
+                    txtNotas.textContent = datosTransferir.Notas;
+                    divDepositos.style.display = "block";
+                    generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion);
                     formatearNumero(peso_inicial_mezclador);
+                    formatearNumero(peso_final_mezclador);
                 }
 
-                valNotas = txtNotas.textContent;                                
-
-                if (data.notas !== null || data.notas !== "") {
-                    txtNotas.textContent = data.notas;
-                } 
-
-                if (modo === "transferir") {                    
-                    txtNotas.textContent = datosTransferir.Notas;                    
+                if (modo === "terminar" && datosEdicion) {
+                    console.log("terminar");
+                    peso_inicial_mezclador.value = datosTransferir.PesoInicialMezclador;
+                    peso_final_mezclador.value = datosTransferir.PesoFinalMezclador;
+                    txtNotas.textContent = datosTransferir.Notas;
+                    divDepositos.style.display = "block";
+                    divPesoFinalMezclador.style.display = "block";
+                    generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion);
+                    formatearNumero(peso_inicial_mezclador);
+                    formatearNumero(peso_final_mezclador);                    
                 }
 
                 return data;
             });
     }
 
-    /*function formatearNumero(input) {
-        let valor = input.value.replace(/\D/g, "");
-        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        input.value = valor;
-    }*/
-
     // ===== FIN ZONA DE FUNCIONES ======
 
-    [peso_inicial_mezclador, peso_final_mezclador].forEach(input => {
+    [peso_inicial_mezclador, peso_final_mezclador, volumen_D111].forEach(input => {
         input.addEventListener("input", () => formatearNumero(input));
     });
 
@@ -227,9 +290,8 @@ document.addEventListener("DOMContentLoaded", () => {
         contenedorPesoFinal.style.display = "none";
 
         inicializarFormulario(modo, producto)
-            .then(data => {                
-                //console.log(data); debugger  
-
+            .then(data => {
+                //console.log(data); debugger
                 btnCrear.addEventListener("click", () => {
 
                     console.log("click en crear");
@@ -300,10 +362,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO EDITAR ====
     if (modo === "editar") {
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
-        console.log(datosEdicion); debugger 
+        //console.log(datosEdicion); debugger
         btnCrear.textContent = "Editar";
         const contenedorPesoFinal = document.querySelector(".peso-final");
-        contenedorPesoFinal.innerHTML = "";
+        //contenedorPesoFinal.innerHTML = "";
 
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
@@ -311,6 +373,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     e.preventDefault();
                     const pesoMezcladorEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
                     const pesoMezcladorFinal = parseInt(peso_final_mezclador.value.replace(/\./g, ""), 10);
+                    const VolumenD111Editado = parseInt(volumen_D111.value.replace(/\./g, ""), 10);
+
+                    if (isNaN(VolumenD111Editado) && modo === "terminar") {
+                        alert("Introduzca un volumen para el depósito");
+                        return;
+                    }
 
                     const data = new FormData();
                     data.append("numeroProduccion", datosEdicion.NumeroFabricacion);
@@ -344,16 +412,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO TRANSFERIR ====
     if (modo === "transferir") {
         console.log("Estamos en modo transferir...");
-        //datosTransferir = JSON.parse(localStorage.getItem("datosEditables"));
         datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));
-        console.log(datosTransferir); debugger        
         const contenedorPesoFinal = document.querySelector("#mezcladores .peso-final");
-
         btnCrear.textContent = "Transferir";
 
         inicializarFormulario(modo, producto, datosTransferir)
             .then(() => {
-                contenedorPesoFinal.style.display = "block";
+                divPesoFinalMezclador.style.display = "block";
                 btnCrear.addEventListener("click", (e) => {
                     e.preventDefault();
 
@@ -371,6 +436,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         String(ahora.getMinutes()).padStart(2, '0') + ":" +
                         String(ahora.getSeconds()).padStart(2, '0');*/
 
+
+                    if (!PesoInicialEditado || isNaN(PesoInicialEditado)) {
+                        alert("Falta peso inicial");
+                        return;
+                    }
+
+                    if (!PesoFinalEditado || isNaN(PesoFinalEditado)) {
+                        alert("Falta peso final");
+                        return;
+                    }
+
+                    if (sacasEstado === 0) {
+                        alert("Las sacas no están dosificadas. No se puede transferir.");
+                        return;
+                    }
+
                     const data = new FormData();
                     data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
                     data.append("mezclador", mezcladorSeleccionado);
@@ -380,8 +461,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("pesoInicialMezclador", PesoInicialEditado);
                     data.append("pesoFinalMezclador", PesoFinalEditado);
                     data.append("notas", txtNotas.value);
-                    //data.append("producto", producto);
-                    //data.append("modo", modo);
+                    data.append("sacas", sacasEstado);
+                    data.append("modo", modo);
 
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/
@@ -392,7 +473,59 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(response => response.json())
                         .then(json => {
-                            //console.log(json); debugger
+                            console.log(json); debugger
+                            if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
+                            else alert("Error: " + json.error);
+                        })
+                        .catch(error => console.log("ERROR", error));
+                });
+            });
+    }
+
+    // MODO TERMINAR
+
+    if (modo === "terminar") {
+        console.log("Estamos en modo terminar...");
+        datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));
+        divCantidadTransferida.style.display = "block";
+
+        btnCrear.textContent = "Terminar";
+        inicializarFormulario(modo, producto, datosTransferir)
+            .then(() => {
+                btnCrear.addEventListener("click", (e) => {
+                    e.preventDefault();
+
+                    const PesoInicialEditado = parseInt(peso_inicial_mezclador.value.replace(/\./g, ""), 10);
+                    const PesoFinalEditado = parseInt(peso_final_mezclador.value.replace(/\./g, ""), 10);
+                    const VolumenD111Editado = parseInt(volumen_D111.value.replace(/\./g, ""), 10);
+
+                    if (isNaN(VolumenD111Editado)) {
+                        alert("Introduzca un volumen para el depósito");
+                        return;
+                    }
+
+                    const fechaHoraInicio = datosTransferir.FechaInicio;
+                    const data = new FormData();
+                    data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
+                    data.append("mezclador", mezcladorSeleccionado);
+                    data.append("receta", recetaSeleccionada);
+                    data.append("fechaHoraInicio", fechaHoraInicio);
+                    data.append("pesoInicialMezclador", PesoInicialEditado);
+                    data.append("pesoFinalMezclador", PesoFinalEditado);                    
+                    data.append("volumenD111", VolumenD111Editado);
+                    data.append("notas", txtNotas.value);
+                    data.append("modo", modo);
+
+                    const objeto = Object.fromEntries(data.entries());
+                    console.log(objeto); debugger
+
+                    fetch("index.php?c=Transferir&a=transferirFerrico", {
+                        method: "POST",
+                        body: data
+                    })
+                        .then(response => response.json())
+                        .then(json => {
+                            console.log(json); debugger;
                             if (json.ok) mostrarModal("Producción guardada en acabadas correctamente");
                             else alert("Error: " + json.error);
                         })

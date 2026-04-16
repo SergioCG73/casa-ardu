@@ -5,12 +5,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const displayProduccion = document.getElementById("displayProduccion");
     const divReactores = document.getElementById("reactores");
     const divCantidadFiltrada = document.getElementById("contenedor_cantidad_filtrada");
+    const divPesoFinalMezclador = document.getElementById("contenedor_peso_final");
+    const contenedorPesoFinal = document.getElementById("contenedor_peso_final");
     const peso_inicial_reactor = document.getElementById("peso_inicial_reactor");
     const peso_final_reactor = document.getElementById("peso_final_reactor");
     const volumen_D112 = document.getElementById("volumen_D112");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>    
 
     divCantidadFiltrada.style.display = "none";
+    divPesoFinalMezclador.style.display = "none";
 
     let reactorSeleccionado;
     let recetaSeleccionada;
@@ -119,14 +122,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*const objeto = Object.fromEntries(datos.entries());
         console.log(objeto); debugger*/
-
-        //return fetch("index.php?c=Leer&a=lectura", {
+        
         return fetch("index.php?c=Leer&a=leerSulfato", {
             method: "POST",
             body: datos
         })
             .then(response => response.json())
-            .then(datos => {                
+            .then(datos => {
                 const data = {
                     reactores: datos.reactores || [],
                     notas: datos.notas || [],
@@ -145,29 +147,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (modo === "crear") {
                     sePuedeFabricar(producto, data);
-                }
-
-                //console.log(numeroProduccion); debugger            
+                }                
 
                 //==== REACTORES ====
                 const contenedorReactores = document.querySelector("#reactores fieldset");
                 //generarRadiosReactores(data.reactores, contenedorReactores, modo, datosEdicion);
 
-                if (modo === "terminar") {                    
+                if (modo === "terminar") {
                     generarRadiosReactores(data.reactores, contenedorReactores, modo, datosTransferir);
                 } else {
                     generarRadiosReactores(data.reactores, contenedorReactores, modo, datosEdicion);
                 }
 
                 //==== RECETAS ====
-                const contenedorRecetas = document.querySelector("#recetas fieldset");            
+                const contenedorRecetas = document.querySelector("#recetas fieldset");
                 //generarRadiosRecetas(data.recetas, contenedorReactores, modo, datosEdicion);    
 
-                if (modo === "terminar") {                    
+                if (modo === "terminar") {
                     generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosTransferir);
                 } else {
                     generarRadiosRecetas(data.recetas, contenedorRecetas, modo, datosEdicion);
-                }                
+                }
 
                 //==== LISTENERS ====
                 document.addEventListener("change", function (e) {
@@ -175,24 +175,46 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (e.target.name === "receta") recetaSeleccionada = e.target.value;
                 });
 
-                //==== VALORES INICIALES EN EDITAR ====                
-                if (modo === "editar" && datosEdicion) {
+                //==== VALORES INICIALES FORMULARIO ====                
+                if (modo === "editar" && datosEdicion.FechaFinal === null) {
+                    console.log("editar SIN FechaFinal");
                     peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
                     txtNotas.textContent = datosEdicion.Notas;
+                    contenedorPesoFinal.style.display = "none";
                     formatearNumero(peso_inicial_reactor);
                 }
 
-                if ((modo === "transferir" || modo === "terminar") && datosTransferir) {
-                    peso_inicial_reactor.value = datosTransferir.PesoInicialReactor;
+                if (modo === "editar" && datosEdicion.FechaFinal !== null) {
+                    console.log("editar CON FechaFinal");
+                    peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
+                    peso_final_reactor.value = datosEdicion.PesoFinalReactor;
+                    divPesoFinalMezclador.style.display = "block";
                     txtNotas.textContent = datosEdicion.Notas;
+                    contenedorPesoFinal.style.display = "block";
                     formatearNumero(peso_inicial_reactor);
-                }
-
-                if (modo === "terminar" && datosTransferir) {                    
-                    peso_final_reactor.value = datosTransferir.PesoFinalReactor;
                     formatearNumero(peso_final_reactor);
                 }
 
+                if ((modo === "transferir") && datosTransferir) {
+                    console.log(modo);
+                    console.log(datosTransferir);
+                    peso_inicial_reactor.value = datosTransferir.PesoInicialReactor;
+                    txtNotas.textContent = datosEdicion.Notas;
+                    divPesoFinalMezclador.style.display = "block";
+                    formatearNumero(peso_inicial_reactor);
+                    formatearNumero(peso_final_reactor);
+                }
+
+                if (modo === "terminar" && datosTransferir) {
+                    console.log(modo);                    
+                    peso_inicial_reactor.value = datosTransferir.PesoInicialReactor;
+                    peso_final_reactor.value = datosTransferir.PesoFinalReactor;
+                    txtNotas.textContent = datosEdicion.Notas;
+                    divCantidadFiltrada.style.display = "block";
+                    divPesoFinalMezclador.style.display = "block";
+                    formatearNumero(peso_inicial_reactor);
+                    formatearNumero(peso_final_reactor);
+                }
                 return data;
             });
     }
@@ -304,8 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
         //console.log(datosEdicion); debugger
         btnCrear.textContent = "Editar";
-        const contenedorPesoFinal = document.getElementById("contenedor_peso_final");
-        contenedorPesoFinal.style.display = "none";
 
         inicializarFormulario(modo, producto, datosEdicion)
             .then(() => {
@@ -403,9 +423,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==== MODO TERMINAR ====
     if (modo === "terminar") {
         console.log("Estamos en modo terminar...");
-        datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));        
+        datosTransferir = JSON.parse(localStorage.getItem("datosTransferencia"));
 
-        divCantidadFiltrada.style.display = "block";
+        //divCantidadFiltrada.style.display = "block";
 
         btnCrear.textContent = "Terminar";
         inicializarFormulario(modo, producto, datosTransferir)
@@ -416,12 +436,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const PesoInicialEditado = parseInt(peso_inicial_reactor.value.replace(/\./g, ""), 10);
                     const PesoFinalEditado = parseInt(peso_final_reactor.value.replace(/\./g, ""), 10);
-                    const VolumenD112Editado = parseInt(volumen_D112.value.replace(/\./g, ""), 10);                    
+                    const VolumenD112Editado = parseInt(volumen_D112.value.replace(/\./g, ""), 10);
 
                     if (isNaN(VolumenD112Editado)) {
                         alert("Introduzca un volumen para el depósito");
                         return;
-                    }                    
+                    }
 
                     // === Fechas de Inicio y Final producción
                     const fechaHoraInicio = datosTransferir.FechaInicio;
@@ -429,9 +449,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
                     data.append("reactor", reactorSeleccionado);
                     data.append("receta", recetaSeleccionada);
-                    data.append("fechaHoraInicio", fechaHoraInicio);                    
+                    data.append("fechaHoraInicio", fechaHoraInicio);
                     data.append("pesoInicialReactor", PesoInicialEditado);
-                    data.append("pesoFinalReactor", PesoFinalEditado);  
+                    data.append("pesoFinalReactor", PesoFinalEditado);
                     data.append("volumenD112", VolumenD112Editado);
                     data.append("notas", txtNotas.value);
                     data.append("modo", modo);
