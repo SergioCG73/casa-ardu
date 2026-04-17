@@ -109,6 +109,9 @@ if ($pesoRF === null) {
 
     $sqlUpdateReactor->execute([':reactor' => $reactorNuevo]);
 } else if ($pesoRF !== null) {
+
+
+    // 2ª TRANSFERENCIA 
     //echo json_encode(["LINE" => __LINE__]); exit;     
 
     //Insertar en P18_terminadas    
@@ -197,6 +200,7 @@ if ($pesoRF === null) {
                                             
                                                    )");
 
+    //Nota: existe un TRIGGER para sumar los volúmenes de mezclador_216 y pasarlos al Volumen de equipos-->Equipo_id = 'M216'
 
     $sqlInsert->execute([":nf" => $numeroProduccion]);
 

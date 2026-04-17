@@ -15,6 +15,7 @@ require_once("miconexion.php");
 $input = json_decode(file_get_contents("php://input"), true);
 $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
+$tabla = "p18_terminadas";
 
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
@@ -55,9 +56,9 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 
 function obtenerDatosProducto($conexion, $producto)
 {
-
     $numeroProduccion = $_POST["numeroProduccion"] ?? null;
 
+    // Equipos
     $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
     $stmt = $conexion->prepare($sql);
     $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
@@ -91,16 +92,35 @@ function obtenerDatosProducto($conexion, $producto)
                       "recetas" => $recetas, 
                       "reactores" => $reactores,
                       "notas" => $notas
-        ]); exit;*/
+    ]); exit;*/
 
     return [$equipos, $recetas, $reactores, $notas];
 }
 
+function obtenerDatosProduccionEnCurso($conexion)
+{
+    $numeroProduccion = $_POST["numeroProduccion"] ?? null;
+
+    // Produccion en curso
+    $sqlSelect = "SELECT * FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+    $stmt = $conexion->prepare($sqlSelect);
+    $stmt->bindParam(":nf", $numeroProduccion);
+    $stmt->execute();
+    $produccionCurso = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    /*    echo json_encode(["produccionCurso" => $produccionCurso]);
+    exit;*/
+
+
+    return $produccionCurso;
+}
+
+
+
 // -----------------------------------------------------------
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR P18
 // -----------------------------------------------------------
-if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
-    $tabla = "p18_terminadas";
+if (in_array($modo, ["crear", "editar", "transferir"])) {
     list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) =
         obtenerUltimasFabricaciones($conexion, $producto, $tabla);
 
@@ -129,6 +149,9 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
     exit;
 }
 
+
+/*
+
 list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
 
 $siguienteFabricacion = ($modo === "crear")
@@ -141,7 +164,7 @@ if ($modo === "crear") {
 
 list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
 
-echo json_encode([    
+echo json_encode([
     "modo" => $modo,
     "producto" => $producto,
     "tabla" => $tabla,
@@ -151,7 +174,27 @@ echo json_encode([
     "equipos" => $equipos,
     "linea" => __LINE__
 ]);
-exit;
+exit;*/
+
+// MODO TERMINAR
+if ($modo === "terminar") {
+    list($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, "P18");
+
+    $produccionCurso = obtenerDatosProduccionEnCurso($conexion);
+
+    echo json_encode([
+        "ok" => true,        
+        "numeroProduccion" => $numeroProduccion,
+        "produccionCurso" => $produccionCurso,
+        "equipos" => $equipos,
+        "recetas" => $recetas,
+        "reactores" => $reactores       
+    ]);
+    exit;
+    
+}
+
 
 // -----------------------------
 // MODO FILTRAR

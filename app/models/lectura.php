@@ -27,12 +27,18 @@ if ($modo === "inicial") {
     $producciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 2) Volumen en M216
-    $sql = "SELECT SUM(Volumen) AS TotalVolumen FROM mezclador_216";
+    /*$sql = "SELECT SUM(Volumen) AS TotalVolumen FROM mezclador_216";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $volumen_M216 = $result["TotalVolumen"] ?? 0;
-    $volumen_M216 = intval($volumen_M216);
+    $volumen_M216 = intval($volumen_M216);*/
+
+    $sql = "SELECT Volumen FROM equipos WHERE Equipo_id = 'M216'";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $volumen_M216 = intval($result["Volumen"]);
 
     // Filtrar las que NO son "0000"
     $solo_fabricaciones = array_filter(
@@ -46,8 +52,7 @@ if ($modo === "inicial") {
         "modo" => $modo,
         "producto" => $producto,
         "producciones_en_curso" => $producciones_en_curso,
-        "volumen_M216" => $volumen_M216,
-        "mensaje" => "INICIAL"
+        "volumen_M216" => $volumen_M216
     ]);
     exit;
 }
@@ -55,7 +60,8 @@ if ($modo === "inicial") {
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
 // -----------------------------------------------
-function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
+function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
+{
     // Última terminada
     $sql = "SELECT NumeroFabricacion FROM $tablaTerminadas ORDER BY NumeroFabricacion DESC LIMIT 1";
     $stmt = $conexion->prepare($sql);
@@ -82,11 +88,13 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
         $ultimaSinFiltrar = 0;
     }
 
-    echo json_encode(["LINE" => __LINE__,
-                      "ultimaAcabada" => $ultimaAcabada,
-                      "ultimaEnCurso" => $ultimaEnCurso,
-                      "ultimaSinFiltrar" => $ultimaSinFiltrar
-    ]); exit;
+    echo json_encode([
+        "LINE" => __LINE__,
+        "ultimaAcabada" => $ultimaAcabada,
+        "ultimaEnCurso" => $ultimaEnCurso,
+        "ultimaSinFiltrar" => $ultimaSinFiltrar
+    ]);
+    exit;
 
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
@@ -133,13 +141,13 @@ function obtenerDatosProducto($conexion, $producto)
 
         return [$mezcladores, $recetas, $sacas, $notas];
     } else {
-        $numeroProduccion = $_POST["numeroProduccion"] ?? null;        
-            $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
-            $stmt = $conexion->prepare($sql);
-            $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
-            $stmt->execute();
-            $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+        $numeroProduccion = $_POST["numeroProduccion"] ?? null;
+        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+        $stmt->execute();
+        $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
         // Recetas
         $sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
