@@ -1,8 +1,7 @@
+```mermaid
 flowchart TD
     A([INICIO]) --> B{modo === "transferir"?}
-
     B -->|NO| Z([FIN])
-
     B -->|SÍ| C{Mezclador ≠ null<br>Y<br>Reactor vacío?}
 
     %% --- BLOQUE M → R ---
@@ -12,14 +11,13 @@ flowchart TD
         • Deshabilitar peso_final_reactor]
 
     D --> E[Click en botón "Transferir"]
-    E --> F{Validaciones:<br>
-        • pesoMF<br>
-        • reactorSeleccionado<br>
+    E --> F{Validaciones:
+        • pesoMF
+        • reactorSeleccionado
         • pesoR}
 
     F -->|Falla| E
     F -->|OK| G[Crear FormData<br>mezclaAReactor]
-
     G --> H[fetch → Transferir/mezclaAReactor]
     H --> I{json.ok?}
     I -->|SÍ| J[Mostrar modal "Producción transferida"]
@@ -29,7 +27,6 @@ flowchart TD
     C -->|NO| L{PesoInicialReactor ≠ null<br>Y<br>Reactor ≠ null?}
 
     L -->|NO| Z
-
     L -->|SÍ| M[Modo transferencia R → M216<br><br>
         • Cambiar botón a "Finalizar"<br>
         • inicializarFormulario()<br>
@@ -40,7 +37,6 @@ flowchart TD
 
     O -->|Falla| N
     O -->|OK| P[Crear FormData<br>reactorAM216]
-
     P --> Q[fetch → Transferir/reactorAM216]
     Q --> R[alert "Producción transferida a M216"]
     R --> S[Redirigir a home]

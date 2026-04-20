@@ -95,3 +95,13 @@ async function sePuedeFabricar(producto, data) {
 
     return true;
 }
+
+
+async function cargarProductos() {
+    fetch("index.php?c=Leer&a=leerproductos"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modo: "laboratorio" })        
+    }
+
+}

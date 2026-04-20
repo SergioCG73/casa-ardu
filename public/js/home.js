@@ -4,15 +4,16 @@ function init() {
     const btnP18 = document.getElementById("btnP18");
     const btnSulfato = document.getElementById("btnSulfato");
     const btnFerrico = document.getElementById("btnFerrico");
-    //const btnFiltrado = document.getElementById("btnFiltrado");
+    const btnHb10 = document.getElementById("btnHb10");
+    const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
     const displayM216 = document.getElementById("displayM216");
 
-    localStorage.setItem("modo", "inicial");
+    localStorage.setItem("modo", "inicial");    
 
     if (ROL_USUARIO === "LAB") {
-        console.log("MODO LABORATORIO");
+        console.log("MODO LABORATORIO");            
         window.location.href = "index.php?c=Formulario&a=laboratorio";
     }
 
@@ -32,7 +33,14 @@ function init() {
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "Ferrico");
         window.location.href = "index.php?c=Formulario&a=ferrico";
+    });
+
+    btnHb10.addEventListener("click", () => {
+        localStorage.setItem("modo", "crear");
+        localStorage.setItem("producto", "Hb10");
+        window.location.href = "index.php?c=Formulario&a=hb10";
     })
+
 
     cargarProducciones(tabla, divProducciones);
 

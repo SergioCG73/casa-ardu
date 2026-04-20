@@ -26,4 +26,8 @@ class LeerController {
     public function leerfiltradas() {          
         include __DIR__ . '/../models/leerFiltradas.php';
     }
+
+    public function leerproductos() {          
+        include __DIR__ . '/../models/leerProductos.php';
+    }
 }

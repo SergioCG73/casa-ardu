@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- DEBUG HOME -->
 <html lang="es">
 
 <head>
@@ -14,7 +13,7 @@
         <button id="btnP18" class="boton">P18</button>
         <button id="btnSulfato" class="boton">Sulfato</button>
         <button id="btnFerrico" class="boton">Férrico</button>
-        <button id="btnHB10" class="boton">HB 10</button>
+        <button id="btnHb10" class="boton">HB 10</button>        
         <!--<button id="btnFiltrado" class="boton">Filtrado</button>-->
     </div>
 
