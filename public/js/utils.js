@@ -96,12 +96,40 @@ async function sePuedeFabricar(producto, data) {
     return true;
 }
 
-
 async function cargarProductos() {
-    fetch("index.php?c=Leer&a=leerproductos"), {
+    const response = await fetch("index.php?c=Leer&a=leerproductos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "laboratorio" })        
-    }
+        body: JSON.stringify({ modo: "laboratorio" })
+    });
+
+    const data = await response.json();    
+    return data;
+}
+
+function generarCheckBoxesProductos(productos) {   
+    console.log(productos);
+    const contenedor = document.querySelector("#productos");
+    contenedor.innerHTML = "";   
+
+    productos.forEach(p => {
+        const id = "prod_" + p.ProductoFabricado.replace(/\s+/g, "_");
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.name = "producto";
+        input.value = p.productos;
+
+        const label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.textContent = p.ProductoFabricado;        
+
+        contenedor.appendChild(input);
+        contenedor.appendChild(label);
+        //fieldset.appendChild(document.createElement("br"));
+        
+    })
+
 
 }
