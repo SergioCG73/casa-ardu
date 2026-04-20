@@ -119,17 +119,34 @@ function generarCheckBoxesProductos(productos) {
         input.type = "checkbox";
         input.id = id;
         input.name = "producto";
-        input.value = p.productos;
+        input.value = p.ProductoFabricado;
 
         const label = document.createElement("label");
         label.setAttribute("for", id);
-        label.textContent = p.ProductoFabricado;        
+        label.textContent = p.ProductoFabricado;
 
         contenedor.appendChild(input);
         contenedor.appendChild(label);
-        //fieldset.appendChild(document.createElement("br"));
-        
+    })
+}
+
+function cargarAnaliticas() {
+    const checkboxes = document.querySelectorAll("input[name='producto[]'):checked");
+
+    let productos = [];
+    checkboxes.forEach(cb => {
+        productos.push(cb.value);
     })
 
+    fetch("index.php?c=Leer&a=analiticas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({productos: productos})
+    })
+    .then(response = response.json())
+    .then(data => {
+        console.log(data)
+    })
+    .catch(error => console.error("Error: ", error));
 
 }
