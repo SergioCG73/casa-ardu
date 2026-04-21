@@ -37,4 +37,19 @@ class LeerController {
         //echo json_encode(["LINE" => __LINE__]); exit;
         include __DIR__ . '/../models/leerAnaliticas.php';
     }
+
+    public function leerJSON() {
+    header("Content-Type: application/json");
+    
+    $ruta = __DIR__ . "/../../public/config/config.json";
+
+    if (!file_exists($ruta)) {
+        echo json_encode(["error" => "Archivo no encontrado"]);
+        return;
+    }
+
+    $contenido = file_get_contents($ruta);
+    echo $contenido;
+}
+
 }
