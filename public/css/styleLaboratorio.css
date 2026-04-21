@@ -56,3 +56,10 @@
     text-align: center;
     line-height: 16px;
 }
+
+#botonera {
+    display: flex;
+    justify-content: flex-end;   /* A la derecha */
+    margin-top: 12px;            /* Separación del contenido */
+}
+
