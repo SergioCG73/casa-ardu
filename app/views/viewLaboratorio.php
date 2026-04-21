@@ -20,6 +20,9 @@
                 <label>Hasta</label>
                 <input type="date" id = "hasta">
             </div>
+            <div id="botonera">
+                <button ID="btnBuscar" class="btnBuscar">Buscar</button>
+            </div>
         </fieldset>
     </div>
 
