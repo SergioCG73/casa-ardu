@@ -1,0 +1,6 @@
+{
+    "limitesSelect": {
+        "inferior": 1,
+        "superior": 20
+    }
+}
