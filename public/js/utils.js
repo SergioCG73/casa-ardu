@@ -103,14 +103,14 @@ async function cargarProductos() {
         body: JSON.stringify({ modo: "laboratorio" })
     });
 
-    const data = await response.json();    
+    const data = await response.json();
     return data;
 }
 
-function generarCheckBoxesProductos(productos) {   
+function generarCheckBoxesProductos(productos) {
     console.log(productos);
     const contenedor = document.querySelector("#productos");
-    contenedor.innerHTML = "";   
+    contenedor.innerHTML = "";
 
     productos.forEach(p => {
         const id = "prod_" + p.ProductoFabricado.replace(/\s+/g, "_");
@@ -130,23 +130,17 @@ function generarCheckBoxesProductos(productos) {
     })
 }
 
-function cargarAnaliticas() {
-    const checkboxes = document.querySelectorAll("input[name='producto[]'):checked");
-
-    let productos = [];
-    checkboxes.forEach(cb => {
-        productos.push(cb.value);
-    })
-
-    fetch("index.php?c=Leer&a=analiticas", {
+function cargarAnaliticas(productosSeleccionados) {
+    //const productos = productosSeleccionados.map(item => item.ProductoFabricado);
+    fetch("index.php?c=Leer&a=leeranaliticas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({productos: productos})
+        body: JSON.stringify({ productosSeleccionados })
     })
-    .then(response = response.json())
-    .then(data => {
-        console.log(data)
-    })
-    .catch(error => console.error("Error: ", error));
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => console.error("Error: ", error));
 
 }
