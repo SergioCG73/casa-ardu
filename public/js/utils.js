@@ -130,17 +130,38 @@ function generarCheckBoxesProductos(productos) {
     })
 }
 
-function cargarAnaliticas(productosSeleccionados) {
-    //const productos = productosSeleccionados.map(item => item.ProductoFabricado);
+async function CargarConfig() {
+    const res = await fetch("index.php?c=Leer&a=leerJSON");
+    return await res.json();
+}
+
+function configurarSelectCantidad(config) {
+    const select = document.getElementById("cantidad");
+    select.innerHTML = ""; // limpiar opciones previas
+
+    const min = config.limitesSelect.inferior;
+    const max = config.limitesSelect.superior;
+
+    for (let i = min; i <= max; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        select.appendChild(option);
+    }
+}
+
+function cargarAnaliticas(productosSeleccionados, limite) {
+
     fetch("index.php?c=Leer&a=leeranaliticas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productosSeleccionados })
+        body: JSON.stringify({ productosSeleccionados, limite })
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            console.log(data); debugger
         })
         .catch(error => console.error("Error: ", error));
-
 }
+
+
