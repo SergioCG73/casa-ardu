@@ -20,6 +20,10 @@
                 <label>Hasta</label>
                 <input type="date" id = "hasta">
             </div>
+            <div id="mostrar" class="mostrar">
+                <label>Mostrar</label>
+                <select id="cantidad"></select>
+            </div>
             <div id="botonera">
                 <button ID="btnBuscar" class="btnBuscar">Buscar</button>
             </div>
