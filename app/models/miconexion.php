@@ -8,6 +8,7 @@ try {
     // Conexión PDO
     $conexion = new PDO(DB_DSN, DB_USER, DB_PASS);
     $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conexion->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 } catch (PDOException $e) {
     // Devuelve JSON SIEMPRE, NO texto plano
     header('Content-Type: application/json; charset=utf-8');
