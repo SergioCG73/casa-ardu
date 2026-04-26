@@ -61,7 +61,7 @@ function cargarProducciones(tabla, divProducciones) {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); debugger
+            //console.log(data); debugger
             if (!data.ok) return;
             tabla.innerHTML = generarEncabezado() + construirTabla(data);
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");

@@ -56,10 +56,163 @@
     text-align: center;
     line-height: 16px;
 }
-
+/*
 #botonera {
     display: flex;
-    justify-content: flex-end;   /* A la derecha */
-    margin-top: 12px;            /* Separación del contenido */
+    justify-content: flex-end;   
+    margin-top: 12px;            
 }
 
+/* TABLA */
+.producciones_sin_analitica {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.tabla th,
+.tabla td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla th { border-bottom: 3px solid #ccc; }
+
+.tabla tr:hover { background: #f9f9f9; }
+
+
+/* ================================
+   MODAL ANALÍTICA
+   ================================ */
+
+/* Fondo oscuro semitransparente */
+#modalAnalitica {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: none;              /* Lo controlas desde JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Caja del modal */
+#modalAnalitica .modal-contenido {
+    background: #fff;
+    padding: 22px 28px;
+    border-radius: 8px;
+    width: 420px;
+    max-width: 90%;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    position: relative;
+    animation: aparecer 0.25s ease-out;
+}
+
+/* Animación suave */
+@keyframes aparecer {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+/* Botón de cerrar */
+#cerrarModalAnalitica {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #555;
+    transition: 0.2s;
+}
+
+#cerrarModalAnalitica:hover {
+    color: #000;
+}
+
+/* Título */
+#modalAnalitica h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 20px;
+    text-align: center;
+    color: #333;
+}
+
+/* Campos del formulario */
+#contenedorCamposAnalitica label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #444;
+}
+
+#contenedorCamposAnalitica input,
+#contenedorCamposAnalitica textarea {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 4px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+#contenedorCamposAnalitica textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+/* Botón Guardar */
+#formAnalitica button[type="submit"] {
+    margin-top: 18px;
+    width: 100%;
+    padding: 10px;
+    background: #2ecc71;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#formAnalitica button[type="submit"]:hover {
+    background: #27ae60;
+}
+
+/* Botón de cerrar como círculo rojo */
+#cerrarModalAnalitica {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: #e74c3c;          /* Rojo */
+    color: white;                 /* X blanca */
+    border-radius: 50%;           /* Círculo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+    line-height: 1;               /* Centrado perfecto */
+}
+
+/* Hover más oscuro */
+#cerrarModalAnalitica:hover {
+    background: #c0392b;
+}

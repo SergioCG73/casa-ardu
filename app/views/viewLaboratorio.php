@@ -16,9 +16,9 @@
             <div id="productos" class="productos"></div>
             <div id="fechas" class="fechas">
                 <label>Desde </label>
-                <input type="date" id = "desde">
+                <input type="date" id="desde">
                 <label>Hasta</label>
-                <input type="date" id = "hasta">
+                <input type="date" id="hasta">
             </div>
             <div id="mostrar" class="mostrar">
                 <label>Mostrar</label>
@@ -30,7 +30,34 @@
         </fieldset>
     </div>
 
-    <div id="tabla" class="tabla"></div>
+    <div id="modalAnalitica" class="modal" style="display:none;">
+        <div class="modal-contenido">
+            <span id="cerrarModalAnalitica" class="cerrar">&times;</span>
+
+            <h3>Registrar Analítica</h3>
+
+            <form id="formAnalitica">
+                <input type="hidden" id="productoAnalitica">
+                <input type="hidden" id="fabricacionAnalitica">
+
+                <div id="contenedorCamposAnalitica"></div>
+
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="producciones_sin_analitica" name="producciones_sin_analitica" class="producciones_sin_analitica">
+        <table id="tabla" name="tabla" class="tabla">
+            <tr>
+                <th>Producto</th>
+                <th>Nº Fabricación</th>
+                <th>Fecha - Hora</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </table>
+    </div>
 </body>
 <script src="js/utils.js"></script>
 <script src="js/Laboratorio.js"></script>

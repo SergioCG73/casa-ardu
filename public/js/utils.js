@@ -1,3 +1,10 @@
+const nombres = {
+    ferrico: "Férrico",
+    sulfato: "Sulfato",
+    p18: "P18",
+    hb10: "HB10"
+};
+
 function mostrarModal(mensaje) {
     const modal = document.getElementById("modal");
     document.getElementById("modalMsg").textContent = mensaje;
@@ -12,6 +19,23 @@ function cerrarModal() {
     window.location.href = "index.php?c=Formulario&a=home";
 }
 
+function abrirModalGenerico(idModal) {
+    const modal = document.getElementById(idModal);
+    if (!modal) return;
+
+    modal.hidden = false;
+    modal.style.display = "flex";
+}
+
+function cerrarModalGenerico(idModal) {
+    const modal = document.getElementById(idModal);
+    if (!modal) return;
+
+    modal.hidden = true;
+    modal.style.display = "none";
+}
+
+
 function formatearNumero(input) {
     let valor = input.value;
     if (valor == null) return;
@@ -24,6 +48,24 @@ function formatearMiles(num) {
     return num
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function formatearFecha(fechaStr) {
+    if (!fechaStr) return "";
+
+    const fecha = new Date(fechaStr);
+
+    if (isNaN(fecha)) return fechaStr; // Si no se puede convertir, devolver tal cual
+
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const año = fecha.getFullYear();
+
+    const horas = String(fecha.getHours()).padStart(2, "0");
+    const minutos = String(fecha.getMinutes()).padStart(2, "0");
+    const segundos = String(fecha.getSeconds()).padStart(2, "0");
+
+    return `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
 }
 
 async function sePuedeFabricar(producto, data) {
@@ -96,7 +138,7 @@ async function sePuedeFabricar(producto, data) {
     return true;
 }
 
-async function cargarProductos() {
+/*async function obtenerProductos() {
     const response = await fetch("index.php?c=Leer&a=leerproductos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,10 +147,20 @@ async function cargarProductos() {
 
     const data = await response.json();
     return data;
-}
+}*/
 
-function generarCheckBoxesProductos(productos) {
-    console.log(productos);
+async function generarCheckBoxesProductos() {
+
+    const response = await fetch("index.php?c=Leer&a=leerproductos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modo: "laboratorio" })
+    });
+
+    const data = await response.json();
+    const productos = data.productos;
+    //console.log(productos);
+
     const contenedor = document.querySelector("#productos");
     contenedor.innerHTML = "";
 
@@ -130,6 +182,18 @@ function generarCheckBoxesProductos(productos) {
     })
 }
 
+async function cargarProductos() {
+    const response = await fetch("index.php?c=Leer&a=leerproductos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modo: "laboratorio" })
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+
 async function CargarConfig() {
     const res = await fetch("index.php?c=Leer&a=leerJSON");
     return await res.json();
@@ -150,18 +214,100 @@ function configurarSelectCantidad(config) {
     }
 }
 
-function cargarAnaliticas(productosSeleccionados, limite) {
+async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
+    try {
+        const response = await fetch("index.php?c=Leer&a=leeranaliticas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productosSeleccionados, limite })
+        });
 
-    fetch("index.php?c=Leer&a=leeranaliticas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productosSeleccionados, limite })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data); debugger
-        })
-        .catch(error => console.error("Error: ", error));
+        const data = await response.json();
+        //console.log("Analíticas cargadas:", data); debugger
+        return data;
+
+    } catch (error) {
+        console.error("Error:", error);
+        return { error: "Error al obtener analíticas" };
+    }
 }
+
+function obtenerCamposAnalitica(producto) {
+    switch (producto.toUpperCase()) {
+
+        case "P18":
+            return `
+                <label>Acidez:</label>
+                <input type="number" step="0.01" id="acidez">
+
+                <label>Densidad:</label>
+                <input type="number" step="0.01" id="densidad">
+
+                <label>Riqueza:</label>
+                <input type="number" step="0.01" id="riqueza">
+            `;
+
+        case "FERRICO":
+            return `
+                <label>Densidad:</label>
+                <input type="number" step="0.001" id="densidad">
+
+                <label>Riqueza:</label>
+                <input type="number" step="0.01" id="riqueza">
+
+                <label>Acidez:</label>
+                <input type="number" step="0.01" id="acidez">
+
+                <label>Observaciones:</label>
+                <textarea id="observaciones"></textarea>
+            `;
+
+        case "SULFATO":
+            return `
+                <label>pH:</label>
+                <input type="number" step="0.01" id="ph">
+
+                <label>Alcalinidad:</label>
+                <input type="number" step="0.01" id="alcalinidad">
+            `;
+
+        default:
+            return `
+                <label>Observaciones:</label>
+                <textarea id="observaciones"></textarea>
+            `;
+    }
+}
+
+function recogerDatosAnalitica(producto) {    
+    switch (producto.toUpperCase()) {
+        case "FERRICO":
+            return {
+                densidad: document.getElementById("densidad")?.value ?? null,
+                acidez: document.getElementById("acidez")?.value ?? null,
+                riqueza: document.getElementById("riqueza")?.value ?? null,
+                observaciones: document.getElementById("observaciones")?.value ?? null                
+            };
+
+        case "P18":
+            return {
+                ph: document.getElementById("ph")?.value ?? null,
+                viscosidad: document.getElementById("viscosidad")?.value ?? null,
+                color: document.getElementById("color")?.value ?? null
+            };
+
+        case "SULFATO":
+            return {
+                ph: document.getElementById("ph")?.value ?? null,
+                alcalinidad: document.getElementById("alcalinidad")?.value ?? null
+            };
+
+        default:
+            return {
+                observaciones: document.getElementById("observaciones")?.value ?? null
+            };
+    }
+}
+
 
 
