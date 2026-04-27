@@ -19,7 +19,7 @@ function cerrarModal() {
     window.location.href = "index.php?c=Formulario&a=home";
 }
 
-function abrirModalGenerico(idModal) {
+function abrirModalGenerico(idModal) {    
     const modal = document.getElementById(idModal);
     if (!modal) return;
 
@@ -138,19 +138,7 @@ async function sePuedeFabricar(producto, data) {
     return true;
 }
 
-/*async function obtenerProductos() {
-    const response = await fetch("index.php?c=Leer&a=leerproductos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "laboratorio" })
-    });
-
-    const data = await response.json();
-    return data;
-}*/
-
 async function generarCheckBoxesProductos() {
-
     const response = await fetch("index.php?c=Leer&a=leerproductos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -182,26 +170,12 @@ async function generarCheckBoxesProductos() {
     })
 }
 
-async function cargarProductos() {
-    const response = await fetch("index.php?c=Leer&a=leerproductos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "laboratorio" })
-    });
-
-    const data = await response.json();
-    return data;
-}
-
-
-async function CargarConfig() {
+async function configurarSelectCantidad() {
     const res = await fetch("index.php?c=Leer&a=leerJSON");
-    return await res.json();
-}
+    const config = await res.json();
 
-function configurarSelectCantidad(config) {
     const select = document.getElementById("cantidad");
-    select.innerHTML = ""; // limpiar opciones previas
+    select.innerHTML = "";
 
     const min = config.limitesSelect.inferior;
     const max = config.limitesSelect.superior;
@@ -232,19 +206,21 @@ async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
     }
 }
 
-function obtenerCamposAnalitica(producto) {
+function obtenerCamposAnalitica(producto) {    
     switch (producto.toUpperCase()) {
-
         case "P18":
             return `
-                <label>Acidez:</label>
-                <input type="number" step="0.01" id="acidez">
-
                 <label>Densidad:</label>
-                <input type="number" step="0.01" id="densidad">
-
+                <input type="number" step="0.01" id="densidad">                
+                
                 <label>Riqueza:</label>
                 <input type="number" step="0.01" id="riqueza">
+
+                <label>Basicidad:</label>
+                <input type="number" step="0.01" id="basicidad">
+
+                <label>Observaciones:</label>
+                <textarea id="observaciones"></textarea>
             `;
 
         case "FERRICO":
@@ -255,8 +231,8 @@ function obtenerCamposAnalitica(producto) {
                 <label>Riqueza:</label>
                 <input type="number" step="0.01" id="riqueza">
 
-                <label>Acidez:</label>
-                <input type="number" step="0.01" id="acidez">
+                <!--<label>Acidez:</label>
+                <input type="number" step="0.01" id="acidez">-->
 
                 <label>Observaciones:</label>
                 <textarea id="observaciones"></textarea>
@@ -264,11 +240,17 @@ function obtenerCamposAnalitica(producto) {
 
         case "SULFATO":
             return `
+                <label>Densidad:</label>
+                <input type="number" step="0.001" id="densidad">
+
                 <label>pH:</label>
                 <input type="number" step="0.01" id="ph">
 
-                <label>Alcalinidad:</label>
-                <input type="number" step="0.01" id="alcalinidad">
+                <label>Riqueza:</label>
+                <input type="number" step="0.01" id="riqueza">
+
+                <label>Observaciones:</label>
+                <textarea id="observaciones"></textarea>
             `;
 
         default:
@@ -279,27 +261,32 @@ function obtenerCamposAnalitica(producto) {
     }
 }
 
-function recogerDatosAnalitica(producto) {    
+function recogerDatosAnalitica(producto) {
     switch (producto.toUpperCase()) {
         case "FERRICO":
             return {
                 densidad: document.getElementById("densidad")?.value ?? null,
-                acidez: document.getElementById("acidez")?.value ?? null,
                 riqueza: document.getElementById("riqueza")?.value ?? null,
-                observaciones: document.getElementById("observaciones")?.value ?? null                
+                observaciones: document.getElementById("observaciones")?.value ?? null
+                //acidez: document.getElementById("acidez")?.value ?? null,
             };
 
         case "P18":
             return {
-                ph: document.getElementById("ph")?.value ?? null,
-                viscosidad: document.getElementById("viscosidad")?.value ?? null,
-                color: document.getElementById("color")?.value ?? null
+                densidad: document.getElementById("densidad")?.value ?? null,
+                riqueza: document.getElementById("riqueza")?.value ?? null,
+                basicidad: document.getElementById("basicidad")?.value ?? null,                
+                observaciones: document.getElementById("observaciones")?.value ?? null,
+                producciones: document.getElementById("produccionesAnalitica")?.value ?? null                
             };
 
         case "SULFATO":
             return {
-                ph: document.getElementById("ph")?.value ?? null,
-                alcalinidad: document.getElementById("alcalinidad")?.value ?? null
+                densidad: document.getElementById("densidad")?.value ?? null,
+                riqueza: document.getElementById("riqueza")?.value ?? null,
+                ph: document.getElementById("ph")?.value ?? null,                
+                observaciones: document.getElementById("observaciones")?.value ?? null
+                //alcalinidad: document.getElementById("alcalinidad")?.value ?? null
             };
 
         default:

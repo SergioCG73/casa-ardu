@@ -39,6 +39,7 @@
             <form id="formAnalitica">
                 <input type="hidden" id="productoAnalitica">
                 <input type="hidden" id="fabricacionAnalitica">
+                <input type="hidden" id="produccionesAnalitica">
 
                 <div id="contenedorCamposAnalitica"></div>
 

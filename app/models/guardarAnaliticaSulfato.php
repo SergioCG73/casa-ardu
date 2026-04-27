@@ -13,13 +13,11 @@ $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 
 $numeroFabricacion = $data["numeroFabricacion"] ?? null;
-$densidad          = $data["densidad"] ?? null;
-//$acidez            = $data["acidez"] ?? null;
-$riqueza           = $data["riqueza"] ?? null;
+$densidad = floatval($data["densidad"] ?? 0);
+$riqueza  = floatval($data["riqueza"] ?? 0);
+$ph       = floatval($data["ph"] ?? 0);
 $observaciones     = $data["observaciones"] ?? null;
 $estado = null;
-
-//echo json_encode(["numeroFabricacion" => $numeroFabricacion]); exit;
 
 if (!$numeroFabricacion) {
     echo json_encode(["ok" => false, "error" => "Falta numeroFabricacion"]);
@@ -27,40 +25,45 @@ if (!$numeroFabricacion) {
 }
 
 //Determinar el estado de la producción
-if ($densidad < 1.31 || $densidad > 1.43) {
+
+if ($densidad < 1.31 || $densidad > 1.335) {
     $estado = 1;
 } 
 
-if ($riqueza < 37.5 || $riqueza > 38.45) {
+if ($riqueza < 8.15 || $riqueza > 8.35) {
+    $estado = $estado + 1;
+}
+
+if ($ph < 1.8 || $ph > 3) {
     $estado = $estado + 1;
 }
 
 
-$sql = "UPDATE ferrico_terminadas
+$sql = "UPDATE sulfato_terminadas
         SET 
             Densidad = :densidad,
-            /*Acidez = :acidez,*/
             Riqueza = :riqueza,
-            Analitica = 1,
-            NotasLab = :obs,
-            EstadoAnalitica = :estado
+            EstadoAnalitica = :estado,
+            NotasLab = :observaciones,
+            Analitica = 1, 
+            ph = :ph            
         WHERE NumeroFabricacion = :nf";
 
 $stmt = $conexion->prepare($sql);
 $stmt->bindParam(":nf", $numeroFabricacion);
 $stmt->bindParam(":densidad", $densidad);
-//$stmt->bindParam(":acidez", $acidez);
 $stmt->bindParam(":riqueza", $riqueza);
-$stmt->bindParam(":obs", $observaciones);
+$stmt->bindParam(":ph", $ph);
 $stmt->bindParam(":estado", $estado);
+$stmt->bindParam(":observaciones", $observaciones);
 $stmt->execute();
 
 echo json_encode([
     "ok" => true,
-    "densidad" => $densidad,
-    "riqueza" => $riqueza,/*
-    "acidez" => $acidez,*/
-    "estado" => $estado,
-    "notas" => $observaciones
+    "Densidad" => $densidad,
+    "Riqueza" => $riqueza,
+    "ph" => $ph,
+    "EstadoAnalitica" => $estado,
+    "NotasLab" => $observaciones
 ]);
 exit;

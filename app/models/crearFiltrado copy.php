@@ -29,7 +29,6 @@ $densidad = floatval($data["densidad"] ?? 0);
 $riqueza  = floatval($data["riqueza"] ?? 0);
 $basicidad = floatval($data["basicidad"] ?? 0);
 $observaciones     = $data["observaciones"] ?? null;
-$filtradas          = $data["producciones"] ?? null;
 $estado = null;
 
 /*if (!$numeroFabricacion) {
@@ -47,15 +46,24 @@ function generarID()
 
 $id = generarID();
 
-/*echo json_encode(["densidad" => $densidad,
+echo json_encode(["densidad" => $densidad,
                   "riqueza" => $riqueza,
                   "basicidad" => $basicidad,
                   "notas" => $observaciones,
-                  "filtradas" => $filtradas,
+                  "data" => $data,
                   "ID" => $id
-]); exit;*/
+]); exit;
 
-$InsertSQL = "INSERT INTO fabricaciones_en_curso (
+
+
+
+
+
+
+if ($modo === "laboratorio") {
+    $id = generarID();
+
+    $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
                                 Producto_id,
                                 FechaInicio,
@@ -79,22 +87,83 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
     $stmt->bindParam(":fab", $filtradas);    
     $stmt->bindParam(":riqueza", $riqueza);
     $stmt->bindParam(":densidad", $densidad);
-    //$stmt->bindParam(":observaciones", $observaciones);
-    
     $stmt->execute();
 
     $TruncateSQL = "TRUNCATE mezclador_216";
     $stmt = $conexion->prepare($TruncateSQL);
     $stmt->execute();
 
- 
+} else {
+    //$id = generarID();
+
+    echo json_encode(["producción" => "produccion"]);  exit;
+
+/*    $InsertSQL = "INSERT INTO fabricaciones_en_curso (
+                                NumeroFabricacion, 
+                                Producto_id,
+                                FechaInicio,
+                                Mezclador,
+                                PesoInicialMezclador,
+                                Volumen_Agua,
+                                Fab_Filtradas,
+                                Deposito,
+                                Notas,
+                                Riqueza, 
+                                Densidad
+                            )
+                            VALUES (
+                                :id,
+                                'Filtrado',
+                                NOW(),
+                                'M216',
+                                :pesoM,
+                                :agua,
+                                :fab,
+                                :dep,
+                                :notas,
+                                :riqueza,
+                                :densidad
+                                )";*/
+    
+    $UpdateSQL = "UPDATE fabricaciones_en_curso SET                
+                FechaInicioReaccion = NOW(),
+                PesoInicialMezclador = :pesoM,
+                Volumen_Agua = :agua                
+                Deposito = :dep,
+                Notas = :notas
+            WHERE NumeroFabricacion = :id";
+
+    $stmt = $conexion->prepare($InsertSQL);
+    //$stmt->bindParam(":id", $id);
+    $stmt->bindParam(":pesoM", $volumenInicial);
+    $stmt->bindParam(":agua", $volumenAgua);
+    //$stmt->bindParam(":fab", $fabricaciones);
+    $stmt->bindParam(":dep", $deposito);
+    $stmt->bindParam(":notas", $notas);
+    //$stmt->bindParam(":riqueza", $riqueza);
+    //$stmt->bindParam(":densidad", $densidad);
+    $stmt->execute();
+
+    $updateSQL = "UPDATE equipos
+                 SET Estado = 'En uso'
+                 WHERE Equipo_id IN (:mezclador)
+                 OR Equipo_id IN (:dep)";
+
+    $stmt = $conexion->prepare($updateSQL);
+    $stmt->bindValue(":mezclador", "M216");
+    $stmt->bindValue(":dep", $deposito);
+    //$stmt->execute();
+}
 
 echo json_encode([
     "ok" => true,
     "id" => $id,
-    "filtradas" => $filtradas,        
+    "fabricaciones" => $fabricaciones,
+    "volumeninicial" => $volumenInicial,
+    "volumenagua" => $volumenAgua,
     "densidad" => $densidad,
-    "riqueza" => $riqueza,    
+    "riqueza" => $riqueza,
+    "deposito" => $deposito,
     "notas" => $notas,
     "message" => "Filtración creada correctamente"
 ]);
