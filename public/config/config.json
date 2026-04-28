@@ -2,5 +2,14 @@
     "limitesSelect": {
         "inferior": 1,
         "superior": 20
+    },
+    "productos": [
+        { "ProductoFabricado": "Ferrico" },
+        { "ProductoFabricado": "Sulfato" },
+        { "ProductoFabricado": "P18" }
+    ],
+
+    "fechas": {
+        "minDesde": "2020-01-01"        
     }
 }

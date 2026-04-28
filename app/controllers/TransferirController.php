@@ -2,9 +2,7 @@
 
 //echo json_encode(["FILE" => __FILE__]); exit;
 
-class TransferirController
-{
-
+class TransferirController {
     public function mezclaAReactor() {
         require_once __DIR__ . "/../models/transferirP18.php";
     }
@@ -33,7 +31,7 @@ class TransferirController
         require_once __DIR__ . "/../models/guardarAnaliticaSulfato.php";
     }
 
-    public function guardarAnaliticaP18() {        
+    public function crearFiltrado() {        
         //echo json_encode(["LINE" => __LINE__]); exit;
         require_once __DIR__ . "/../models/crearFiltrado.php";
     }
