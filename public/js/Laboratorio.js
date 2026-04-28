@@ -113,7 +113,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         cerrarModalGenerico("modalAnalitica");
     });
 
-
     document.getElementById("formAnalitica").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -172,22 +171,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log(DateHasta.value);
     });
 
-    // Obtener productos fabricados    
-    /*const data = await cargarProductos();
-    const productos = data.productos;*/
-
-    // Generar checkboxes
-    //generarCheckBoxesProductos(productos);
-    //generarCheckBoxesProductos();
-
-    // Obtener archivo config.json
-    /*const config = await CargarConfig();
-    const min = config.limitesSelect.inferior;
-    const max = config.limitesSelect.superior;*/
-
-    // Generar select
-    //configurarSelectCantidad(config);
-    //configurarSelectCantidad();
     configurarBuscador();
 
     btnBuscar.addEventListener("click", async () => {
@@ -203,12 +186,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         console.log(respuesta); debugger
 
-        // Aquí refrescas la tabla como ya haces más abajo
+        // Refrescar la tabla
         renderizarTabla(respuesta.analiticas);
     });
 
     const respuesta = await obtenerAnaliticas();
     //console.log(respuesta);
     renderizarTabla(respuesta.analiticas);
-
 }); 
