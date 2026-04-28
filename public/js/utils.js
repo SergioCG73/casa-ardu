@@ -19,7 +19,7 @@ function cerrarModal() {
     window.location.href = "index.php?c=Formulario&a=home";
 }
 
-function abrirModalGenerico(idModal) {    
+function abrirModalGenerico(idModal) {
     const modal = document.getElementById(idModal);
     if (!modal) return;
 
@@ -34,7 +34,6 @@ function cerrarModalGenerico(idModal) {
     modal.hidden = true;
     modal.style.display = "none";
 }
-
 
 function formatearNumero(input) {
     let valor = input.value;
@@ -138,7 +137,60 @@ async function sePuedeFabricar(producto, data) {
     return true;
 }
 
-async function generarCheckBoxesProductos() {
+
+async function configurarBuscador() {
+
+    // Leer JSON con límites y productos
+    const res = await fetch("index.php?c=Leer&a=leerJSON");
+    const config = await res.json();
+
+    // ============================
+    // 1. Generar checkboxes
+    // ============================
+    const contenedor = document.querySelector("#productos");
+    contenedor.innerHTML = "";
+
+    const productos = config.productos; // ← ahora vienen del JSON
+
+    productos.forEach(p => {
+
+        // Si el JSON trae strings:
+        const nombre = typeof p === "string" ? p : p.ProductoFabricado;
+
+        const id = "prod_" + nombre.replace(/\s+/g, "_");
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.name = "producto";
+        input.value = nombre;
+
+        const label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.textContent = nombre;
+
+        contenedor.appendChild(input);
+        contenedor.appendChild(label);
+    });
+
+    // ============================
+    // 2. Configurar select cantidad
+    // ============================
+    const select = document.getElementById("cantidad");
+    select.innerHTML = "";
+
+    const min = config.limitesSelect.inferior;
+    const max = config.limitesSelect.superior;
+
+    for (let i = min; i <= max; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        select.appendChild(option);
+    }
+}
+
+/*async function generarCheckBoxesProductos() {
     const response = await fetch("index.php?c=Leer&a=leerproductos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -168,9 +220,9 @@ async function generarCheckBoxesProductos() {
         contenedor.appendChild(input);
         contenedor.appendChild(label);
     })
-}
+}*/
 
-async function configurarSelectCantidad() {
+/*async function configurarSelectCantidad() {
     const res = await fetch("index.php?c=Leer&a=leerJSON");
     const config = await res.json();
 
@@ -186,7 +238,7 @@ async function configurarSelectCantidad() {
         option.textContent = i;
         select.appendChild(option);
     }
-}
+}*/
 
 async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
     try {
@@ -206,7 +258,7 @@ async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
     }
 }
 
-function obtenerCamposAnalitica(producto) {    
+function obtenerCamposAnalitica(producto) {
     switch (producto.toUpperCase()) {
         case "P18":
             return `
@@ -275,16 +327,16 @@ function recogerDatosAnalitica(producto) {
             return {
                 densidad: document.getElementById("densidad")?.value ?? null,
                 riqueza: document.getElementById("riqueza")?.value ?? null,
-                basicidad: document.getElementById("basicidad")?.value ?? null,                
+                basicidad: document.getElementById("basicidad")?.value ?? null,
                 observaciones: document.getElementById("observaciones")?.value ?? null,
-                producciones: document.getElementById("produccionesAnalitica")?.value ?? null                
+                producciones: document.getElementById("produccionesAnalitica")?.value ?? null
             };
 
         case "SULFATO":
             return {
                 densidad: document.getElementById("densidad")?.value ?? null,
                 riqueza: document.getElementById("riqueza")?.value ?? null,
-                ph: document.getElementById("ph")?.value ?? null,                
+                ph: document.getElementById("ph")?.value ?? null,
                 observaciones: document.getElementById("observaciones")?.value ?? null
                 //alcalinidad: document.getElementById("alcalinidad")?.value ?? null
             };
