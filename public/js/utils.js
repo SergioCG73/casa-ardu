@@ -139,8 +139,7 @@ async function sePuedeFabricar(producto, data) {
 
 
 async function configurarBuscador() {
-
-    // Leer JSON con límites y productos
+    // Leer JSON config.JSON
     const res = await fetch("index.php?c=Leer&a=leerJSON");
     const config = await res.json();
 
@@ -188,6 +187,16 @@ async function configurarBuscador() {
         option.textContent = i;
         select.appendChild(option);
     }
+
+    // =====================
+    // 3. Limitar date Desde
+    // =====================
+    const dateDesde = document.getElementById("desde");
+
+    if (config.fechas.minDesde) {
+        dateDesde.min = config.fechas.minDesde;
+    }
+    
 }
 
 /*async function generarCheckBoxesProductos() {
