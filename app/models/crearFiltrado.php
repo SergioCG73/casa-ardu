@@ -14,12 +14,13 @@ $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 
 //$numeroFabricacion = $data["numeroFabricacion"] ?? null;
-$densidad = floatval($data["densidad"] ?? 0);
-$riqueza  = floatval($data["riqueza"] ?? 0);
-$basicidad = floatval($data["basicidad"] ?? 0);
-$observaciones     = $data["observaciones"] ?? null;
+$densidad           = floatval($data["densidad"] ?? 0);
+$riqueza            = floatval($data["riqueza"] ?? 0);
+$basicidad          = floatval($data["basicidad"] ?? 0);
+$observaciones      = $data["observaciones"] ?? null;
 $filtradas          = $data["producciones"] ?? null;
 $estado = null;
+$producto = "P18";
 
 $producciones = array_map("trim", explode("+", $filtradas));
 
@@ -115,10 +116,25 @@ foreach ($producciones as $produccion) {
     $stmt->bindParam(":riqueza", $riqueza);
     $stmt->bindParam(":basicidad", $basicidad);
     $stmt->bindParam(":nf", $produccion);
-
-    $stmt->execute();
+    //$stmt->execute();
 }
 
+// Insertar en tabla: analíticas
+$InsertSQL = "INSERT INTO analiticas
+                    (ID_Analitica, Producto, Fecha, NumeroFabricacion, Densidad, Riqueza, Basicidad, NotasLab, Estado) 
+                    VALUES
+                    (:id, :producto, CURDATE(), :fab, :densidad, :riqueza, :basicidad, :observaciones, :estado)";
+
+$stmt = $conexion->prepare($InsertSQL);
+$stmt->bindParam(":id", $id);
+$stmt->bindParam(":producto", $producto);
+$stmt->bindParam(":fab", $filtradas);
+$stmt->bindParam(":densidad", $densidad);
+$stmt->bindParam(":riqueza", $riqueza);
+$stmt->bindParam(":basicidad", $basicidad);
+$stmt->bindParam(":observaciones", $observaciones);
+$stmt->bindParam(":estado", $estado);
+$stmt->execute();
 
 echo json_encode([
     "ok" => true,
@@ -126,7 +142,7 @@ echo json_encode([
     "filtradas" => $filtradas,
     "densidad" => $densidad,
     "riqueza" => $riqueza,
-    "notas" => $notas,
+    "basicidad" => $basicidad,
     "notasLab" => $observaciones,
     "estado" => $estado,
     "message" => "Filtración creada correctamente"
