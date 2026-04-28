@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderizarTabla(analiticas) {
+        //console.log(analiticas); debugger
         const tabla = document.getElementById("tabla");
 
         tabla.querySelectorAll("tr:not(:first-child)").forEach(tr => tr.remove());
@@ -28,21 +29,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             const nombreMostrar = nombres[producto.toLowerCase()] ?? producto;
 
             // CASO ESPECIAL: STRING (P18)
-            if (typeof filas === "string") {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                <td>${nombreMostrar}</td>
-                <td>${filas}</td>
-                <td></td>
-                <td></td>
-                <td>
-                    <img src="images/editar_azul_icon_20x20.png"
-                         class="icono-editar"
-                         data-info='${JSON.stringify({ producto, producciones: filas })}'
-                         title="Editar fabricación">
-                </td>
-            `;
-                tabla.appendChild(tr);
+            // CASO ESPECIAL: P18 devuelve array de strings ["2779", "1234", ...]
+            if (Array.isArray(filas) && typeof filas[0] === "string") {
+                filas.forEach(num => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+            <td>${nombreMostrar}</td>
+            <td>${num}</td>
+            <td></td>
+            <td></td>
+            <td>
+                <img src="images/editar_azul_icon_20x20.png"
+                     class="icono-editar"
+                     data-info='${JSON.stringify({ producto, producciones: num })}'
+                     title="Editar fabricación">
+            </td>
+        `;
+                    tabla.appendChild(tr);
+                });
+
                 continue;
             }
 
@@ -98,7 +103,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("fabricacionAnalitica").value = info.NumeroFabricacion ?? "";
         document.getElementById("produccionesAnalitica").value = info.producciones ?? "";
 
-
         const contenedor = document.getElementById("contenedorCamposAnalitica");
         contenedor.innerHTML = obtenerCamposAnalitica(info.producto);
 
@@ -118,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const datos = recogerDatosAnalitica(producto);
         datos.producto = producto;
-        datos.numeroFabricacion = fabricacion;        
+        datos.numeroFabricacion = fabricacion;
 
         const prod = producto.toLowerCase();
 
@@ -140,7 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 .then(response => response.json())
                 .then(datos => console.log(datos));
         } else if (prod === "p18") {
-            await fetch("index.php?c=Transferir&a=guardarAnaliticaP18", {
+            await fetch("index.php?c=Transferir&a=crearFiltrado", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datos)
@@ -174,7 +178,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Generar checkboxes
     //generarCheckBoxesProductos(productos);
-    generarCheckBoxesProductos();
+    //generarCheckBoxesProductos();
 
     // Obtener archivo config.json
     /*const config = await CargarConfig();
@@ -183,7 +187,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Generar select
     //configurarSelectCantidad(config);
-    configurarSelectCantidad();
+    //configurarSelectCantidad();
+    configurarBuscador();
 
     btnBuscar.addEventListener("click", async () => {
         const productosSeleccionados = [...document.querySelectorAll("input[name='producto']:checked")]
@@ -191,10 +196,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const limite = selectMostrar.value;
         const desde = DateDesde.value;
-        const hasta = DateHasta.value;
+        const hasta = DateHasta.value;        
 
         // Llamada a tu función que obtiene analíticas con filtros
         const respuesta = await obtenerAnaliticas(productosSeleccionados, limite, desde, hasta);
+
+        console.log(respuesta); debugger
 
         // Aquí refrescas la tabla como ya haces más abajo
         renderizarTabla(respuesta.analiticas);
