@@ -19,18 +19,14 @@ if (empty($productos)) {
 $resultadoFinal = [];
 
 foreach ($productos as $producto) {
-
     // -------------------------
     // CASO ESPECIAL: P18
     // -------------------------
     if (strtolower($producto) === "p18") {
-
         $sql = "SELECT NumeroFabricacion FROM mezclador_216";
         $stmt = $conexion->prepare($sql);
         $stmt->execute();
-
         $filas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         $normales = [];
         $restos = false;
 
@@ -55,7 +51,12 @@ foreach ($productos as $producto) {
             }
         }
 
-        $resultadoFinal[$producto] = $resultado;
+        if ($resultado === "") {
+            $resultadoFinal[$producto] = [];
+        } else {
+            $resultadoFinal[$producto] = [$resultado];
+        }
+
         continue;
     }
 
@@ -71,7 +72,6 @@ foreach ($productos as $producto) {
 
         $filas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $resultadoFinal[$producto] = $filas;
-
     } catch (PDOException $e) {
         $resultadoFinal[$producto] = [
             "error" => $e->getMessage(),
