@@ -9,17 +9,6 @@ ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
-//$fabricaciones = $_POST["fabricaciones"] ?? "";
-//$filtradas = $_POST["filtradas"] ?? "";
-//$volumenInicial = (int)($_POST["vol_inicial_m216"] ?? 0);
-//$volumenAgua = (int)($_POST["vol_agua"] ?? 0);
-//$densidad = (float)($_POST["densidad"] ?? 0);
-//$riqueza = (float)($_POST["riqueza"] ?? 0);
-//$notas = $_POST["notas"] ?? "";
-//$deposito = $_POST["deposito"] ?? "";
-//$fabricaciones = $_POST["fabricaciones"] ?? "";
-//$modo = $_POST["modo"] ?? "";
-
 // Recibir JSON
 $json = file_get_contents("php://input");
 $data = json_decode($json, true);
@@ -32,11 +21,24 @@ $observaciones     = $data["observaciones"] ?? null;
 $filtradas          = $data["producciones"] ?? null;
 $estado = null;
 
-/*if (!$numeroFabricacion) {
-    echo json_encode(["ok" => false, "error" => "Falta numeroFabricacion"]);
-    exit;
-}*/
+$producciones = array_map("trim", explode("+", $filtradas));
 
+$producciones = array_filter($producciones, function ($p) {
+    return strtolower($p) !== "restos";
+});
+
+
+if ($densidad < 1.345 || $densidad > 1.35) {
+    $estado = $estado  + 1;
+}
+
+if ($riqueza < 16 || $riqueza > 18) {
+    $estado = $estado  + 2;
+}
+
+if ($basicidad < 35 || $basicidad > 45) {
+    $estado = $estado  + 1;
+}
 
 function generarID()
 {
@@ -47,13 +49,17 @@ function generarID()
 
 $id = generarID();
 
-/*echo json_encode(["densidad" => $densidad,
-                  "riqueza" => $riqueza,
-                  "basicidad" => $basicidad,
-                  "notas" => $observaciones,
-                  "filtradas" => $filtradas,
-                  "ID" => $id
-]); exit;*/
+/*echo json_encode([
+    "densidad" => $densidad,
+    "riqueza" => $riqueza,
+    "basicidad" => $basicidad,
+    "notas" => $observaciones,
+    "filtradas" => $filtradas,
+    "producciones" => $producciones,
+    "estado" => $estado,
+    "ID" => $id
+]);
+exit;*/
 
 $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
@@ -62,7 +68,10 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 Mezclador, 
                                 Fab_Filtradas,                                
                                 Riqueza, 
-                                Densidad
+                                Densidad,
+                                Basicidad,
+                                NotasLab,
+                                EstadoAnalitica                                
                             )
                             VALUES (
                                 :id,
@@ -71,31 +80,55 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 'M216',                              
                                 :fab,                                
                                 :riqueza,
-                                :densidad
+                                :densidad,
+                                :basicidad,
+                                :observaciones,
+                                :estado
                                 )";
 
-    $stmt = $conexion->prepare($InsertSQL);
-    $stmt->bindParam(":id", $id);    
-    $stmt->bindParam(":fab", $filtradas);    
-    $stmt->bindParam(":riqueza", $riqueza);
+$stmt = $conexion->prepare($InsertSQL);
+$stmt->bindParam(":id", $id);
+$stmt->bindParam(":fab", $filtradas);
+$stmt->bindParam(":riqueza", $riqueza);
+$stmt->bindParam(":densidad", $densidad);
+$stmt->bindParam(":basicidad", $basicidad);
+$stmt->bindParam(":observaciones", $observaciones);
+$stmt->bindParam(":estado", $estado);
+$stmt->execute();
+
+// Borrar tabla mezclador_216
+$TruncateSQL = "TRUNCATE mezclador_216";
+$stmt = $conexion->prepare($TruncateSQL);
+//$stmt->execute();
+
+foreach ($producciones as $produccion) {
+
+    $sql = "UPDATE p18_terminadas
+            SET Densidad = :densidad,
+                Riqueza = :riqueza,
+                Basicidad = :basicidad
+            WHERE NumeroFabricacion = :nf";
+
+    $stmt = $conexion->prepare($sql);
+
     $stmt->bindParam(":densidad", $densidad);
-    //$stmt->bindParam(":observaciones", $observaciones);
-    
-    $stmt->execute();
+    $stmt->bindParam(":riqueza", $riqueza);
+    $stmt->bindParam(":basicidad", $basicidad);
+    $stmt->bindParam(":nf", $produccion);
 
-    $TruncateSQL = "TRUNCATE mezclador_216";
-    $stmt = $conexion->prepare($TruncateSQL);
     $stmt->execute();
+}
 
- 
 
 echo json_encode([
     "ok" => true,
     "id" => $id,
-    "filtradas" => $filtradas,        
+    "filtradas" => $filtradas,
     "densidad" => $densidad,
-    "riqueza" => $riqueza,    
+    "riqueza" => $riqueza,
     "notas" => $notas,
+    "notasLab" => $observaciones,
+    "estado" => $estado,
     "message" => "Filtración creada correctamente"
 ]);
 exit;
