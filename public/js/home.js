@@ -41,7 +41,6 @@ function init() {
         window.location.href = "index.php?c=Formulario&a=hb10";
     })
 
-
     cargarProducciones(tabla, divProducciones);
 
     setInterval(() => {

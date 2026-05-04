@@ -13,7 +13,6 @@ $stmt->bindParam(":clave", $password);
 $stmt->execute();
 
 if ($stmt->rowCount() == 1) {
-
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC); // ← AQUÍ estaba el error
 
     session_start();

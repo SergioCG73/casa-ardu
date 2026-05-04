@@ -149,7 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
         datos.append("modo", modo);
         datos.append("producto", producto);
 
-        return fetch("index.php?c=Leer&a=leerferrico", {
+        //return fetch("index.php?c=Leer&a=leerferrico", {
+        return fetch("index.php?c=Ferrico&a=leer", {
             method: "POST",
             body: datos
         })
@@ -344,7 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*const objeto = Object.fromEntries(datosEnviar.entries());
                     console.log(objeto); debugger*/
 
-                    fetch("index.php?c=Crear&a=ferrico", {
+                    //fetch("index.php?c=Crear&a=ferrico", {
+                    fetch("index.php?c=Ferrico&a=crear", {
                         method: "POST",
                         body: datosEnviar
                     })
@@ -394,7 +396,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/
 
-                    fetch("index.php?c=Editar&a=fabCurso", {
+                    //fetch("index.php?c=Editar&a=fabCurso", {
+                    fetch("index.php?c=Ferrico&a=editar", {
                         method: "POST",
                         body: data
                     })
@@ -467,7 +470,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger*/
 
-                    fetch("index.php?c=Transferir&a=transferirFerrico", {
+                    //fetch("index.php?c=Transferir&a=transferirFerrico", {
+                    fetch("index.php?c=Ferrico&a=transferir", {
                         method: "POST",
                         body: data
                     })
@@ -519,7 +523,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const objeto = Object.fromEntries(data.entries());
                     console.log(objeto); debugger
 
-                    fetch("index.php?c=Transferir&a=transferirFerrico", {
+                    //fetch("index.php?c=Transferir&a=transferirFerrico", {
+                    fetch("index.php?c=Ferrico&a=transferir", {
                         method: "POST",
                         body: data
                     })

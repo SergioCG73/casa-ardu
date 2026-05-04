@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const divFormulario = document.getElementById("filtros");
     const selectMostrar = document.getElementById("cantidad");
+    const selectAnalitica = document.getElementById("filtroAnalitica");
     const btnBuscar = document.getElementById("btnBuscar");
     const DateDesde = document.getElementById("desde");
     const DateHasta = document.getElementById("hasta");
     const tabla = document.getElementById("tabla");
+    const desde = DateDesde.value ? DateDesde.value : null;    
 
     function activarEventosIconos() {
         const iconos = document.querySelectorAll(".icono-editar");
@@ -62,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 continue;
             }
 
-            // 🔥 FILTRAR SOLO PRODUCCIONES SIN ANALÍTICA
+            // FILTRAR SOLO PRODUCCIONES SIN ANALÍTICA
             const pendientes = Array.isArray(filas)
                 ? filas.filter(f => !f.Analitica || f.Analitica === 0)
                 : [];
@@ -76,13 +78,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             pendientes.forEach(fila => {
                 const fechaRaw = fila.Fecha ?? fila.Hora_Inicio ?? fila.Hora_Finalizacion ?? "";
                 const fecha = formatearFecha(fechaRaw);
-
                 const tr = document.createElement("tr");
+
+                let color = "green";
+                if (fila.Valoracion === 3) {
+                    color = "red";
+
+                } else if (fila.Valoracion === 2) {
+                    color = "orange";
+                } else if (fila.Valoracion === 1) {
+                    color = "yellow";
+                }
+
+                const circulo = `
+                  <span style="
+                  display:inline-block;
+                  width:14px;
+                  height:14px;
+                  border-radius:50%;
+                  background:${color};
+                  border:1px solid #555;"></span>`;
+
                 tr.innerHTML = `
                 <td>${nombreMostrar}</td>
-                <td>${fila.NumeroFabricacion ?? ""}</td>
+                <td>${fila.NumeroFabricacion ?? fila.Fabricaciones ?? ""}</td>
                 <td>${fecha}</td>
-                <td>${fila.Estado ?? ""}</td>
+                <td>${circulo}</td>
                 <td>
                     <img src="images/editar_azul_icon_20x20.png"
                          class="icono-editar"
@@ -100,11 +121,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     function abrirModalSegunProducto(info) {
         //console.log(info); debugger
         document.getElementById("productoAnalitica").value = info.producto ?? "";
-        document.getElementById("fabricacionAnalitica").value = info.NumeroFabricacion ?? "";
-        document.getElementById("produccionesAnalitica").value = info.producciones ?? "";
+
+        document.getElementById("fabricacionAnalitica").value =
+            info.NumeroFabricacion ??
+            info.Fabricaciones ??
+            "";
+
+        document.getElementById("produccionesAnalitica").value =
+            info.producciones ??
+            info.Fabricaciones ??
+            "";
 
         const contenedor = document.getElementById("contenedorCamposAnalitica");
         contenedor.innerHTML = obtenerCamposAnalitica(info.producto);
+
+        /*for (const clave in info) {
+            const input = document.querySelector(`#contenedorCamposAnalitica [name="${clave}"]`);
+            if (input) {
+                input.value = info[clave];
+            }
+        }*/
+
+        for (const clave in info) {
+            const input = contenedor.querySelector(`[name="${clave}"]`);
+            if (input) {
+                input.value = info[clave];
+            }
+        }
+
+        if (info.NotasLab) {
+            const obs = contenedor.querySelector('[name="Observaciones"]');
+            if (obs) {
+                obs.value = info.NotasLab;
+            }
+        }
 
         abrirModalGenerico("modalAnalitica");
     }
@@ -113,6 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         cerrarModalGenerico("modalAnalitica");
     });
 
+    // Formulario de búsqueda 
     document.getElementById("formAnalitica").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -154,22 +205,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         cerrarModalGenerico("modalAnalitica");
 
-        const resp = await fetch("index.php?c=Leer&a=leeranaliticas");
-        const analiticasActualizadas = await resp.json();
+        setInterval(async () => {
+            const resp = await fetch("index.php?c=Leer&a=leeranaliticas");
+            const analiticasActualizadas = await resp.json();
 
-        const respuesta = await obtenerAnaliticas();
-        //console.log(respuesta); debugger
-        renderizarTabla(analiticasActualizadas.analiticas);
+            const respuesta = await obtenerAnaliticas();
+            //console.log(respuesta); debugger
+            renderizarTabla(analiticasActualizadas.analiticas);
+
+        }, 600000); // Se refresca cada 10 minutos
+
+
     });
 
+    // =========================================
 
-    DateDesde.addEventListener("change", () => {
-        console.log(DateDesde.value);
+    /*DateDesde.addEventListener("change", () => {
+        console.log(desde); debugger
     });
 
     DateHasta.addEventListener("change", () => {
         console.log(DateHasta.value);
-    });
+    });*/
 
     configurarBuscador();
 
@@ -177,20 +234,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         const productosSeleccionados = [...document.querySelectorAll("input[name='producto']:checked")]
             .map(cb => cb.value);
 
+        const buscador = 1;
         const limite = selectMostrar.value;
         const desde = DateDesde.value;
-        const hasta = DateHasta.value;        
+        const hasta = DateHasta.value;
+        const valorMin = document.getElementById("valor_min").value;
+        const valorMax = document.getElementById("valor_max").value;
 
         // Llamada a tu función que obtiene analíticas con filtros
-        const respuesta = await obtenerAnaliticas(productosSeleccionados, limite, desde, hasta);
-
-        console.log(respuesta); debugger
+        const respuesta = await obtenerAnaliticas(productosSeleccionados, limite, desde, hasta, buscador, valorMin, valorMax);
 
         // Refrescar la tabla
         renderizarTabla(respuesta.analiticas);
     });
 
-    const respuesta = await obtenerAnaliticas();
-    //console.log(respuesta);
+    const productosIniciales = [...document.querySelectorAll("input[name='producto']:checked")]
+        .map(cb => cb.value);
+
+
+    //const respuesta = await obtenerAnaliticas(productosSeleccionados, selectMostrar.value, null, null, selectAnalitica.value);
+    const limiteInicial = selectMostrar.value || 10
+    const respuesta = await obtenerAnaliticas(
+        productosIniciales,
+        limiteInicial,
+        null,
+        null
+    );
+
+    //console.log(respuesta); debugger
     renderizarTabla(respuesta.analiticas);
 }); 

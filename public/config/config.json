@@ -4,12 +4,17 @@
         "superior": 20
     },
     "productos": [
-        { "ProductoFabricado": "Ferrico" },
+        { "ProductoFabricado": "P18" },
         { "ProductoFabricado": "Sulfato" },
-        { "ProductoFabricado": "P18" }
+        { "ProductoFabricado": "Ferrico" }
     ],
 
     "fechas": {
         "minDesde": "2020-01-01"        
+    },
+    "valoresAnaliticas": {
+        "inferior": 0,
+        "superior": 3
     }
+
 }

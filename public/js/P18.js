@@ -239,8 +239,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     generarRadiosMezcladores(mezcladoresEditar, datosTransferencia, modo);
                 }
 
-
-
                 // ===== RECETAS ====
 
                 /*if (modo === "terminar") {

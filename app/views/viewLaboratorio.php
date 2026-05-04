@@ -20,10 +20,25 @@
                 <label>Hasta</label>
                 <input type="date" id="hasta">
             </div>
+            <!--<div id="analitica" class="analitica">
+                <label>Analítica</label>
+                <select id="filtroAnalitica">                    
+                    <option value="0">Sin analítica</option>
+                    <option value="1">Con analítica</option>
+                </select>
+            </div>-->            
+
+            <div id="mostrar" class="mostrar">
+                <label>Valor analítica</label>
+                <select id="valor_min"></select>
+                <select id="valor_max"></select>
+            </div>
+
             <div id="mostrar" class="mostrar">
                 <label>Mostrar</label>
                 <select id="cantidad"></select>
             </div>
+
             <div id="botonera">
                 <button ID="btnBuscar" class="btnBuscar">Buscar</button>
             </div>

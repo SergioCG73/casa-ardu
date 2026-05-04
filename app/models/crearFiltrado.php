@@ -100,7 +100,7 @@ $stmt->execute();
 // Borrar tabla mezclador_216
 $TruncateSQL = "TRUNCATE mezclador_216";
 $stmt = $conexion->prepare($TruncateSQL);
-//$stmt->execute();
+$stmt->execute();
 
 foreach ($producciones as $produccion) {
 
@@ -116,7 +116,7 @@ foreach ($producciones as $produccion) {
     $stmt->bindParam(":riqueza", $riqueza);
     $stmt->bindParam(":basicidad", $basicidad);
     $stmt->bindParam(":nf", $produccion);
-    //$stmt->execute();
+    $stmt->execute();
 }
 
 // Insertar en tabla: analíticas

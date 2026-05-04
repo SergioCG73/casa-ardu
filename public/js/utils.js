@@ -92,7 +92,7 @@ async function sePuedeFabricar(producto, data) {
 
     // 4. Equipos disponibles    
     const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");
-    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.ProductoFabricado === "P18");
+    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id != "M311" && m.Equipo_id != "M411");
     const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
     const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
 
@@ -120,7 +120,7 @@ async function sePuedeFabricar(producto, data) {
         visperaFestivoTarde ||
         noHayEquipos)) {
         console.log("NO se puede fabricar vispera festivo");
-        mostrarModal("NO se puede fabricar");
+        mostrarModal("No se puede fabricar");
         return false;
     }
 
@@ -137,7 +137,6 @@ async function sePuedeFabricar(producto, data) {
     return true;
 }
 
-
 async function configurarBuscador() {
     // Leer JSON config.JSON
     const res = await fetch("index.php?c=Leer&a=leerJSON");
@@ -149,13 +148,10 @@ async function configurarBuscador() {
     const contenedor = document.querySelector("#productos");
     contenedor.innerHTML = "";
 
-    const productos = config.productos; // ← ahora vienen del JSON
+    const productos = config.productos;
 
     productos.forEach(p => {
-
-        // Si el JSON trae strings:
         const nombre = typeof p === "string" ? p : p.ProductoFabricado;
-
         const id = "prod_" + nombre.replace(/\s+/g, "_");
 
         const input = document.createElement("input");
@@ -172,21 +168,23 @@ async function configurarBuscador() {
         contenedor.appendChild(label);
     });
 
-    // ============================
+    // =============================
     // 2. Configurar select cantidad
-    // ============================
-    const select = document.getElementById("cantidad");
-    select.innerHTML = "";
+    // =============================
+    const selectCantidad = document.getElementById("cantidad");
+    selectCantidad.innerHTML = "";
 
-    const min = config.limitesSelect.inferior;
-    const max = config.limitesSelect.superior;
+    const minCant = config.limitesSelect.inferior;
+    const maxCant = config.limitesSelect.superior;
 
-    for (let i = min; i <= max; i++) {
+    for (let i = minCant; i <= maxCant; i++) {
         const option = document.createElement("option");
         option.value = i;
         option.textContent = i;
-        select.appendChild(option);
+        selectCantidad.appendChild(option);
     }
+
+    selectCantidad.value = 5;
 
     // =====================
     // 3. Limitar date Desde
@@ -196,8 +194,38 @@ async function configurarBuscador() {
     if (config.fechas.minDesde) {
         dateDesde.min = config.fechas.minDesde;
     }
-    
+
+    // =============================
+    // 4. Configurar select valor (rango)
+    // =============================
+    const selectMin = document.getElementById("valor_min");
+    const selectMax = document.getElementById("valor_max");
+
+    selectMin.innerHTML = "";
+    selectMax.innerHTML = "";
+
+    const minVal = config.valoresAnaliticas.inferior;
+    const maxVal = config.valoresAnaliticas.superior;
+
+    for (let a = minVal; a <= maxVal; a++) {
+        const opt1 = document.createElement("option");
+        opt1.value = a;
+        opt1.textContent = a;
+        selectMin.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = a;
+        opt2.textContent = a;
+        selectMax.appendChild(opt2);
+    }
+
+    // Valores por defecto
+    selectMin.value = minVal;
+    selectMax.value = maxVal;
+
 }
+
+
 
 /*async function generarCheckBoxesProductos() {
     const response = await fetch("index.php?c=Leer&a=leerproductos", {
@@ -249,16 +277,35 @@ async function configurarBuscador() {
     }
 }*/
 
-async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
+/*async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
     try {
         const response = await fetch("index.php?c=Leer&a=leeranaliticas", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productosSeleccionados, limite })
+            body: JSON.stringify({ productosSeleccionados, limite, filtroAnalitica })
         });
 
         const data = await response.json();
-        //console.log("Analíticas cargadas:", data); debugger
+        console.log("Analíticas cargadas:", data); debugger
+        return data;
+
+    } catch (error) {
+        console.error("Error:", error);
+        return { error: "Error al obtener analíticas" };
+    }
+}*/
+
+async function obtenerAnaliticas(productosSeleccionados = [], limite = null, desde = null, hasta = null, buscador, valorMin = null, valorMax = null) {
+    //console.log(valorMin, valorMax); debugger
+    try {
+        const response = await fetch("index.php?c=Laboratorio&a=obtenerAnaliticas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productosSeleccionados, limite, desde, hasta, buscador, valorMin, valorMax })
+        });
+
+        const data = await response.json();
+        console.log("Analíticas cargadas:", data);
         return data;
 
     } catch (error) {
@@ -267,58 +314,53 @@ async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
     }
 }
 
+
 function obtenerCamposAnalitica(producto) {
     switch (producto.toUpperCase()) {
         case "P18":
             return `
-                <label>Densidad:</label>
-                <input type="number" step="0.01" id="densidad">                
+        <label>Densidad:</label>
+        <input type="number" step="0.01" id="densidad" name="Densidad">                
                 
-                <label>Riqueza:</label>
-                <input type="number" step="0.01" id="riqueza">
+        <label>Riqueza:</label>
+        <input type="number" step="0.01" id="riqueza" name="Riqueza">
 
-                <label>Basicidad:</label>
-                <input type="number" step="0.01" id="basicidad">
+        <label>Basicidad:</label>
+        <input type="number" step="0.01" id="basicidad" name="Basicidad">
 
-                <label>Observaciones:</label>
-                <textarea id="observaciones"></textarea>
-            `;
+        <label>Observaciones:</label>
+        <textarea id="observaciones" name="Observaciones"></textarea>
+    `;
+
 
         case "FERRICO":
             return `
-                <label>Densidad:</label>
-                <input type="number" step="0.001" id="densidad">
+        <label>Densidad:</label>
+        <input type="number" step="0.001" id="densidad" name="Densidad">
 
-                <label>Riqueza:</label>
-                <input type="number" step="0.01" id="riqueza">
+        <label>Riqueza:</label>
+        <input type="number" step="0.01" id="riqueza" name="Riqueza">
 
-                <!--<label>Acidez:</label>
-                <input type="number" step="0.01" id="acidez">-->
+        <label>Observaciones:</label>
+        <textarea id="observaciones" name="Observaciones"></textarea>
+    `;
 
-                <label>Observaciones:</label>
-                <textarea id="observaciones"></textarea>
-            `;
 
         case "SULFATO":
             return `
-                <label>Densidad:</label>
-                <input type="number" step="0.001" id="densidad">
+        <label>Densidad:</label>
+        <input type="number" step="0.001" id="densidad" name="Densidad">
 
-                <label>pH:</label>
-                <input type="number" step="0.01" id="ph">
+        <label>pH:</label>
+        <input type="number" step="0.01" id="ph" name="ph">
 
-                <label>Riqueza:</label>
-                <input type="number" step="0.01" id="riqueza">
+        <label>Riqueza:</label>
+        <input type="number" step="0.01" id="riqueza" name="Riqueza">
 
-                <label>Observaciones:</label>
-                <textarea id="observaciones"></textarea>
-            `;
+        <label>Observaciones:</label>
+        <textarea id="observaciones" name="Observaciones"></textarea>
+    `;
 
-        default:
-            return `
-                <label>Observaciones:</label>
-                <textarea id="observaciones"></textarea>
-            `;
     }
 }
 
