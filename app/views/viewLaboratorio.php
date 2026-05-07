@@ -34,10 +34,10 @@
                 <select id="valor_max"></select>
             </div>
 
-            <div id="mostrar" class="mostrar">
+            <!--<div id="mostrar" class="mostrar">
                 <label>Mostrar</label>
                 <select id="cantidad"></select>
-            </div>
+            </div>-->
 
             <div id="botonera">
                 <button ID="btnBuscar" class="btnBuscar">Buscar</button>
@@ -74,6 +74,8 @@
             </tr>
         </table>
     </div>
+    <div id="paginador" style="margin-top:10px;"></div>
+
 </body>
 <script src="js/utils.js"></script>
 <script src="js/Laboratorio.js"></script>
