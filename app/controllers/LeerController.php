@@ -21,6 +21,11 @@ class LeerController {
         include __DIR__ . '/../models/leerFerrico.php';
     }
 
+    public function leerHB10() {
+        //echo json_encode(["LINE" => __LINE__]); exit;
+        include __DIR__ . '/../models/leerHB10.php';
+    }
+
     public function leerfiltrado() {        
         include __DIR__ . '/../models/leerFiltrado.php';
     }
