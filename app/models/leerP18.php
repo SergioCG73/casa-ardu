@@ -20,8 +20,7 @@ $tabla = "p18_terminadas";
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
 // -----------------------------------------------
-function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
-{
+function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     // Última terminada
     $sql = "SELECT NumeroFabricacion FROM $tablaTerminadas ORDER BY NumeroFabricacion DESC LIMIT 1";
     $stmt = $conexion->prepare($sql);
