@@ -172,14 +172,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function inicializarFormulario(modo, producto, datosEdicion = null) {
         console.log("inicializar formulario...");
         console.log(modo, producto);
-        
+
         const formData = new FormData();
         formData.append("producto", "P18");
         formData.append("modo", modo);
 
         if (modo != "crear") {
             formData.append("numeroProduccion", datosEdicion.NumeroFabricacion);
-        }        
+        }
 
         /*const objeto = Object.fromEntries(formData.entries());
         console.log(objeto); debugger*/
@@ -314,47 +314,48 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== MODO CREAR =====
     if (modo === "crear") {
         console.log("modo crear...");
-        inicializarFormulario(modo, producto).then(() => {
-            document.querySelector('#peso_final_mezclador').disabled = true;
+        inicializarFormulario(modo, producto)
+            .then(() => {
+                document.querySelector('#peso_final_mezclador').disabled = true;
 
-            const reactores = document.querySelector('#reactores');
-            reactores
-                .querySelectorAll("input, select, textarea, button")
-                .forEach(el => el.disabled = true);
+                const reactores = document.querySelector('#reactores');
+                reactores
+                    .querySelectorAll("input, select, textarea, button")
+                    .forEach(el => el.disabled = true);
 
-            btnCrear.addEventListener("click", () => {
-                if (!mezcladorSeleccionado) return alert("Selecciona un mezclador");
-                if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
-                if (!recetaSeleccionada) return alert("Selecciona una receta");
+                btnCrear.addEventListener("click", () => {
+                    if (!mezcladorSeleccionado) return alert("Selecciona un mezclador");
+                    if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
+                    if (!recetaSeleccionada) return alert("Selecciona una receta");
 
-                const valNotas = txtNotas.value;
+                    const valNotas = txtNotas.value;
 
-                const datosEnviar = new FormData();
-                //datosEnviar.append("numeroProduccion", numeroProduccionActual);
-                datosEnviar.append("numeroProduccion", numeroProduccion);
-                datosEnviar.append("mezclador", mezcladorSeleccionado);
-                datosEnviar.append("receta", recetaSeleccionada);
-                datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
-                datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
-                datosEnviar.append("producto", producto);
-                datosEnviar.append("modo", modo);
-                datosEnviar.append("notas", valNotas);
+                    const datosEnviar = new FormData();
+                    //datosEnviar.append("numeroProduccion", numeroProduccionActual);
+                    datosEnviar.append("numeroProduccion", numeroProduccion);
+                    datosEnviar.append("mezclador", mezcladorSeleccionado);
+                    datosEnviar.append("receta", recetaSeleccionada);
+                    datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
+                    datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
+                    datosEnviar.append("producto", producto);
+                    datosEnviar.append("modo", modo);
+                    datosEnviar.append("notas", valNotas);
 
-                /*const objeto = Object.fromEntries(datosEnviar.entries()); 
-                console.log("objeto", objeto); return; */
+                    /*const objeto = Object.fromEntries(datosEnviar.entries()); 
+                    console.log("objeto", objeto); return; */
 
-                fetch("index.php?c=Crear&a=fabricacionP18", {
-                    method: "POST",
-                    body: datosEnviar
-                })
-                    .then(res => res.json())
-                    .then(json => {
-                        console.log(json);
-                        if (json.ok) mostrarModal(json.message);
-                        else alert(json.error);
-                    });
+                    fetch("index.php?c=Crear&a=fabricacionP18", {
+                        method: "POST",
+                        body: datosEnviar
+                    })
+                        .then(res => res.json())
+                        .then(json => {
+                            console.log(json);
+                            if (json.ok) mostrarModal(json.message);
+                            else alert(json.error);
+                        });
+                });
             });
-        });
     }
 
     // ===== MODO EDITAR =====

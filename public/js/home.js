@@ -37,7 +37,7 @@ function init() {
 
     btnHb10.addEventListener("click", () => {
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "Hb10");
+        localStorage.setItem("producto", "hb10");
         window.location.href = "index.php?c=Formulario&a=hb10";
     })
 

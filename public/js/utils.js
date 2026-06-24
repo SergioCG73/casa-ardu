@@ -171,7 +171,7 @@ async function configurarBuscador() {
     // =============================
     // 2. Configurar select cantidad
     // =============================
-    const selectCantidad = document.getElementById("cantidad");
+    /*const selectCantidad = document.getElementById("cantidad");
     selectCantidad.innerHTML = "";
 
     const minCant = config.limitesSelect.inferior;
@@ -184,7 +184,7 @@ async function configurarBuscador() {
         selectCantidad.appendChild(option);
     }
 
-    selectCantidad.value = 5;
+    selectCantidad.value = 5;*/
 
     // =====================
     // 3. Limitar date Desde
@@ -222,86 +222,24 @@ async function configurarBuscador() {
     // Valores por defecto
     selectMin.value = minVal;
     selectMax.value = maxVal;
-
 }
 
+async function obtenerAnaliticas(productosSeleccionados = [], desde = null, hasta = null, buscador, valorMin = null, valorMax = null, pagina = 1, porPagina = 20) {
 
-
-/*async function generarCheckBoxesProductos() {
-    const response = await fetch("index.php?c=Leer&a=leerproductos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "laboratorio" })
-    });
-
-    const data = await response.json();
-    const productos = data.productos;
-    //console.log(productos);
-
-    const contenedor = document.querySelector("#productos");
-    contenedor.innerHTML = "";
-
-    productos.forEach(p => {
-        const id = "prod_" + p.ProductoFabricado.replace(/\s+/g, "_");
-
-        const input = document.createElement("input");
-        input.type = "checkbox";
-        input.id = id;
-        input.name = "producto";
-        input.value = p.ProductoFabricado;
-
-        const label = document.createElement("label");
-        label.setAttribute("for", id);
-        label.textContent = p.ProductoFabricado;
-
-        contenedor.appendChild(input);
-        contenedor.appendChild(label);
-    })
-}*/
-
-/*async function configurarSelectCantidad() {
-    const res = await fetch("index.php?c=Leer&a=leerJSON");
-    const config = await res.json();
-
-    const select = document.getElementById("cantidad");
-    select.innerHTML = "";
-
-    const min = config.limitesSelect.inferior;
-    const max = config.limitesSelect.superior;
-
-    for (let i = min; i <= max; i++) {
-        const option = document.createElement("option");
-        option.value = i;
-        option.textContent = i;
-        select.appendChild(option);
-    }
-}*/
-
-/*async function obtenerAnaliticas(productosSeleccionados = [], limite = null) {
-    try {
-        const response = await fetch("index.php?c=Leer&a=leeranaliticas", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productosSeleccionados, limite, filtroAnalitica })
-        });
-
-        const data = await response.json();
-        console.log("Analíticas cargadas:", data); debugger
-        return data;
-
-    } catch (error) {
-        console.error("Error:", error);
-        return { error: "Error al obtener analíticas" };
-    }
-}*/
-
-async function obtenerAnaliticas(productosSeleccionados = [], limite = null, desde = null, hasta = null, buscador, valorMin = null, valorMax = null) {
-    //console.log(valorMin, valorMax); debugger
     try {
         const response = await fetch("index.php?c=Laboratorio&a=obtenerAnaliticas", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productosSeleccionados, limite, desde, hasta, buscador, valorMin, valorMax })
+            body: JSON.stringify({
+                productosSeleccionados,
+                desde,
+                hasta,
+                buscador,
+                valorMin,
+                valorMax,
+                pagina,       
+                porPagina
+            })
         });
 
         const data = await response.json();
@@ -313,6 +251,24 @@ async function obtenerAnaliticas(productosSeleccionados = [], limite = null, des
         return { error: "Error al obtener analíticas" };
     }
 }
+
+function cargarPagina(num) {
+    filtros.pagina = num;
+    filtros.porPagina = 15;
+    obtenerAnaliticas(
+        filtros.productosSeleccionados,
+        filtros.desde,
+        filtros.hasta,
+        filtros.buscador,
+        filtros.valorMin,
+        filtros.valorMax,
+        filtros.pagina,
+        filtros.porPagina
+    ).then(data => renderizarTabla(data.analiticas));
+}
+
+window.cargarPagina = cargarPagina;
+
 
 
 function obtenerCamposAnalitica(producto) {
