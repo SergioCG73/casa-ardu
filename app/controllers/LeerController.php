@@ -1,5 +1,7 @@
 <?php
 
+//echo json_encode(["FILE" => __FILE__]); exit;
+
 class LeerController {
     public function lectura() {
         include __DIR__ . '/../models/lectura.php';
@@ -19,6 +21,11 @@ class LeerController {
         include __DIR__ . '/../models/leerFerrico.php';
     }
 
+    public function leerHB10() {
+        //echo json_encode(["LINE" => __LINE__]); exit;
+        include __DIR__ . '/../models/leerHB10.php';
+    }
+
     public function leerfiltrado() {        
         include __DIR__ . '/../models/leerFiltrado.php';
     }
@@ -30,4 +37,24 @@ class LeerController {
     public function leerproductos() {          
         include __DIR__ . '/../models/leerProductos.php';
     }
+
+    public function leeranaliticas() {
+        //echo json_encode(["LINE" => __LINE__]); exit;
+        include __DIR__ . '/../models/leerAnaliticas.php';
+    }
+
+    public function leerJSON() {
+    header("Content-Type: application/json");
+    
+    $ruta = __DIR__ . "/../../public/config/config.json";
+
+    if (!file_exists($ruta)) {
+        echo json_encode(["error" => "Archivo no encontrado"]);
+        return;
+    }
+
+    $contenido = file_get_contents($ruta);
+    echo $contenido;
+}
+
 }

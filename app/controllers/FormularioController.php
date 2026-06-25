@@ -34,6 +34,10 @@ class FormularioController {
     public function filtrado() {
         require_once __DIR__ . "/../views/viewFiltrado.php";
     }
+
+    public function hb10() {
+        require_once __DIR__ . "/../views/viewHB10.php";
+    }    
 }
 
 ?>

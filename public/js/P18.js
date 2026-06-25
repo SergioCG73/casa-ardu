@@ -136,8 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    function generarRadiosRecetas(recetas, datosEdicion, modo) {    
-        console.log(recetas);
+    function generarRadiosRecetas(recetas, datosEdicion, modo) {
+        //console.log(recetas);
         const contenedorRecetas = document.querySelector("#recetas .radio-group");
         contenedorRecetas.innerHTML = "";
 
@@ -170,6 +170,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function inicializarFormulario(modo, producto, datosEdicion = null) {
+        console.log("inicializar formulario...");
+        console.log(modo, producto);
+
         const formData = new FormData();
         formData.append("producto", "P18");
         formData.append("modo", modo);
@@ -189,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 /// ==== NUMERO PRODUCCION ==== ////
                 // Determinar número de producción final
-                if (modo === "editar" || modo === "transferir" || modo === "terminar") {
+                if (modo === "editar" || modo === "transferir") {
                     numeroProduccion = datosEdicion.NumeroFabricacion;
                 } else {
                     // modo === "crear"
@@ -198,11 +201,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     datosEdicion.NumeroFabricacion = numeroProduccion;
                 }
 
+                if (modo === "terminar") {
+                    numeroProduccion = datosTransferencia.NumeroFabricacion;
+                }
+
                 // Mostrar siempre el número final
                 parDisplayProduccion.textContent = numeroProduccion;
 
-                // === MEZCLADORES =====
-                                
+                // === MEZCLADORES =====                                
                 const mezcladoresDisponibles = data.equipos.filter(
                     e => e.Tipo === "Mezclador" &&
                         e.Estado === "Vacio" &&
@@ -225,9 +231,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
-
-                if (modo === "editar" || modo === "transferir" || modo === "terminar") {
+                if (modo === "editar" || modo === "transferir") {
                     generarRadiosMezcladores(mezcladoresEditar, datosEdicion, modo);
+                }
+
+                if (modo === "terminar") {
+                    generarRadiosMezcladores(mezcladoresEditar, datosTransferencia, modo);
                 }
 
                 // ===== RECETAS ====
@@ -237,48 +246,53 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.recetas = data;
                 }*/
 
-                generarRadiosRecetas(data.recetas, datosEdicion, modo);
-
-                if (modo === "transferir") {
+                if (modo === "terminar") {
+                    generarRadiosRecetas(data.recetas, datosTransferencia, modo);
+                } else {
                     generarRadiosRecetas(data.recetas, datosEdicion, modo);
                 }
 
-                // ===== REACTORES =====
+                /*if (modo === "transferir") {
+                    generarRadiosRecetas(data.recetas, datosEdicion, modo);
+                }*/
 
+                // ===== REACTORES =====
                 if (modo === "terminar") {
-                        datosEdicion = data.produccionCurso;
-                    }
+                    //datosEdicion = data.produccionCurso;
+                    datosEdicion = datosTransferencia;
+                }
 
                 const reactoresFiltrados = data.reactores.filter(r => r.Estado !== "Averiado");
                 generarRadiosReactores(reactoresFiltrados, datosEdicion);
 
                 // === DATOS INICIALES FORMULARIO === 
                 if (datosEdicion) {
-                    if (datosEdicion.PesoInicialMezclador !== undefined)
-                        peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
-
-                    if (datosEdicion.PesoFinalMezclador !== undefined)
-                        peso_final_mezclador.value = datosEdicion.PesoFinalMezclador;
-
-                    if (datosEdicion.PesoInicialReactor !== undefined) {
-                        peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
-                    }
-
-                    if (datosEdicion.PesoFinalReactor !== undefined) {
-                        peso_final_reactor.value = datosEdicion.PesoFinalReactor;
-                    }
-
-                    if (datosEdicion.Notas !== undefined || datosEdicion !== null) {
-                        txtNotas.textContent = datosEdicion.Notas;
-                    }                    
-
                     if (modo === "terminar") {
-                        console.log(data);
-                        peso_inicial_mezclador.value = data.produccionCurso.PesoInicialMezclador;
-                        peso_final_mezclador.value = data.produccionCurso.PesoFinalMezclador;
-                        peso_inicial_reactor.value = data.produccionCurso.PesoInicialReactor;
-                        txtNotas.textContent = data.produccionCurso.Notas
-                        generarRadiosReactores(reactoresFiltrados, data.produccionCurso);
+                        console.log(datosEdicion); debugger
+                        //peso_inicial_mezclador.value = data.produccionCurso.PesoInicialMezclador;
+                        peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+                        peso_final_mezclador.value = datosEdicion.PesoFinalMezclador;
+                        peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
+                        txtNotas.textContent = datosEdicion.Notas;
+                        generarRadiosReactores(reactoresFiltrados, datosEdicion);
+                    } else {
+                        if (datosEdicion.PesoInicialMezclador !== undefined)
+                            peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
+
+                        if (datosEdicion.PesoFinalMezclador !== undefined)
+                            peso_final_mezclador.value = datosEdicion.PesoFinalMezclador;
+
+                        if (datosEdicion.PesoInicialReactor !== undefined) {
+                            peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
+                        }
+
+                        if (datosEdicion.PesoFinalReactor !== undefined) {
+                            peso_final_reactor.value = datosEdicion.PesoFinalReactor;
+                        }
+
+                        if (datosEdicion.Notas !== undefined || datosEdicion !== null) {
+                            txtNotas.textContent = datosEdicion.Notas;
+                        }
                     }
 
                     formatearNumero(peso_inicial_mezclador);
@@ -299,47 +313,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== MODO CREAR =====
     if (modo === "crear") {
-        inicializarFormulario(modo, producto).then(() => {
-            document.querySelector('#peso_final_mezclador').disabled = true;
+        console.log("modo crear...");
+        inicializarFormulario(modo, producto)
+            .then(() => {
+                document.querySelector('#peso_final_mezclador').disabled = true;
 
-            const reactores = document.querySelector('#reactores');
-            reactores
-                .querySelectorAll("input, select, textarea, button")
-                .forEach(el => el.disabled = true);
+                const reactores = document.querySelector('#reactores');
+                reactores
+                    .querySelectorAll("input, select, textarea, button")
+                    .forEach(el => el.disabled = true);
 
-            btnCrear.addEventListener("click", () => {
-                if (!mezcladorSeleccionado) return alert("Selecciona un mezclador");
-                if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
-                if (!recetaSeleccionada) return alert("Selecciona una receta");
+                btnCrear.addEventListener("click", () => {
+                    if (!mezcladorSeleccionado) return alert("Selecciona un mezclador");
+                    if (!peso_inicial_mezclador.value) return alert("Selecciona un peso inicial");
+                    if (!recetaSeleccionada) return alert("Selecciona una receta");
 
-                const valNotas = txtNotas.value;
+                    const valNotas = txtNotas.value;
 
-                const datosEnviar = new FormData();
-                //datosEnviar.append("numeroProduccion", numeroProduccionActual);
-                datosEnviar.append("numeroProduccion", numeroProduccion);
-                datosEnviar.append("mezclador", mezcladorSeleccionado);
-                datosEnviar.append("receta", recetaSeleccionada);
-                datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
-                datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
-                datosEnviar.append("producto", producto);
-                datosEnviar.append("modo", modo);
-                datosEnviar.append("notas", valNotas);
+                    const datosEnviar = new FormData();
+                    //datosEnviar.append("numeroProduccion", numeroProduccionActual);
+                    datosEnviar.append("numeroProduccion", numeroProduccion);
+                    datosEnviar.append("mezclador", mezcladorSeleccionado);
+                    datosEnviar.append("receta", recetaSeleccionada);
+                    datosEnviar.append("pesoInicialMezclador", peso_inicial_mezclador.value.replace(/\./g, ""));
+                    datosEnviar.append("pesoFinalMezclador", peso_final_mezclador.value.replace(/\./g, ""));
+                    datosEnviar.append("producto", producto);
+                    datosEnviar.append("modo", modo);
+                    datosEnviar.append("notas", valNotas);
 
-                /*const objeto = Object.fromEntries(datosEnviar.entries()); 
-                console.log("objeto", objeto); return; */
+                    /*const objeto = Object.fromEntries(datosEnviar.entries()); 
+                    console.log("objeto", objeto); return; */
 
-                fetch("index.php?c=Crear&a=fabricacionP18", {
-                    method: "POST",
-                    body: datosEnviar
-                })
-                    .then(res => res.json())
-                    .then(json => {
-                        console.log(json);
-                        if (json.ok) mostrarModal(json.message);
-                        else alert(json.error);
-                    });
+                    fetch("index.php?c=Crear&a=fabricacionP18", {
+                        method: "POST",
+                        body: datosEnviar
+                    })
+                        .then(res => res.json())
+                        .then(json => {
+                            console.log(json);
+                            if (json.ok) mostrarModal(json.message);
+                            else alert(json.error);
+                        });
+                });
             });
-        });
     }
 
     // ===== MODO EDITAR =====
@@ -527,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     /*const objeto = Object.fromEntries(datosTransferenciaFinal.entries());
                     console.log(objeto); debugger*/
 
-                    fetch("index.php?c=Transferir&a=reactorAM216", {                    
+                    fetch("index.php?c=Transferir&a=reactorAM216", {
                         method: "POST",
                         body: datosTransferenciaFinal
                     })

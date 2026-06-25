@@ -37,10 +37,9 @@ function init() {
 
     btnHb10.addEventListener("click", () => {
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "Hb10");
+        localStorage.setItem("producto", "hb10");
         window.location.href = "index.php?c=Formulario&a=hb10";
     })
-
 
     cargarProducciones(tabla, divProducciones);
 
@@ -61,7 +60,7 @@ function cargarProducciones(tabla, divProducciones) {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); debugger
+            //console.log(data); debugger
             if (!data.ok) return;
             tabla.innerHTML = generarEncabezado() + construirTabla(data);
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
