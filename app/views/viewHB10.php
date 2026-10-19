@@ -4,11 +4,11 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/styleHB10.css" rel="stylesheet" type="text/css">
         <title>Alta Basicidad</title>
     </head>
 
-    <body>
-        <h2>EN CONSTRUCCIÓN</h2>
+    <body>        
         <div id="contenedor" class="contenedor">
             <div id="formulario">
                 <div id="mezclador_M411">

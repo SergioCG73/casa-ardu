@@ -53,8 +53,7 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
 
-function obtenerDatosProducto($conexion, $producto)
-{
+function obtenerDatosProducto($conexion, $producto) {
     $numeroProduccion = $_POST["numeroProduccion"] ?? null;
 
     // Equipos
@@ -113,8 +112,6 @@ function obtenerDatosProduccionEnCurso($conexion)
 
     return $produccionCurso;
 }
-
-
 
 // -----------------------------------------------------------
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR P18

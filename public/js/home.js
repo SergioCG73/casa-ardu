@@ -41,6 +41,12 @@ function init() {
         window.location.href = "index.php?c=Formulario&a=hb10";
     })
 
+    btnFiltrado.addEventListener("click", () => {
+        localStorage.setItem("modo", "filtrado");
+        localStorage.setItem("producto", "P18");
+        window.location.href = "index.php?c=Formulario&a=filtrado";        
+    })
+
     cargarProducciones(tabla, divProducciones);
 
     setInterval(() => {
@@ -70,7 +76,7 @@ function cargarProducciones(tabla, divProducciones) {
 
             divProducciones.style.display = "block";
 
-            let claseEspecial = null;
+            let claseEspecial = null;            
 
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";

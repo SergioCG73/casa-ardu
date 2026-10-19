@@ -35,18 +35,28 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("Ultima Fabricacion", data);
+                numeroProduccion = Math.max(...Object.values(data).filter(v => typeof v === "number"));
+                console.log("Fabricacion nº", numeroProduccion);
+                console.log("Equipos", data.equipos);
+                return data;
             }
-
             )
 
-
+        
     }
+    
 
     if (modo === "crear") {
         console.log("Modo crear...");
         inicializarFormulario(modo, producto)
             .then(() => {
+                // === NUMERO PRODUCCION === //
+                parDisplayProduccion.textContent = numeroProduccion;
+
+                // === ESTADO EQUIPOS === //
+                if (data.equipos.M512 === "vacio") {
+                    console.log("M512 Vacio");
+                }
 
             })
     }

@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(res => res.json())
             .then(data => {
-                /// ==== NUMERO PRODUCCION ==== ////
+                /// ==== NUMERO PRODUCCION ==== ///
                 // Determinar número de producción final
                 if (modo === "editar" || modo === "transferir") {
                     numeroProduccion = datosEdicion.NumeroFabricacion;

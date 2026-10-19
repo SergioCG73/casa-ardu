@@ -13,12 +13,17 @@ require_once("miconexion.php");
 $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 
+/*echo json_encode([
+    "post" => $_POST
+]);
+exit;*/
+
 //$numeroFabricacion = $data["numeroFabricacion"] ?? null;
-$densidad           = floatval($data["densidad"] ?? 0);
-$riqueza            = floatval($data["riqueza"] ?? 0);
-$basicidad          = floatval($data["basicidad"] ?? 0);
-$observaciones      = $data["observaciones"] ?? null;
-$filtradas          = $data["producciones"] ?? null;
+$densidad           = floatval($_POST["densidad"] ?? 0);
+$riqueza            = floatval($_POST["riqueza"] ?? 0);
+$basicidad          = floatval($_POST["basicidad"] ?? 0);
+$observaciones      = $_POST["notas"] ?? null;
+$filtradas          = $_POST["fabricaciones"] ?? null;
 $estado = null;
 $producto = "P18";
 
@@ -27,7 +32,6 @@ $producciones = array_map("trim", explode("+", $filtradas));
 $producciones = array_filter($producciones, function ($p) {
     return strtolower($p) !== "restos";
 });
-
 
 if ($densidad < 1.345 || $densidad > 1.35) {
     $estado = $estado  + 1;

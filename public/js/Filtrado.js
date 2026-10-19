@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     divfabricaciones.textContent = "Fabricaciones a filtrar: ";
 
     function inicializarFormulario(modo, datosEdicion) {
-        //console.log(datosEdicion); debugger        
+        //console.log(datosEdicion); debugger
         const data = new FormData();
         data.append("modo", modo);
 
@@ -30,20 +30,20 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(response => response.json())
             .then(data => {
-                //console.log(data); debugger
-
-                if (modo === "crear") {
+                //console.log(data.M216); debugger
+                if (modo === "filtrado") {
                     if (Array.isArray(data.M216) && data.M216.length > 0) {
                         lista = data.M216.map(f => f.NumeroFabricacion);
                         const hayRestos = lista.includes("0000");
                         lista = lista.filter(f => f !== "0000");
 
+                        //console.log(lista); debugger
+
                         if (hayRestos) {
                             lista.push("Restos");
                         }
                         
-                        divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;                        
-                        
+                        divfabricaciones.textContent = `Fabricaciones a filtrar: ${ordenarFabricaciones(lista)}`;
 
                     } else {
                         divfabricaciones.textContent = "Sin fabricaciones que filtrar";
@@ -175,8 +175,9 @@ function generarRadiosDepositos(data) {
         return nums.join(" + ");
     }
 
-    //---------------------- MODO CREAR ---------------------------------------//
-    if (modo === "crear") {
+    //---------------------- MODO CREAR ---------------------------------------//    
+    if (modo === "filtrado") {
+        console.log("Estamos en crear filtrado"); 
         inicializarFormulario(modo);
 
         btnFiltrar.textContent = "Crear";
@@ -189,8 +190,7 @@ function generarRadiosDepositos(data) {
             const notas = txtNotas.value;
 
             lista = lista.sort((a, b) => a - b)
-                .join(" + ");
-            //console.log(lista); debugger
+                .join(" + ");            
 
             datos = new FormData();
             datos.append("densidad", densidad);
@@ -210,7 +210,7 @@ function generarRadiosDepositos(data) {
             })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json)
+                    console.log(json); debugger
                     if (json.ok) {
                         mostrarModal("Datos guardados correctamente")
                     } else {
@@ -219,7 +219,6 @@ function generarRadiosDepositos(data) {
                     }
                 })
                 .catch(err => console.log("Error:", err.message))
-
         })
     }
 

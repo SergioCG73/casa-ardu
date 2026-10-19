@@ -20,8 +20,7 @@ $tabla = "hb10_terminadas";
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
 // -----------------------------------------------
-function obtenerUltimasFabricaciones($conexion, $producto, $tabla)
-{
+function obtenerUltimasFabricaciones($conexion, $producto, $tabla) {
     // Última terminada
     $sql = "SELECT NumeroFabricacion FROM $tabla ORDER BY NumeroFabricacion DESC LIMIT 1";
     $stmt = $conexion->prepare($sql);
@@ -48,9 +47,54 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tabla)
 
 list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
 
-/*echo json_encode([
+function obtenerDatosProducto($conexion, $producto) {
+    $numeroProduccion = $_POST["numeroProduccion"] ?? null;
+
+    // Equipos
+    $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
+    $stmt->execute();
+    $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Recetas
+    /*$sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(":producto", $producto);
+    $stmt->execute();
+    $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
+
+    // Reactores
+    /*$sql = "SELECT * FROM equipos WHERE Tipo = 'Reactor' AND ProductoFabricado = :producto";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(":producto", $producto);
+    $stmt->execute();
+    $reactores = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
+
+    //Notas
+    /*$sql = "SELECT Notas FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(":nf", $numeroProduccion);
+    $stmt->execute();
+    $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
+
+    /*echo json_encode(["LINE" => __LINE__,
+                      "numeroProduccion" => $numeroProduccion,
+                      "equipos" => $equipos
+                      "recetas" => $recetas, 
+                      "reactores" => $reactores,
+                      "notas" => $notas
+    ]); exit;*/
+
+    return [$equipos];
+}
+
+$equipos = obtenerDatosProducto($conexion, $producto);
+
+echo json_encode([
     "LINE" => __LINE__,
     "ultimaAcabada" => $ultimaAcabada,
-    "ultimaEnCurso" => $ultimaEnCurso
+    "ultimaEnCurso" => $ultimaEnCurso,
+    "equipos" => $equipos
 ]);
-exit;*/
+exit;
