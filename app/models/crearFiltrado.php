@@ -22,8 +22,10 @@ exit;*/
 $densidad           = floatval($_POST["densidad"] ?? 0);
 $riqueza            = floatval($_POST["riqueza"] ?? 0);
 $basicidad          = floatval($_POST["basicidad"] ?? 0);
+$vol_agua           = $_POST["vol_agua"] ?? 0;
 $observaciones      = $_POST["notas"] ?? null;
 $filtradas          = $_POST["fabricaciones"] ?? null;
+$deposito           = $_POST["deposito"] ?? null;
 $estado = null;
 $producto = "P18";
 
@@ -62,6 +64,8 @@ $id = generarID();
     "filtradas" => $filtradas,
     "producciones" => $producciones,
     "estado" => $estado,
+    "vol_agua" => $vol_agua,
+    "deposito" => $deposito,
     "ID" => $id
 ]);
 exit;*/
@@ -70,7 +74,9 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
                                 Producto_id,
                                 FechaInicio,
+                                Volumen_Agua,
                                 Mezclador, 
+                                Deposito,
                                 Fab_Filtradas,                                
                                 Riqueza, 
                                 Densidad,
@@ -81,8 +87,10 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                             VALUES (
                                 :id,
                                 'Filtrado',
-                                NOW(),  
-                                'M216',                              
+                                NOW(),
+                                :agua,
+                                'M216',
+                                :deposito,                           
                                 :fab,                                
                                 :riqueza,
                                 :densidad,
@@ -99,12 +107,15 @@ $stmt->bindParam(":densidad", $densidad);
 $stmt->bindParam(":basicidad", $basicidad);
 $stmt->bindParam(":observaciones", $observaciones);
 $stmt->bindParam(":estado", $estado);
+$stmt->bindParam(":agua", $vol_agua);
+$stmt->bindParam(":deposito", $deposito);
 $stmt->execute();
 
 // Borrar tabla mezclador_216
 $TruncateSQL = "TRUNCATE mezclador_216";
 $stmt = $conexion->prepare($TruncateSQL);
 $stmt->execute();
+
 
 foreach ($producciones as $produccion) {
 

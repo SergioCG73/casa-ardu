@@ -79,7 +79,6 @@ $offset = ($pagina - 1) * $porPagina;
                     
 ]); exit;*/
 
-
 foreach ($productos as $producto) {
     // Calcular límite para este producto
     $limiteProducto = $limiteBase;
@@ -91,10 +90,9 @@ foreach ($productos as $producto) {
 
     // -------------------------
     // CASO ESPECIAL: P18
-    // -------------------------
+    // -------------------------    
     if (strtolower($producto) === "p18") {
-        if ($buscador === 1) {
-
+        if ($buscador === 1) {            
             // -------------------------
             // NUEVO: COUNT TOTAL
             // -------------------------
@@ -142,7 +140,7 @@ foreach ($productos as $producto) {
                 "totalPaginas" => $totalPaginas,
                 "paginaActual" => $pagina
             ];
-
+            
             continue;
         }
 

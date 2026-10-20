@@ -184,9 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             next.onclick = () => cargarPagina(paginaActual + 1);
             cont.appendChild(next);
         }
-    }
-
-    
+    }    
 
     function abrirModalSegunProducto(info) {
         //console.log(info); debugger
@@ -295,7 +293,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Llamada a tu función que obtiene analíticas con filtros
         const respuesta = await obtenerAnaliticas(productosSeleccionados, desde, hasta, buscador, valorMin, valorMax);
 
-        console.log(respuesta); debugger
+        //console.log(respuesta); debugger
 
         // Refrescar la tabla
         renderizarTabla(respuesta.analiticas);

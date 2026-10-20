@@ -189,11 +189,13 @@ async function configurarBuscador() {
     // =====================
     // 3. Limitar date Desde
     // =====================
-    const dateDesde = document.getElementById("desde");
+    const dateDesde = document.getElementById("desde");    
 
     if (config.fechas.minDesde) {
         dateDesde.min = config.fechas.minDesde;
     }
+
+    //console.log(dateDesde.min); debugger
 
     // =============================
     // 4. Configurar select valor (rango)
@@ -270,7 +272,6 @@ function cargarPagina(num) {
 window.cargarPagina = cargarPagina;
 
 
-
 function obtenerCamposAnalitica(producto) {
     switch (producto.toUpperCase()) {
         case "P18":
@@ -300,7 +301,6 @@ function obtenerCamposAnalitica(producto) {
         <label>Observaciones:</label>
         <textarea id="observaciones" name="Observaciones"></textarea>
     `;
-
 
         case "SULFATO":
             return `

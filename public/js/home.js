@@ -76,7 +76,7 @@ function cargarProducciones(tabla, divProducciones) {
 
             divProducciones.style.display = "block";
 
-            let claseEspecial = null;            
+            let claseEspecial = null;                
 
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";
@@ -153,7 +153,6 @@ function construirTabla(data) {
         }
 
         if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
-
             claseMezclador = "M311_destacado";
         }
 

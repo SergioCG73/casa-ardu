@@ -16,7 +16,7 @@ class FormularioController {
     
     public function login() {
         //echo "LINE", __LINE__ ; exit;
-        require_once __DIR__ . "/../views/viewLogin.php";      
+        require_once __DIR__ . "/../views/viewLogin.php";
     }    
       
     public function p18() {

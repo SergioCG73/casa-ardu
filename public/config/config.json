@@ -10,7 +10,7 @@
     ],
 
     "fechas": {
-        "minDesde": "2020-01-01"        
+        "minDesde": "2020-01-01"
     },
     "valoresAnaliticas": {
         "inferior": 0,
