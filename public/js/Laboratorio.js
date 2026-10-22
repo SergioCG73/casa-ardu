@@ -21,22 +21,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderizarTabla(analiticas) {
-        const tabla = document.getElementById("tabla");
+        console.log("ENTRO EN RENDERIZAR");
+        console.log(analiticas);
 
+        const tabla = document.getElementById("tabla");
         tabla.querySelectorAll("tr:not(:first-child)").forEach(tr => tr.remove());
 
         for (const producto in analiticas) {
-
             let filas = analiticas[producto];
-            
+
             if (filas && filas.datos) {
                 filas = filas.datos;
             }
 
             const nombreMostrar = nombres[producto.toLowerCase()] ?? producto;
 
-            // CASO ESPECIAL: STRING (P18)
-            if (Array.isArray(filas) && typeof filas[0] === "string") {
+
+            /*console.log(producto);
+            console.log(filas);
+            console.log(Array.isArray(filas));
+            console.log(filas[0]);
+            console.log(typeof filas[0]);*/
+
+            // CASO ESPECIAL: STRING (P18)            
+            /*if (Array.isArray(filas) && typeof filas[0] === "string") {
+                console.log("CASO P18");
                 filas.forEach(num => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
@@ -54,10 +63,44 @@ document.addEventListener("DOMContentLoaded", async () => {
                     tabla.appendChild(tr);
                 });
                 continue;
+            }*/
+
+            if (producto === "P18") {
+                console.log("CASO P18");
+
+                if (!Array.isArray(filas) || filas.length === 0) {
+                    continue;
+                }
+
+                filas.forEach(num => {
+
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+            <td>${nombreMostrar}</td>
+            <td>${num}</td>
+            <td></td>
+            <td></td>
+            <td>
+                <img src="images/editar_azul_icon_20x20.png"
+                     class="icono-editar"
+                     data-info='${JSON.stringify({
+                        producto,
+                        producciones: num
+                    })}'
+                     title="Editar fabricación">
+            </td>
+        `;
+
+                    tabla.appendChild(tr);
+                });
+
+                continue;
             }
 
-            // CASO ERROR
+            // CASO ERROR            
             if (filas.error) {
+                console.log("CASO ERROR");
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                 <td>${nombreMostrar}</td>
@@ -79,6 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             // CASO NORMAL
+            console.log("CASO NORMAL");
             pendientes = pendientes.slice(0, 15);
             pendientes.forEach(fila => {
                 const fechaRaw = fila.Fecha ?? fila.Hora_Inicio ?? fila.Hora_Finalizacion ?? "";
@@ -184,7 +228,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             next.onclick = () => cargarPagina(paginaActual + 1);
             cont.appendChild(next);
         }
-    }    
+    }
 
     function abrirModalSegunProducto(info) {
         //console.log(info); debugger
@@ -280,6 +324,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     configurarBuscador();
 
     btnBuscar.addEventListener("click", async () => {
+        //console.log("Pulso Buscar");
         const productosSeleccionados = [...document.querySelectorAll("input[name='producto']:checked")]
             .map(cb => cb.value);
 
@@ -291,9 +336,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const valorMax = document.getElementById("valor_max").value;
 
         // Llamada a tu función que obtiene analíticas con filtros
+        //console.log("LLAMAR A obtenerAnalisticas");
         const respuesta = await obtenerAnaliticas(productosSeleccionados, desde, hasta, buscador, valorMin, valorMax);
 
-        //console.log(respuesta); debugger
+        /*console.log("RESPUESTA COMPLETA");
+        console.log(respuesta.analiticas); debugger*/
 
         // Refrescar la tabla
         renderizarTabla(respuesta.analiticas);
@@ -314,5 +361,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //console.log(respuesta); debugger
     renderizarTabla(respuesta.analiticas);
-}); 
+});
 

@@ -1,6 +1,6 @@
 <?php
 
-//echo json_encode(["FILE" => __FILE__,]); exit;
+echo json_encode(["FILE" => __FILE__,]); exit;
 
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
@@ -11,12 +11,15 @@ require_once("miconexion.php");
 
 $modo = $_POST["modo"] ?? "";
 
-$sql = "SELECT * FROM mezclador_216";
-$stmt = $conexion->prepare($sql);
+//$sql = "SELECT * FROM mezclador_216";
+$sqlSelect = "SELECT * FROM fabricaciones_en_curso WHERE Producto_id = 'Filtrado'";
+$stmt = $conexion->prepare($sqlSelect);
 $stmt->execute();
-$m216 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$filtraciones_en_curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (count($m216) === 0) {
+echo json_encode(["filtraciones" => $filtraciones_en_curso]); exit;
+
+if (count($filtraciones_en_curso) === 0) {
     echo json_encode([
         "M216" => "Nada que filtrar"
     ]);
@@ -29,6 +32,8 @@ if (count($m216) === 0) {
 
     echo json_encode([
         "Depositos" => $depositos,
-        "M216" => $m216
+        "M216" => $filtraciones_en_curso
     ]);exit;
 }
+
+?>

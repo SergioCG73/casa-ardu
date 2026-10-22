@@ -43,8 +43,10 @@ $stmt->execute([
     ':riqueza'      => $riqueza
 ]);
 
+
+
 echo json_encode([
-    "ok" => true,
+    "ok"                   => true,
     "densidad"             => $densidad,
     "riqueza"              => $riqueza,
     "volInicialMezclador"  => $volInicialMezclador,

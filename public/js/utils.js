@@ -227,7 +227,6 @@ async function configurarBuscador() {
 }
 
 async function obtenerAnaliticas(productosSeleccionados = [], desde = null, hasta = null, buscador, valorMin = null, valorMax = null, pagina = 1, porPagina = 20) {
-
     try {
         const response = await fetch("index.php?c=Laboratorio&a=obtenerAnaliticas", {
             method: "POST",

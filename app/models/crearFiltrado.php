@@ -19,15 +19,16 @@ $data = json_decode($json, true);
 exit;*/
 
 //$numeroFabricacion = $data["numeroFabricacion"] ?? null;
-$densidad           = floatval($_POST["densidad"] ?? 0);
-$riqueza            = floatval($_POST["riqueza"] ?? 0);
-$basicidad          = floatval($_POST["basicidad"] ?? 0);
-$vol_agua           = $_POST["vol_agua"] ?? 0;
-$observaciones      = $_POST["notas"] ?? null;
-$filtradas          = $_POST["fabricaciones"] ?? null;
-$deposito           = $_POST["deposito"] ?? null;
-$estado = null;
-$producto = "P18";
+$densidad                    = floatval($_POST["densidad"] ?? 0);
+$riqueza                     = floatval($_POST["riqueza"] ?? 0);
+$basicidad                   = floatval($_POST["basicidad"] ?? 0);
+$vol_inicial_m216            = floatval($_POST["vol_inicial_m216"] ?? 0);
+$vol_agua                    = $_POST["vol_agua"] ?? 0;
+$observaciones               = $_POST["notas"] ?? null;
+$filtradas                   = $_POST["fabricaciones"] ?? null;
+$deposito                    = $_POST["deposito"] ?? null;
+$estado                      = null;
+$producto                    = "P18";
 
 $producciones = array_map("trim", explode("+", $filtradas));
 
@@ -64,6 +65,7 @@ $id = generarID();
     "filtradas" => $filtradas,
     "producciones" => $producciones,
     "estado" => $estado,
+    "vol_inicial_m216" => $vol_inicial_m216,
     "vol_agua" => $vol_agua,
     "deposito" => $deposito,
     "ID" => $id
@@ -74,6 +76,7 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
                                 Producto_id,
                                 FechaInicio,
+                                PesoInicialMezclador,
                                 Volumen_Agua,
                                 Mezclador, 
                                 Deposito,
@@ -88,6 +91,7 @@ $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 :id,
                                 'Filtrado',
                                 NOW(),
+                                :vol_inicial_m216,
                                 :agua,
                                 'M216',
                                 :deposito,                           
@@ -107,6 +111,7 @@ $stmt->bindParam(":densidad", $densidad);
 $stmt->bindParam(":basicidad", $basicidad);
 $stmt->bindParam(":observaciones", $observaciones);
 $stmt->bindParam(":estado", $estado);
+$stmt->bindParam(":vol_inicial_m216", $vol_inicial_m216);
 $stmt->bindParam(":agua", $vol_agua);
 $stmt->bindParam(":deposito", $deposito);
 $stmt->execute();
@@ -115,7 +120,6 @@ $stmt->execute();
 $TruncateSQL = "TRUNCATE mezclador_216";
 $stmt = $conexion->prepare($TruncateSQL);
 $stmt->execute();
-
 
 foreach ($producciones as $produccion) {
 

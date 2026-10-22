@@ -24,13 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = new FormData();
         data.append("modo", modo);
 
-        return fetch("index.php?c=Leer&a=leerfiltrado", {
+        return fetch("index.php?c=Leer&a=leerfiltrado", {        
             method: "POST",
             body: data
         })
             .then(response => response.json())
-            .then(data => {
-                //console.log(data.M216); debugger
+            .then(data => {                
+                console.log(data.M216);
                 if (modo === "filtrado") {
                     if (Array.isArray(data.M216) && data.M216.length > 0) {
                         lista = data.M216.map(f => f.NumeroFabricacion);
@@ -50,14 +50,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
-                if (modo === "editar" || modo === "transferir") {                    
+                if (modo === "editar" || modo === "transferir") {                  
+                    console.log(datosEdicion); debugger
                     divfabricaciones.textContent = `Fabricaciones a filtrar: ` + datosEdicion.Fab_Filtradas;
                     inputDensidad.disabled = true;
                     inputRiqueza.disabled = true;
+                    inputVolumenAgua.disabled = true;
                     inputDensidad.value = datosEdicion.Densidad;
-                    inputRiqueza.value = datosEdicion.Riqueza;
+                    inputRiqueza.value = datosEdicion.Riqueza;                                        
+                    inputVolumenAgua.value = formatearMiles(datosEdicion.Volumen_Agua)
                     //inputVolumenInicial.value = formatearMiles(datosEdicion.PesoInicialMezclador) //Es el volumen inicial en el formulario
-                    //inputVolumenAgua.value = formatearMiles(datosEdicion.Volumen_Agua)
+                    
                     txtNotas.value = datosEdicion.Notas;
                 }
 
@@ -221,20 +224,18 @@ function generarRadiosDepositos(data) {
                 .catch(err => console.log("Error:", err.message))
         })
     }
-
-    if (modo === "editar") {
+// ----------------------------------- MODO EDITAR ANTIGUO-------------------------------------- //
+    /*if (modo === "editar") {
         console.log("Editar filtrado");
-
         datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
+
+
 
         inicializarFormulario(modo, datosEdicion);
 
         btnFiltrar.textContent = "Editar";
-
         btnFiltrar.addEventListener("click", () => {
-            datos = new FormData();
-
-            //console.log(inputVolumenInicial);
+            datos = new FormData();            
             datos.append("densidad", inputDensidad.value);
             datos.append("riqueza", inputRiqueza.value);
             datos.append("notas", txtNotas.value);
@@ -242,8 +243,8 @@ function generarRadiosDepositos(data) {
             datos.append("vol_inicial_M216", formatearNumero(inputVolumenInicial).replace(/\./g, ""));
             datos.append("vol_agua", formatearNumero(inputVolumenAgua).replace(/\./g, ""));
 
-            /*const objeto = Object.fromEntries(datos.entries());
-            console.log(objeto); debugger*/
+            const objeto = Object.fromEntries(datos.entries());
+            console.log(objeto); debugger
 
             fetch("index.php?c=Editar&a=filtrado", {
                 method: "POST",
@@ -261,8 +262,26 @@ function generarRadiosDepositos(data) {
                 })
                 .catch(err => console.log("Error:" + err.message));
         });
+    }*/
+
+// ---------------------- MODO EDITAR NUEVO ---------------- //
+    if (modo === "editar") {
+        console.log ("Modo EDITAR"); debugger
+
+        fetch("index.php?c=Leer&a=leerfiltrado")
+            .then(response => response.json())
+            .then(json => {
+                console.log(json); debugger
+                datosEdicion = json;                
+            })
+
+        console.log(datosEdicion); debugger;
+
+        inicializarFormulario(modo, datosEdicion);
+        
     }
 
+// ---------------------- MODO TRANSFERIR ------------------- //
     if (modo === "transferir") {
         console.log("Transferir");
         //console.log(datosEdicion); debugger
@@ -289,7 +308,7 @@ function generarRadiosDepositos(data) {
             })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json); debugger
+                    console.log(json);
 
                     if (json.ok) {
                         mostrarModal("Datos guardados correctamente");

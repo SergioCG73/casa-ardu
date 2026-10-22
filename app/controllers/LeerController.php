@@ -26,9 +26,10 @@ class LeerController {
         include __DIR__ . '/../models/leerHB10.php';
     }
 
-    public function leerfiltrado() {        
+    public function leerfiltrado() {
+        //echo json_encode(["FILE" => __FILE__]); exit;
         include __DIR__ . '/../models/leerFiltrado.php';
-    }
+    }    
 
     public function leerfiltradas() {          
         include __DIR__ . '/../models/leerFiltradas.php';

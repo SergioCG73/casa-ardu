@@ -92,11 +92,13 @@ foreach ($productos as $producto) {
     // CASO ESPECIAL: P18
     // -------------------------    
     if (strtolower($producto) === "p18") {
-        if ($buscador === 1) {            
+        //echo json_encode(["texto" => $producto]); exit;
+        if ($buscador === 1) {
             // -------------------------
             // NUEVO: COUNT TOTAL
             // -------------------------
-            $sqlCount = "SELECT COUNT(*) AS total FROM filtraciones_p18 $whereFecha AND Valoracion BETWEEN :valorMin AND :valorMax";
+            $sqlCount = "SELECT COUNT(*) AS total FROM filtraciones_p18 $whereFecha AND Valoracion BETWEEN :valorMin AND :valorMax OR 
+                            Valoracion is NULL";
             $stmtCount = $conexion->prepare($sqlCount);
 
             if (!empty($desde)) {
@@ -113,10 +115,20 @@ foreach ($productos as $producto) {
             $totalFilas = intval($stmtCount->fetchColumn());
             $totalPaginas = ceil($totalFilas / $porPagina);
 
-            // -------------------------
+            /*echo json_encode([
+               "WhereFecha" => $whereFecha,
+               "desde" => $desde,
+               "hasta" => $hasta,
+               "valorMin" => $valorMin,
+               "valorMax" => $valorMax,
+               "totalFilas" => $totalFilas,
+               "totalPaginas" => $totalPaginas 
+            ]); exit;*/
+
+            // ---------------------------------
             // SELECT PAGINADO (tu SQL original)
-            // -------------------------
-            $sql = "SELECT * FROM filtraciones_p18 $whereFecha AND Valoracion BETWEEN :valorMin AND :valorMax ORDER BY Fecha DESC LIMIT $porPagina OFFSET $offset";
+            // ---------------------------------
+            $sql = "SELECT * FROM filtraciones_p18 $whereFecha AND Valoracion BETWEEN :valorMin AND :valorMax ORDER BY Fecha DESC LIMIT $porPagina OFFSET $offset";            
             $stmt = $conexion->prepare($sql);
 
             if (!empty($desde)) {
@@ -140,7 +152,15 @@ foreach ($productos as $producto) {
                 "totalPaginas" => $totalPaginas,
                 "paginaActual" => $pagina
             ];
-            
+
+            /*echo json_encode([
+                "sql" => $sql,
+                "filas" => $filas,
+                "totalFilas" => $totalFilas,
+                "resultadoFinal" => $resultadoFinal                
+            ]);
+            exit;*/
+
             continue;
         }
 
@@ -184,7 +204,6 @@ foreach ($productos as $producto) {
     $where = [];
 
     if ($buscador === 0) {
-
         // -------------------------
         // NUEVO: COUNT TOTAL
         // -------------------------
