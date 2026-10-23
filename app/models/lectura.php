@@ -148,7 +148,6 @@ function obtenerDatosProducto($conexion, $producto)
         $stmt->execute();
         $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
         // Recetas
         $sql = "SELECT NombreReceta FROM recetas WHERE ProductoFabricado = :producto";
         $stmt = $conexion->prepare($sql);
@@ -201,7 +200,6 @@ if ($modo === "transferir" && $producto === "Sulfato") {
     ]);
     exit;
 } //Fin función obtenerDatosProducto()
-
 
 if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
     $tabla = "sulfato_terminadas";

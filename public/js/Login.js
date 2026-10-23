@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-
     btnIngresar.addEventListener("click", () => {
         const usuario = inputUsuario.value;
         const password = inputPassword.value;

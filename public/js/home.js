@@ -37,10 +37,15 @@ function init() {
 
     btnHb10.addEventListener("click", () => {
         localStorage.setItem("modo", "crear");
-        localStorage.setItem("producto", "Hb10");
+        localStorage.setItem("producto", "hb10");
         window.location.href = "index.php?c=Formulario&a=hb10";
     })
 
+    btnFiltrado.addEventListener("click", () => {
+        localStorage.setItem("modo", "filtrado");
+        localStorage.setItem("producto", "P18");
+        window.location.href = "index.php?c=Formulario&a=filtrado";        
+    })
 
     cargarProducciones(tabla, divProducciones);
 
@@ -61,7 +66,7 @@ function cargarProducciones(tabla, divProducciones) {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); debugger
+            //console.log(data); debugger
             if (!data.ok) return;
             tabla.innerHTML = generarEncabezado() + construirTabla(data);
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
@@ -71,7 +76,7 @@ function cargarProducciones(tabla, divProducciones) {
 
             divProducciones.style.display = "block";
 
-            let claseEspecial = null;
+            let claseEspecial = null;                
 
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";
@@ -148,7 +153,6 @@ function construirTabla(data) {
         }
 
         if (p.Producto_id === "Ferrico" && p.Sacas === 1) {
-
             claseMezclador = "M311_destacado";
         }
 
@@ -193,6 +197,7 @@ function construirTabla(data) {
                      data-info='${JSON.stringify(p)}'
                      title="Editar fabricación">
             </td>
+            
             <!--<td>
                      <img src="images/flecha_amarilla_icon_15x20.png"
                      class="icono-transferir"
@@ -202,7 +207,7 @@ function construirTabla(data) {
             
             <td>
                     <!--<img src="images/${p.FechaFinal ? 'flecha_negra_icon_15x20.png' : 'flecha_amarilla_icon_15x20.png'}"-->
-                    <img src="images/${(p.FechaFinal || p.FechaInicioReaccion) ? 'flag_finish.png' : 'flecha_amarilla_icon_15x20.png'}"
+                    <img src="images/${(p.FechaFinal || p.FechaInicioReaccion || p.Producto_id === "Filtrado") ? 'flag_finish.png' : 'flecha_amarilla_icon_15x20.png'}"
                     class="icono-transferir"
                     data-info='${JSON.stringify(p)}'
                     title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">

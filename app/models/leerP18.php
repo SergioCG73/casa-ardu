@@ -20,8 +20,7 @@ $tabla = "p18_terminadas";
 // -----------------------------------------------
 // FUNCIONES COMUNES A CREAR / EDITAR / TRANSFERIR
 // -----------------------------------------------
-function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
-{
+function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas) {
     // Última terminada
     $sql = "SELECT NumeroFabricacion FROM $tablaTerminadas ORDER BY NumeroFabricacion DESC LIMIT 1";
     $stmt = $conexion->prepare($sql);
@@ -54,8 +53,7 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
 
-function obtenerDatosProducto($conexion, $producto)
-{
+function obtenerDatosProducto($conexion, $producto) {
     $numeroProduccion = $_POST["numeroProduccion"] ?? null;
 
     // Equipos
@@ -114,8 +112,6 @@ function obtenerDatosProduccionEnCurso($conexion)
 
     return $produccionCurso;
 }
-
-
 
 // -----------------------------------------------------------
 // MODO CREAR / EDITAR / TRANSFERENCIA MEZCLADOR A REACTOR P18

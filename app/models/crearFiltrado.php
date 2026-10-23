@@ -1,5 +1,7 @@
 <?php
 
+//echo json_encode(["FILE" => __FILE__]); exit;
+
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0);
@@ -7,16 +9,43 @@ ini_set('display_errors', 0);
 
 require_once("miconexion.php");
 
-$fabricaciones = $_POST["fabricaciones"] ?? "";
-$filtradas = $_POST["filtradas"] ?? "";
-$volumenInicial = (int)($_POST["vol_inicial_m216"] ?? 0);
-$volumenAgua = (int)($_POST["vol_agua"] ?? 0);
-$densidad = (float)($_POST["densidad"] ?? 0);
-$riqueza = (float)($_POST["riqueza"] ?? 0);
-$notas = $_POST["notas"] ?? "";
-$deposito = $_POST["deposito"] ?? "";
-$fabricaciones = $_POST["fabricaciones"] ?? "";
-$modo = $_POST["modo"] ?? "";
+// Recibir JSON
+$json = file_get_contents("php://input");
+$data = json_decode($json, true);
+
+/*echo json_encode([
+    "post" => $_POST
+]);
+exit;*/
+
+$densidad                    = floatval($_POST["densidad"] ?? 0);
+$riqueza                     = floatval($_POST["riqueza"] ?? 0);
+$basicidad                   = floatval($_POST["basicidad"] ?? 0);
+$vol_inicial_m216            = floatval($_POST["vol_inicial_m216"] ?? 0);
+$vol_agua                    = $_POST["vol_agua"] ?? 0;
+$observaciones               = $_POST["notas"] ?? null;
+$filtradas                   = $_POST["fabricaciones"] ?? null;
+$deposito                    = $_POST["deposito"] ?? null;
+$estado                      = null;
+$producto                    = "P18";
+
+$producciones = array_map("trim", explode("+", $filtradas));
+
+$producciones = array_filter($producciones, function ($p) {
+    return strtolower($p) !== "restos";
+});
+
+if ($densidad < 1.345 || $densidad > 1.35) {
+    $estado = $estado  + 1;
+}
+
+if ($riqueza < 16 || $riqueza > 18) {
+    $estado = $estado  + 2;
+}
+
+if ($basicidad < 35 || $basicidad > 45) {
+    $estado = $estado  + 1;
+}
 
 function generarID()
 {
@@ -25,111 +54,114 @@ function generarID()
     return $ID;
 }
 
-if ($modo === "laboratorio") {
-    $id = generarID();
+$id = generarID();
 
-    $InsertSQL = "INSERT INTO fabricaciones_en_curso (
+/*echo json_encode([
+    "densidad" => $densidad,
+    "riqueza" => $riqueza,
+    "basicidad" => $basicidad,
+    "notas" => $observaciones,
+    "filtradas" => $filtradas,
+    "producciones" => $producciones,
+    "estado" => $estado,
+    "vol_inicial_m216" => $vol_inicial_m216,
+    "vol_agua" => $vol_agua,
+    "deposito" => $deposito,
+    "ID" => $id
+]);
+exit;*/
+
+$InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
                                 Producto_id,
                                 FechaInicio,
-                                Mezclador, 
-                                Fab_Filtradas,                                
-                                Riqueza, 
-                                Densidad
-                            )
-                            VALUES (
-                                :id,
-                                'Filtrado',
-                                NOW(),  
-                                'M216',                              
-                                :fab,                                
-                                :riqueza,
-                                :densidad
-                                )";
-
-    $stmt = $conexion->prepare($InsertSQL);
-    $stmt->bindParam(":id", $id);    
-    $stmt->bindParam(":fab", $filtradas);    
-    $stmt->bindParam(":riqueza", $riqueza);
-    $stmt->bindParam(":densidad", $densidad);
-    $stmt->execute();
-
-    $TruncateSQL = "TRUNCATE mezclador_216";
-    $stmt = $conexion->prepare($TruncateSQL);
-    $stmt->execute();
-
-} else {
-    //$id = generarID();
-
-    echo json_encode(["producción" => "produccion"]);  exit;
-
-/*    $InsertSQL = "INSERT INTO fabricaciones_en_curso (
-                                NumeroFabricacion, 
-                                Producto_id,
-                                FechaInicio,
-                                Mezclador,
                                 PesoInicialMezclador,
                                 Volumen_Agua,
-                                Fab_Filtradas,
+                                Mezclador, 
                                 Deposito,
-                                Notas,
+                                Fab_Filtradas,                                
                                 Riqueza, 
-                                Densidad
+                                Densidad,
+                                Basicidad,
+                                NotasLab,
+                                EstadoAnalitica                                
                             )
                             VALUES (
                                 :id,
                                 'Filtrado',
                                 NOW(),
-                                'M216',
-                                :pesoM,
+                                :vol_inicial_m216,
                                 :agua,
-                                :fab,
-                                :dep,
-                                :notas,
+                                'M216',
+                                :deposito,                           
+                                :fab,                                
                                 :riqueza,
-                                :densidad
-                                )";*/
-    
-    $UpdateSQL = "UPDATE fabricaciones_en_curso SET                
-                FechaInicioReaccion = NOW(),
-                PesoInicialMezclador = :pesoM,
-                Volumen_Agua = :agua                
-                Deposito = :dep,
-                Notas = :notas
-            WHERE NumeroFabricacion = :id";
+                                :densidad,
+                                :basicidad,
+                                :observaciones,
+                                :estado
+                                )";
 
-    $stmt = $conexion->prepare($InsertSQL);
-    //$stmt->bindParam(":id", $id);
-    $stmt->bindParam(":pesoM", $volumenInicial);
-    $stmt->bindParam(":agua", $volumenAgua);
-    //$stmt->bindParam(":fab", $fabricaciones);
-    $stmt->bindParam(":dep", $deposito);
-    $stmt->bindParam(":notas", $notas);
-    //$stmt->bindParam(":riqueza", $riqueza);
-    //$stmt->bindParam(":densidad", $densidad);
+$stmt = $conexion->prepare($InsertSQL);
+$stmt->bindParam(":id", $id);
+$stmt->bindParam(":fab", $filtradas);
+$stmt->bindParam(":riqueza", $riqueza);
+$stmt->bindParam(":densidad", $densidad);
+$stmt->bindParam(":basicidad", $basicidad);
+$stmt->bindParam(":observaciones", $observaciones);
+$stmt->bindParam(":estado", $estado);
+$stmt->bindParam(":vol_inicial_m216", $vol_inicial_m216);
+$stmt->bindParam(":agua", $vol_agua);
+$stmt->bindParam(":deposito", $deposito);
+$stmt->execute();
+
+// Borrar tabla mezclador_216
+$TruncateSQL = "TRUNCATE mezclador_216";
+$stmt = $conexion->prepare($TruncateSQL);
+//$stmt->execute();
+
+foreach ($producciones as $produccion) {
+    $sql = "UPDATE p18_terminadas
+            SET Densidad = :densidad,
+                Riqueza = :riqueza,
+                Basicidad = :basicidad
+            WHERE NumeroFabricacion = :nf";
+
+    $stmt = $conexion->prepare($sql);
+
+    $stmt->bindParam(":densidad", $densidad);
+    $stmt->bindParam(":riqueza", $riqueza);
+    $stmt->bindParam(":basicidad", $basicidad);
+    $stmt->bindParam(":nf", $produccion);
     $stmt->execute();
-
-    $updateSQL = "UPDATE equipos
-                 SET Estado = 'En uso'
-                 WHERE Equipo_id IN (:mezclador)
-                 OR Equipo_id IN (:dep)";
-
-    $stmt = $conexion->prepare($updateSQL);
-    $stmt->bindValue(":mezclador", "M216");
-    $stmt->bindValue(":dep", $deposito);
-    //$stmt->execute();
 }
+
+// Insertar en tabla: analíticas
+$InsertSQL = "INSERT INTO analiticas
+                    (ID_Analitica, Producto, Fecha, NumeroFabricacion, Densidad, Riqueza, Basicidad, NotasLab, Estado) 
+                    VALUES
+                    (:id, :producto, CURDATE(), :fab, :densidad, :riqueza, :basicidad, :observaciones, :estado)";
+
+$stmt = $conexion->prepare($InsertSQL);
+$stmt->bindParam(":id", $id);
+$stmt->bindParam(":producto", $producto);
+$stmt->bindParam(":fab", $filtradas);
+$stmt->bindParam(":densidad", $densidad);
+$stmt->bindParam(":riqueza", $riqueza);
+$stmt->bindParam(":basicidad", $basicidad);
+$stmt->bindParam(":observaciones", $observaciones);
+$stmt->bindParam(":estado", $estado);
+$stmt->execute();
 
 echo json_encode([
     "ok" => true,
     "id" => $id,
-    "fabricaciones" => $fabricaciones,
-    "volumeninicial" => $volumenInicial,
-    "volumenagua" => $volumenAgua,
+    "filtradas" => $filtradas,
     "densidad" => $densidad,
     "riqueza" => $riqueza,
-    "deposito" => $deposito,
-    "notas" => $notas,
+    "basicidad" => $basicidad,
+    "notasLab" => $observaciones,
+    "estado" => $estado,
     "message" => "Filtración creada correctamente"
 ]);
 exit;

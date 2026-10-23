@@ -5,7 +5,6 @@
 ]); exit;*/
 
 class CrearController {
-
     public function login() {
         require_once __DIR__ . "/../models/login.php";
     }
@@ -25,4 +24,5 @@ class CrearController {
     public function filtrado() {      
         require_once __DIR__ . "/../models/crearFiltrado.php";
     }
+    
 }
