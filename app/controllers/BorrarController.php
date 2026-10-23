@@ -1,8 +1,6 @@
 <?php
 
-/*echo json_encode([
-    "FILE" => __FILE__
-]); exit;*/
+/*echo json_encode(["FILE" => __FILE__]); exit;*/
 
 class BorrarController {
     public function borrarFabricacion() {

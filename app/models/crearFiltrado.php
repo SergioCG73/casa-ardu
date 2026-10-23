@@ -18,7 +18,6 @@ $data = json_decode($json, true);
 ]);
 exit;*/
 
-//$numeroFabricacion = $data["numeroFabricacion"] ?? null;
 $densidad                    = floatval($_POST["densidad"] ?? 0);
 $riqueza                     = floatval($_POST["riqueza"] ?? 0);
 $basicidad                   = floatval($_POST["basicidad"] ?? 0);
@@ -119,10 +118,9 @@ $stmt->execute();
 // Borrar tabla mezclador_216
 $TruncateSQL = "TRUNCATE mezclador_216";
 $stmt = $conexion->prepare($TruncateSQL);
-$stmt->execute();
+//$stmt->execute();
 
 foreach ($producciones as $produccion) {
-
     $sql = "UPDATE p18_terminadas
             SET Densidad = :densidad,
                 Riqueza = :riqueza,

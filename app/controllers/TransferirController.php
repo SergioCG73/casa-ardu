@@ -20,6 +20,7 @@ class TransferirController {
     }
 
     public function filtrado() {
+        //echo json_encode(["FILE" => __FILE__]); exit;
         require_once __DIR__ . "/../models/finFiltracion.php";
     }
 
