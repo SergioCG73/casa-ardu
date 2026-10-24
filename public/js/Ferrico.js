@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const peso_final_mezclador = document.getElementById("peso_final_mezclador");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>    
     const volumen_D111 = document.getElementById("volumen_D111");
+    const contenedorPesoFinal = document.getElementById("peso_final_mezclador");
     let sacas = document.querySelector(".sacas");
 
     let recetaSeleccionada;
@@ -149,6 +150,10 @@ document.addEventListener("DOMContentLoaded", () => {
         datos.append("modo", modo);
         datos.append("producto", producto);
 
+        if (modo === "crear") {
+            console.log("inicializar formulario CREAR"); debugger
+        }
+
         //return fetch("index.php?c=Leer&a=leerferrico", {
         return fetch("index.php?c=Ferrico&a=leer", {
             method: "POST",
@@ -286,8 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==== MODO CREAR ====
     if (modo === "crear") {
-        console.log("Estamos en modo creación");
-        const contenedorPesoFinal = document.getElementById("peso_final_mezclador");
+        console.log("Modo CREAR");
+        //const contenedorPesoFinal = document.getElementById("peso_final_mezclador");
         contenedorPesoFinal.style.display = "none";
 
         inicializarFormulario(modo, producto)
@@ -486,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // MODO TERMINAR
+    //------------------ MODO TERMINAR ----------------------------------------
 
     if (modo === "terminar") {
         console.log("Estamos en modo terminar...");
