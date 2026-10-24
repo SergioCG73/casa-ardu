@@ -11,10 +11,13 @@ require_once("miconexion.php");
 $id = $_POST["id"];
 $restos = $_POST["restos"] ?? 0;
 $fabricaciones = $_POST["fabricaciones"] ?? null;
-$volumenInicial = $_POST["volumenInicial"] ?? null;
-$volumenAgua = $_POST["volumenAgua"] ?? null;
+$volumenInicial = $_POST["vol_inicial_m216"] ?? null;
+$volumenAgua = $_POST["vol_agua"] ?? null;
 $deposito = $_POST["deposito"] ?? null;
 $notas = $_POST["notas"] ?? null;
+$densidad = $_POST["densidad"];
+$riqueza = $_POST["riqueza"];
+$valoracion = $_POST["valoracion"];
 
 $sqlInsert = "INSERT INTO filtraciones_p18 (
 							ID_Filtracion,
@@ -73,7 +76,7 @@ $stmt->bindParam(":notas", $notas);
 $sqlUpdateDeposito = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :dep";
 $stmt = $conexion->prepare($sqlUpdateDeposito);
 $stmt->bindParam(":dep", $deposito);
-$stmt->execute();
+//$stmt->execute();
 
 $sqlUpdateMezclador = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = 'M216'";
 $stmt = $conexion->prepare($sqlUpdateMezclador);
@@ -88,23 +91,21 @@ $sqlTruncate = "TRUNCATE mezclador_216";
 $stmt = $conexion->prepare($sqlTruncate);
 $stmt->execute();
 
-if ($restos > 0) {    
-$sqlInsert = "INSERT INTO mezclador_216 (NumeroFabricacion, Volumen) VALUES (:id, :restos)";
-$stmt = $conexion->prepare($sqlInsert);
-$stmt->bindValue(":id", '0000', PDO::PARAM_STR);
-$stmt->bindValue(":restos", $restos, PDO::PARAM_INT);
-$stmt->execute();
+if ($restos > 0) {
+	$sqlInsert = "INSERT INTO mezclador_216 (NumeroFabricacion, Volumen) VALUES (:id, :restos)";
+	$stmt = $conexion->prepare($sqlInsert);
+	$stmt->bindValue(":id", '0000', PDO::PARAM_STR);
+	$stmt->bindValue(":restos", $restos, PDO::PARAM_INT);
+	$stmt->execute();
 }
 
 echo json_encode([
-    "ok" => true,    
-    "id" => $id,
+	"ok" => true,
+	"id" => $id,
 	"fabricaciones" => $fabricaciones,
 	"vol_inicial" => $volumenInicial,
 	"agua" => $volumenAgua,
 	"restos" => $restos,
 	"notas" => $notas
-]); exit;
-
-
-?>
+]);
+exit;

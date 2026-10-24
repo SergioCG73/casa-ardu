@@ -14,6 +14,7 @@ $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 
 /*echo json_encode([
+    "ok" => true,
     "post" => $_POST
 ]);
 exit;*/
@@ -57,6 +58,7 @@ function generarID()
 $id = generarID();
 
 /*echo json_encode([
+    "ok" => true,
     "densidad" => $densidad,
     "riqueza" => $riqueza,
     "basicidad" => $basicidad,
@@ -68,8 +70,7 @@ $id = generarID();
     "vol_agua" => $vol_agua,
     "deposito" => $deposito,
     "ID" => $id
-]);
-exit;*/
+]); exit;*/
 
 $InsertSQL = "INSERT INTO fabricaciones_en_curso (
                                 NumeroFabricacion, 
@@ -136,6 +137,15 @@ foreach ($producciones as $produccion) {
     $stmt->execute();
 }
 
+//Actualizar depósito
+$updateSQL = "UPDATE equipos
+                     SET Estado = 'En uso'
+                     WHERE Equipo_id IN (:deposito)";
+
+$stmt = $conexion->prepare($updateSQL);
+$stmt->bindParam(":deposito", $deposito, PDO::PARAM_STR);
+$stmt->execute();
+
 // Insertar en tabla: analíticas
 $InsertSQL = "INSERT INTO analiticas
                     (ID_Analitica, Producto, Fecha, NumeroFabricacion, Densidad, Riqueza, Basicidad, NotasLab, Estado) 
@@ -151,7 +161,7 @@ $stmt->bindParam(":riqueza", $riqueza);
 $stmt->bindParam(":basicidad", $basicidad);
 $stmt->bindParam(":observaciones", $observaciones);
 $stmt->bindParam(":estado", $estado);
-$stmt->execute();
+//$stmt->execute();
 
 echo json_encode([
     "ok" => true,

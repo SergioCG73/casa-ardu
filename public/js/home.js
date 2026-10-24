@@ -42,8 +42,10 @@ function init() {
     })
 
     btnFiltrado.addEventListener("click", () => {
-        localStorage.setItem("modo", "filtrado");
-        localStorage.setItem("producto", "P18");
+        /*localStorage.setItem("modo", "filtrado");
+        localStorage.setItem("producto", "P18");*/
+        localStorage.setItem("modo", "crear");
+        localStorage.setItem("producto", "filtrado");
         window.location.href = "index.php?c=Formulario&a=filtrado";        
     })
 
@@ -279,6 +281,11 @@ function activarEventosTabla(tabla) {
             const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
             localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
             localStorage.setItem("modo", "transferir");
+
+            if (datosTransferir.Producto_id === "Filtrado") {
+                localStorage.setItem("modo", "finalizar");
+            }
+
             if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion === null) {
                 console.log(datosTransferir); debugger
                 window.location.href = "index.php?c=Formulario&a=p18";
