@@ -29,6 +29,8 @@ require_once("miconexion.php");
         $sacas = 0;
     }
 
+    
+
     //Validación de datos recibidos
     try {
     //SQL para INSERT datos en fabricaciones_en_curso
