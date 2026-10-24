@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputVolumenInicial = document.querySelector("#volumen_inicial"); //<input>
     const inputVolumenAgua = document.querySelector("#volumen_agua"); //<input>
     const inputRestos = document.querySelector("#input-restos");
+    const inputVolumenDepFinal = document.querySelector("#vol_dep_final"); //<input>
     const labelRestos = document.querySelector("#label-restos");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>
     const modo = localStorage.getItem("modo");
@@ -19,8 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     divfabricaciones.textContent = "Fabricaciones a filtrar: ";
 
-    function inicializarFormulario(modo, datosEdicion) {
-        //console.log(modo, datosEdicion);
+    function inicializarFormulario(modo, datosEdicion) {        
         datosEdicion.modo = modo;
         //console.log(datosEdicion); debugger
 
@@ -28,7 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
         data.append("modo", modo);*/
 
         if (modo === "crear") {
-            console.log(datosEdicion.M216);
+            console.log(datosEdicion.M216); 
+
+            if (datosEdicion.M216 === "Nada que filtrar") {
+                alert("Nada que filtrar");
+                window.location.href = "index.php?c=Formulario&a=home";
+            }
+
+            //Ocultar lab e input de Volumen Final Depósito
+            document.getElementById("label_vol_dep_final").style.display = "none";
+            document.getElementById("vol_dep_final").style.display = "none";
+
             if (Array.isArray(datosEdicion.M216) && datosEdicion.M216.length > 0) {
                 lista = datosEdicion.M216.map(f => f.NumeroFabricacion);
                 const hayRestos = lista.includes("0000");
@@ -64,20 +74,20 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(datosEdicion);
 
             //Desactivar los input                    
-            document.querySelectorAll("#contenedor input, #contenedor select, #contenedor input[type='radio']")
+            /*document.querySelectorAll("#contenedor input, #contenedor select, #contenedor input[type='radio']")
                 .forEach(elemento => elemento.disabled = true);
 
-            document.getElementById("input-restos").disabled = false;
+            document.getElementById("input-restos").disabled = false;*/
 
             btnFiltrar.textContent = "Finalizar";
-            inputDensidad.disabled = false;
+            /*inputDensidad.disabled = false;
             inputRiqueza.disabled = false;
-            inputVolumenAgua.disabled = false;
+            inputVolumenAgua.disabled = false;*/
             divfabricaciones.textContent = `Fabricaciones filtradas: ` + datosEdicion.filtraciones[0].Fab_Filtradas;
             inputDensidad.value = datosEdicion.filtraciones[0].Densidad;
             inputRiqueza.value = datosEdicion.filtraciones[0].Riqueza;
             inputVolumenAgua.value = formatearMiles(datosEdicion.filtraciones[0].Volumen_Agua);
-            inputVolumenInicial.value = formatearMiles(datosEdicion.filtraciones[0].PesoInicialMezclador) //Es el volumen inicial en el formulario
+            inputVolumenInicial.value = formatearMiles(datosEdicion.filtraciones[0].PesoInicialMezclador) //Es el volumen inicial en el formulario                        
             txtNotas.value = datosEdicion.filtraciones[0].NotasLab;
         }
 
@@ -94,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
             //console.log(depositoSeleccionado);                    
         });
 
-        [inputVolumenInicial, inputVolumenAgua, inputRestos].forEach(input => {
+        [inputVolumenInicial, inputVolumenAgua, inputRestos, inputVolumenDepFinal].forEach(input => {
             input.addEventListener("input", () => formatearNumero(input));
         });
     }  //FIN FUNCION inicializarFormulario
@@ -316,10 +326,11 @@ document.addEventListener("DOMContentLoaded", () => {
             datos.append("deposito", depositoSeleccionado);
             datos.append("densidad", inputDensidad.value);
             datos.append("valoracion", datosEdicion.filtraciones[0].EstadoAnalitica);     
-            datos.append("notas", txtNotas.value);            
+            datos.append("notas", txtNotas.value);
+            datos.append("vol_dep_final", vol_dep_final.value);
 
-            /*const objeto = Object.fromEntries(datos.entries());
-            console.log(objeto); debugger*/
+            const objeto = Object.fromEntries(datos.entries());
+            console.log(objeto); debugger
 
             fetch("index.php?c=Transferir&a=filtrado", {
                 method: "POST",

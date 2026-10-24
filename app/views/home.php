@@ -11,10 +11,10 @@
 <body>
     <div name="botonera">
         <button id="btnP18" class="boton">P18</button>
+        <button id="btnFiltrado" class="boton">Filtrado P18</button>
         <button id="btnSulfato" class="boton">Sulfato</button>
         <button id="btnFerrico" class="boton">Férrico</button>
-        <button id="btnHb10" class="boton">HB 10</button>        
-        <button id="btnFiltrado" class="boton">Filtrado</button>
+        <button id="btnHb10" class="boton">HB 10</button>
     </div>
 
     <div id="producciones_en_curso" name="producciones_en_curso" class="producciones_en_curso" style="display:none">

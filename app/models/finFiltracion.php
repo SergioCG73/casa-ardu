@@ -15,9 +15,10 @@ $volumenInicial = $_POST["vol_inicial_m216"] ?? null;
 $volumenAgua = $_POST["vol_agua"] ?? null;
 $deposito = $_POST["deposito"] ?? null;
 $notas = $_POST["notas"] ?? null;
-$densidad = $_POST["densidad"];
-$riqueza = $_POST["riqueza"];
-$valoracion = $_POST["valoracion"];
+$densidad = $_POST["densidad"] ?? null;
+$riqueza = $_POST["riqueza"] ?? null;
+$valoracion = $_POST["valoracion"] ?? null;
+$volDepFinal = $_POST["vol_dep_final"] ?? null;
 
 $sqlInsert = "INSERT INTO filtraciones_p18 (
 							ID_Filtracion,
@@ -71,12 +72,16 @@ $stmt->bindParam(":agua", $volumenAgua);
 $stmt->bindParam(":restos", $restos);
 $stmt->bindParam(":dep", $deposito);
 $stmt->bindParam(":notas", $notas);
-//$stmt->execute();
+$stmt->execute();
 
-$sqlUpdateDeposito = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :dep";
+$sqlUpdateDeposito = "UPDATE equipos SET 
+						Estado = 'Vacio',
+						Volumen = :volumen
+					 WHERE Equipo_id = :dep";
 $stmt = $conexion->prepare($sqlUpdateDeposito);
 $stmt->bindParam(":dep", $deposito);
-//$stmt->execute();
+$stmt->bindParam(":volumen", $volDepFinal);
+$stmt->execute();
 
 $sqlUpdateMezclador = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = 'M216'";
 $stmt = $conexion->prepare($sqlUpdateMezclador);
@@ -85,7 +90,7 @@ $stmt->execute();
 $sqlDelete = "DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :id";
 $stmt = $conexion->prepare($sqlDelete);
 $stmt->bindParam(":id", $id);
-$stmt->execute();              
+$stmt->execute();
 
 $sqlTruncate = "TRUNCATE mezclador_216";
 $stmt = $conexion->prepare($sqlTruncate);
@@ -104,6 +109,7 @@ echo json_encode([
 	"id" => $id,
 	"fabricaciones" => $fabricaciones,
 	"vol_inicial" => $volumenInicial,
+	"vol_deposito" => $volDepFinal,
 	"agua" => $volumenAgua,
 	"restos" => $restos,
 	"notas" => $notas

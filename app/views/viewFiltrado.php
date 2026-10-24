@@ -20,7 +20,7 @@
                     <legend>Analítica</legend>
                     <label>Densidad</label>
                     <input id="densidad" class="densidad">
-                    <br><br><br>
+                    
                     <label>Riqueza</label>
                     <input id="riqueza" class="riqueza">
                 </fieldset>
@@ -30,12 +30,16 @@
                 <fieldset>
                     <legend>Datos Filtrado</legend>
                     <label>Volumen inicial</label>
-                    <input id="volumen_inicial" class="volumen_inicial">
-                    <br><br><br>
+                    <input id="volumen_inicial" class="volumen_inicial">                    
+                    
                     <label>Volumen de agua</label>
                     <input id="volumen_agua" class="volumen_agua">                    
+                    
                     <label id="label-restos">Restos</label>
-                    <input id="input-restos" class="input-restos">                    
+                    <input id="input-restos" class="input-restos"> 
+                    
+                    <label id="label_vol_dep_final">Volumen depósito final</label>             
+                    <input id="vol_dep_final" class="vol_dep_final">
                 </fieldset>
             </div>
 
