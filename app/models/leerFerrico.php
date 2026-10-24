@@ -120,8 +120,8 @@ if (($modo === "crear" || $modo === "editar")) {
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
-        "sacas" => $sacas,
-        "notas" => $notas
+        "sacas" => $sacas,/*
+        "notas" => $notas*/
     ]);
     exit;
 }
