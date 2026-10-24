@@ -95,16 +95,19 @@ async function sePuedeFabricar(producto, data) {
     const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id != "M311" && m.Equipo_id != "M411");
     const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
     const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
+    const mezcladoresDisponiblesFerrico = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio");
 
     // 5. Condiciones de bloqueo
     let tmargen;
     switch (producto) {
         case "P18":
-            tmargen = 11;
+            tmargen = 11; //11am
             break;
         case "Sulfato":
-            tmargen = 14;
+            tmargen = 14; //14pm
             break;
+        case "Ferrico":
+            tmaren = 17; //17pm
         default:
             tmargen = 0; // por si llega un producto inesperado
             break;
@@ -116,23 +119,32 @@ async function sePuedeFabricar(producto, data) {
 
     // 6. Resultado final
     if (producto === "P18" && (
-        viernesTarde ||
-        visperaFestivoTarde ||
-        noHayEquipos)) {
+        viernesTarde ||                                         //Si es viernes tarde y son más de las 11am
+        visperaFestivoTarde ||                                  //Si es víspera de festivo y son más de las 11am
+        noHayEquipos)) {                                        //No hay equipos disponibles    
         console.log("NO se puede fabricar vispera festivo");
         mostrarModal("No se puede fabricar");
         return false;
     }
 
     if (producto === "Sulfato" && (
-        viernesTarde ||
-        visperaFestivoTarde ||
-        reactoresDisponiblesSulfato.length === 0 ||
-        mezcladoresUsados.length != 0)) {
-        console.log("NO se puede fabricar vispera festivo");
+        viernesTarde ||                                             //Si es viernes tarde y son más de las 14pm
+        visperaFestivoTarde ||                                      //Si es víspera de festivo y son más de la 14pm
+        reactoresDisponiblesSulfato.length === 0 ||                 //Si no hay reactores de sulfato disponibles
+        mezcladoresUsados.length != 0)) {                           //???????
+        console.log("NO se puede fabricar víspera festivo");
         mostrarModal("NO se puede fabricar");
         return false;
     }
+
+    if (producto === "Ferrico" && (
+        viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
+        visperaFestivoTarde ||                                                  //Si es víspera de festivo y son más de las 17am
+        mezcladoresDisponiblesFerrico.length === 0)) {                          //Si el M311 no está disponible
+            console.log("NO se puede fabricar por ser víspera de festivo");     
+            mostrarModal("NO se puede fabricar");
+            return false;
+        }
 
     return true;
 }
