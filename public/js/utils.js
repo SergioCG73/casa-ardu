@@ -2,8 +2,11 @@ const nombres = {
     ferrico: "Férrico",
     sulfato: "Sulfato",
     p18: "P18",
-    hb10: "HB10"
+    hb10: "HB10",
+    filtrado: "Filtrado"
 };
+
+console.log("nombres"); debugger
 
 function mostrarModal(mensaje) {
     const modal = document.getElementById("modal");
@@ -79,9 +82,11 @@ async function sePuedeFabricar(producto, data) {
     const horaActual = ahora.getHours();
     const minActual = ahora.getMinutes();
 
-    // 3. Calcular si mañana es festivo
+    // 3. Calcular si mañana es festivo    
     const mañana = new Date(ahora);
     mañana.setDate(ahora.getDate() + 1);
+
+    console.log (mañana); debugger
 
     const yyyy = mañana.getFullYear();
     const mm = String(mañana.getMonth() + 1).padStart(2, "0");
@@ -365,6 +370,3 @@ function recogerDatosAnalitica(producto) {
             };
     }
 }
-
-
-
