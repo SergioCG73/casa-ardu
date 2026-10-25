@@ -1,8 +1,9 @@
 <?php
 
 /*echo json_encode([
-    "FILE" => __FILE__
-]); exit;*/
+    "file" => __FILE__
+]);
+exit;*/
 
 class CrearController {
     public function login() {
@@ -17,7 +18,7 @@ class CrearController {
         require_once __DIR__ . "/../models/crearSulfato.php";
     }
 
-    public function ferrico() {
+    public function ferrico() {        
         require_once __DIR__ . "/../models/crearFerrico.php";
     }
 
