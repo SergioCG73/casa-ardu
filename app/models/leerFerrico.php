@@ -1,8 +1,6 @@
 <?php
 
-/*echo json_encode([
-    "file" => __FILE__
-]); exit;*/
+//echo json_encode(["FILE" => __FILE__]); exit;
 
 ob_clean();
 header('Content-Type: application/json; charset=utf-8');
@@ -18,7 +16,9 @@ $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 $tabla = "ferrico_terminadas";
 //$numeroProduccion = $_POST["numeroProduccion "] ?? "";
 
-//echo json_encode(["modo", $modo]); exit;
+/*echo json_encode(["modo" => $modo,
+                  "producto" => $producto
+]); exit;*/
 
 function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
 {
@@ -98,7 +98,6 @@ function obtenerDatosProducto($conexion, $producto)
         return [$equipos, $recetas];
     }
 }
-
 
 if (($modo === "crear" || $modo === "editar")) {
 
