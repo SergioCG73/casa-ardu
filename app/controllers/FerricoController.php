@@ -2,6 +2,7 @@
 
 class FerricoController {
     public function crear() {
+        echo json_encode(["LINE" => __LINE__]); exit;
         require_once __DIR__ . "/../models/crearFerrico.php";
     }
 
