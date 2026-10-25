@@ -27,37 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     divPesoFinalMezclador.style.display = "none";
     producto = "Ferrico";
 
-    //const datosTransferencia = localStorage.getItem("datosTransferencia"); 
-    //console.log(datosTransferencia); debugger    
-
-    // ===== INICIO ZONA DE FUNCIONES ======
-
-    /*function desactivarValidaciones() {
-        peso_inicial_mezclador.required = false;
-    }
-
-    function mostrarModal(mensaje) {
-        const modal = document.getElementById("modal");
-        document.getElementById("modalMsg").textContent = mensaje;
-        modal.hidden = false;
-        modal.style.display = "flex";
-    }
-
-    function cerrarModal() {
-        const modal = document.getElementById("modal");
-        modal.hidden = true;
-        modal.style.display = "none";
-        //window.location.href = "index.php";
-        window.location.href = "index.php?c=Formulario&a=home";        
-
-    }
-        
-    function formatearNumero(input) {
-        let valor = input.value.replace(/\D/g, "");
-        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        input.value = valor;
-    }*/
-
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
     function inicializarFormulario(modo, producto, datosEdicion = null) {
@@ -68,32 +37,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (modo === "crear") {
             console.log("inicializar formulario CREAR"); debugger
             contenedorPesoFinal.style.display = "none";
-
-
         }
 
-        //return fetch("index.php?c=Leer&a=leerferrico", {
         return fetch("index.php?c=Ferrico&a=leer", {
             method: "POST",
             body: datos
         })
             .then(response => response.json())
-            .then(data => {
-                //console.log(data); debugger
+            .then(data => {        
                 sacasEstado = data.sacas ? Number(data.sacas.Sacas) : null;
-                /*if (modo === "editar") {
-                    data.notas = datosEdicion.Notas;
-                } */
-
-
-                /*if (modo === "crear") {
-                    numeroProduccion = Math.max(data.ultimaAcabada, data.ultimaEnCurso) + 1;
-                }
-
-                numeroProduccion = (modo === "editar" || modo === "transferir" || modo === "terminar")
-                    ? data.ultimaAcabada
-                    : data.siguienteFabricacion;*/
-
+                
                 if (modo === "crear") {
                     numeroProduccion = Math.max(data.ultimaAcabada, data.ultimaEnCurso) + 1;
                 }
@@ -103,10 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 else {
                     numeroProduccion = data.siguienteFabricacion;
                 }
-
-
-                //data.ultimaEnCurso = Number(data.ultimaEnCurso);
-
 
                 // ==== VALOR INICIAL DEL CHECKBOX ====
                 if (data.sacas && data.sacas.Sacas == 1) {
@@ -127,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 listaDepositos = data.equipos.filter(d => d.Tipo === "Deposito");
 
                 generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo);
+
                 //==== RECETAS ====                
                 const contenedorRecetas = document.querySelector("#recetas .radio-group");
                 contenedorRecetas.innerHTML = "";
@@ -193,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return data;
             });
     }
-
 
     function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo) {
         //console.log(listaMezcladores); debugger
@@ -289,15 +238,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==== BOTÓN RETROCEDER ====
 
-    btnRetroceder.addEventListener("click", () => {
-        //window.location.href = "index.php";
+    btnRetroceder.addEventListener("click", () => {        
         window.location.href = "index.php?c=Formulario&a=home";
     });
 
     // ==== MODO CREAR ====
     if (modo === "crear") {
-        console.log("Modo CREAR");
-        //const contenedorPesoFinal = document.getElementById("peso_final_mezclador");
+        console.log("Modo CREAR");        
 
         fetch("index.php?c=Ferrico&a=leer", {
             method: "POST",
@@ -312,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(error => console.log("ERROR", error));
     };
 
-
     inicializarFormulario(modo, producto)
         .then(data => {
             //console.log(data); debugger
@@ -325,17 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     alert("Introduzca un peso inicial para el mezclador");
                     return;
                 }
-
-                /*const ahora = new Date();
-    
-                const fechaHoraInicio =
-                    ahora.getFullYear() + "-" +
-                    String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
-                    String(ahora.getDate()).padStart(2, '0') + " " +
-                    String(ahora.getHours()).padStart(2, '0') + ":" +
-                    String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                    String(ahora.getSeconds()).padStart(2, '0');*/
-
+      
                 const mezcladorMarcado = document.querySelector("input[name='mezclador']:checked");
                 if (mezcladorMarcado) mezcladorSeleccionado = mezcladorMarcado.value;
 
@@ -357,8 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 //console.log(sacas.value); debugger                    
 
                 const datosEnviar = new FormData();
-                datosEnviar.append("numeroProduccion", numeroProduccion);
-                //datosEnviar.append("fechaHoraInicio", fechaHoraInicio);
+                datosEnviar.append("numeroProduccion", numeroProduccion);                
                 datosEnviar.append("mezclador", mezcladorSeleccionado);
                 datosEnviar.append("receta", recetaMarcada.value);
                 datosEnviar.append("pesoInicialMezclador", pesoLimpio);
@@ -367,8 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 /*const objeto = Object.fromEntries(datosEnviar.entries());
                 console.log(objeto); debugger*/
-
-                //fetch("index.php?c=Crear&a=ferrico", {
+                
                 fetch("index.php?c=Ferrico&a=crear", {
                     method: "POST",
                     body: datosEnviar
@@ -382,15 +316,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         })
         .catch(error => console.log("ERROR", error));
-}
 
 // ==== MODO EDITAR ====
 if (modo === "editar") {
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
     //console.log(datosEdicion); debugger
     btnCrear.textContent = "Editar";
-    const contenedorPesoFinal = document.querySelector(".peso-final");
-    //contenedorPesoFinal.innerHTML = "";
+    const contenedorPesoFinal = document.querySelector(".peso-final");    
 
     inicializarFormulario(modo, producto, datosEdicion)
         .then(() => {
@@ -418,8 +350,7 @@ if (modo === "editar") {
 
                 /*const objeto = Object.fromEntries(data.entries());
                 console.log(objeto); debugger*/
-
-                //fetch("index.php?c=Editar&a=fabCurso", {
+                
                 fetch("index.php?c=Ferrico&a=editar", {
                     method: "POST",
                     body: data
@@ -453,16 +384,7 @@ if (modo === "transferir") {
 
                 // === Fechas de Inicio y Final producción
                 const fechaHoraInicio = datosTransferir.FechaInicio;
-
-                /*const ahora = new Date();
-                const fechaHoraFinal = ahora.getFullYear() + "-" +
-                    String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
-                    String(ahora.getDate()).padStart(2, '0') + " " +
-                    String(ahora.getHours()).padStart(2, '0') + ":" +
-                    String(ahora.getMinutes()).padStart(2, '0') + ":" +
-                    String(ahora.getSeconds()).padStart(2, '0');*/
-
-
+                
                 if (!PesoInicialEditado || isNaN(PesoInicialEditado)) {
                     alert("Falta peso inicial");
                     return;
@@ -482,8 +404,6 @@ if (modo === "transferir") {
                 data.append("numeroProduccion", datosTransferir.NumeroFabricacion);
                 data.append("mezclador", mezcladorSeleccionado);
                 data.append("receta", recetaSeleccionada);
-                //data.append("fechaHoraInicio", fechaHoraInicio);
-                //data.append("fechaHoraFinal", fechaHoraFinal);
                 data.append("pesoInicialMezclador", PesoInicialEditado);
                 data.append("pesoFinalMezclador", PesoFinalEditado);
                 data.append("notas", txtNotas.value);
@@ -492,8 +412,7 @@ if (modo === "transferir") {
 
                 /*const objeto = Object.fromEntries(data.entries());
                 console.log(objeto); debugger*/
-
-                //fetch("index.php?c=Transferir&a=transferirFerrico", {
+                
                 fetch("index.php?c=Ferrico&a=transferir", {
                     method: "POST",
                     body: data
@@ -546,7 +465,6 @@ if (modo === "terminar") {
                 const objeto = Object.fromEntries(data.entries());
                 console.log(objeto); debugger
 
-                //fetch("index.php?c=Transferir&a=transferirFerrico", {
                 fetch("index.php?c=Ferrico&a=transferir", {
                     method: "POST",
                     body: data
