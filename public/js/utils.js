@@ -6,7 +6,103 @@ const nombres = {
     filtrado: "Filtrado"
 };
 
-console.log("nombres"); debugger
+
+function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo) {
+    //console.log(listaMezcladores); debugger
+    listaMezcladores.forEach(mezclador => {
+        const id = "mezclador_" + mezclador.Equipo_id;
+
+        const label = document.createElement("label");
+        label.className = "radio-label";
+        label.htmlFor = id;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "mezclador";
+        input.id = id;
+        input.value = mezclador.Equipo_id;
+
+        //Si sólo hay un mezclador, seleccionarlo
+        if (listaMezcladores.length === 1) {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+
+        // Si algún mezclador está en uso, seleccionarlo
+        if (mezclador.Estado === "En uso") {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+
+        if (mezclador.Estado === "En uso") {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(mezclador.Equipo_id));
+
+        contenedorMezcladores.appendChild(label);        
+    });
+}
+
+function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
+    listaRecetas.forEach((receta, index) => {
+        const id = `R${index + 1}_p18`;
+
+        const label = document.createElement("label");
+        label.className = "radio-label";
+        label.htmlFor = id;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "receta";
+        input.id = id;
+        input.value = receta.NombreReceta;
+
+        if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.Receta == receta.NombreReceta) {
+            input.checked = true;
+            recetaSeleccionada = receta.NombreReceta;
+        }
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(receta.NombreReceta));
+
+        contenedorRecetas.appendChild(label);
+    });
+}
+
+function generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion) {
+    //console.log(listaDepositos); debugger
+    const radioGroup = divDepositos.querySelector(".radio-group");
+    radioGroup.innerHTML = "";
+
+    listaDepositos.forEach((depositos, index) => {
+        const id = `Dep${index + 1}_Ferrico`;
+
+        const label = document.createElement("label");
+        label.className = "radio-label";
+        label.htmlFor = id;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "deposito";
+        input.id = id;
+        input.value = depositos.Equipo_id;
+
+        if (listaDepositos.length === 1) {
+            input.checked = true;
+            depositoSeleccionado = depositos.Equipo_id;  // ← SOLUCIÓN
+        }
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(depositos.Equipo_id));
+
+        radioGroup.appendChild(label);
+    });
+}
+
+
 
 function mostrarModal(mensaje) {
     const modal = document.getElementById("modal");
@@ -52,6 +148,10 @@ function formatearMiles(num) {
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+function quitarPuntoMiles(valor) {
+    return valor.replace(/\./g, "");
+}
+
 function formatearFecha(fechaStr) {
     if (!fechaStr) return "";
 
@@ -86,7 +186,7 @@ async function sePuedeFabricar(producto, data) {
     const mañana = new Date(ahora);
     mañana.setDate(ahora.getDate() + 1);
 
-    console.log (mañana); debugger
+    console.log(mañana); debugger
 
     const yyyy = mañana.getFullYear();
     const mm = String(mañana.getMonth() + 1).padStart(2, "0");
@@ -146,10 +246,10 @@ async function sePuedeFabricar(producto, data) {
         viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
         visperaFestivoTarde ||                                                  //Si es víspera de festivo y son más de las 17am
         mezcladoresDisponiblesFerrico.length === 0)) {                          //Si el M311 no está disponible
-            console.log("NO se puede fabricar por ser víspera de festivo");     
-            mostrarModal("NO se puede fabricar");
-            return false;
-        }
+        console.log("NO se puede fabricar por ser víspera de festivo");
+        mostrarModal("NO se puede fabricar");
+        return false;
+    }
 
     return true;
 }
@@ -190,23 +290,23 @@ async function configurarBuscador() {
     // =============================
     /*const selectCantidad = document.getElementById("cantidad");
     selectCantidad.innerHTML = "";
-
+ 
     const minCant = config.limitesSelect.inferior;
     const maxCant = config.limitesSelect.superior;
-
+ 
     for (let i = minCant; i <= maxCant; i++) {
         const option = document.createElement("option");
         option.value = i;
         option.textContent = i;
         selectCantidad.appendChild(option);
     }
-
+ 
     selectCantidad.value = 5;*/
 
     // =====================
     // 3. Limitar date Desde
     // =====================
-    const dateDesde = document.getElementById("desde");    
+    const dateDesde = document.getElementById("desde");
 
     if (config.fechas.minDesde) {
         dateDesde.min = config.fechas.minDesde;
@@ -255,7 +355,7 @@ async function obtenerAnaliticas(productosSeleccionados = [], desde = null, hast
                 buscador,
                 valorMin,
                 valorMax,
-                pagina,       
+                pagina,
                 porPagina
             })
         });
