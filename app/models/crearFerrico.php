@@ -56,15 +56,15 @@ try {
 
     $updateStmt = $conexion->prepare($updateSQL);
     $updateStmt->bindParam(":Mezclador", $mezclador, PDO::PARAM_STR);
-    //$updateStmt->execute();
+    $updateStmt->execute();
 
     echo json_encode([
         "ok" => true,
         "numeroProduccion" => $numeroProduccion,
-        "mezclador" => $mezclador,        
+        "mezclador" => $mezclador,
         "pesoInicialMezclador" => $pesoInicialMezclador,
         "receta" => $receta,
-        "sacas" => $sacas, 
+        "sacas" => $sacas,
         "notas" => $notas,
         "message" => "Datos guardados correctamente"
     ]);
