@@ -24,32 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
 
-    // ===== FUNCIONES =====
-    /* function mostrarModal(mensaje) {
-         const modal = document.getElementById("modal");
-         document.getElementById("modalMsg").textContent = mensaje;
-         modal.hidden = false;
-         modal.style.display = "flex";
-     }
- 
-     function cerrarModal() {
-         const modal = document.getElementById("modal");
-         modal.hidden = true;
-         modal.style.display = "none";
-         //window.location.href = "index.php";
-         window.location.href = "index.php?c=Formulario&a=home";
-     }    
- 
-     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
- 
-     function formatearNumero(input) {
-         let valor = input.value;
-         if (valor == null) return;
-         valor = String(valor).replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-         input.value = valor;
-         return valor;
-     }*/
-
     document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
 
     function generarRadiosMezcladores(mezcladores, datosEdicion, modo) {
@@ -239,12 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     generarRadiosMezcladores(mezcladoresEditar, datosTransferencia, modo);
                 }
 
-                // ===== RECETAS ====
-
-                /*if (modo === "terminar") {
-                    console.log(data); debugger
-                    data.recetas = data;
-                }*/
+                // ===== RECETAS ====                
 
                 if (modo === "terminar") {
                     generarRadiosRecetas(data.recetas, datosTransferencia, modo);
@@ -252,13 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     generarRadiosRecetas(data.recetas, datosEdicion, modo);
                 }
 
-                /*if (modo === "transferir") {
-                    generarRadiosRecetas(data.recetas, datosEdicion, modo);
-                }*/
-
                 // ===== REACTORES =====
                 if (modo === "terminar") {
-                    //datosEdicion = data.produccionCurso;
                     datosEdicion = datosTransferencia;
                 }
 
@@ -268,8 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // === DATOS INICIALES FORMULARIO === 
                 if (datosEdicion) {
                     if (modo === "terminar") {
-                        console.log(datosEdicion); debugger
-                        //peso_inicial_mezclador.value = data.produccionCurso.PesoInicialMezclador;
+                        console.log(datosEdicion);
                         peso_inicial_mezclador.value = datosEdicion.PesoInicialMezclador;
                         peso_final_mezclador.value = datosEdicion.PesoFinalMezclador;
                         peso_inicial_reactor.value = datosEdicion.PesoInicialReactor;
@@ -330,8 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const valNotas = txtNotas.value;
 
-                    const datosEnviar = new FormData();
-                    //datosEnviar.append("numeroProduccion", numeroProduccionActual);
+                    const datosEnviar = new FormData();                    
                     datosEnviar.append("numeroProduccion", numeroProduccion);
                     datosEnviar.append("mezclador", mezcladorSeleccionado);
                     datosEnviar.append("receta", recetaSeleccionada);
