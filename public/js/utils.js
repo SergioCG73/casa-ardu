@@ -42,11 +42,12 @@ function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo)
         label.appendChild(input);
         label.appendChild(document.createTextNode(mezclador.Equipo_id));
 
-        contenedorMezcladores.appendChild(label);        
+        contenedorMezcladores.appendChild(label);
     });
 }
 
 function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
+    //console.log(listaRecetas); debugger
     listaRecetas.forEach((receta, index) => {
         const id = `R${index + 1}_p18`;
 
@@ -60,11 +61,11 @@ function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicio
         input.id = id;
         input.value = receta.NombreReceta;
 
-        if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.Receta == receta.NombreReceta) {
+        if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.receta == receta.NombreReceta) {
             input.checked = true;
             recetaSeleccionada = receta.NombreReceta;
-        }
-
+        } 
+        
         label.appendChild(input);
         label.appendChild(document.createTextNode(receta.NombreReceta));
 
