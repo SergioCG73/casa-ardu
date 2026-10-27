@@ -10,10 +10,10 @@ function init() {
     const divProducciones = document.getElementById("producciones_en_curso");
     const displayM216 = document.getElementById("displayM216");
 
-    localStorage.setItem("modo", "inicial");    
+    localStorage.setItem("modo", "inicial");
 
     if (ROL_USUARIO === "LAB") {
-        console.log("MODO LABORATORIO");            
+        console.log("MODO LABORATORIO");
         window.location.href = "index.php?c=Formulario&a=laboratorio";
     }
 
@@ -46,7 +46,7 @@ function init() {
         localStorage.setItem("producto", "P18");*/
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "filtrado");
-        window.location.href = "index.php?c=Formulario&a=filtrado";        
+        window.location.href = "index.php?c=Formulario&a=filtrado";
     })
 
     cargarProducciones(tabla, divProducciones);
@@ -60,7 +60,7 @@ function init() {
 /* ============================================================
    CARGAR DATOS DESDE PHP
    ============================================================ */
-function cargarProducciones(tabla, divProducciones) {    
+function cargarProducciones(tabla, divProducciones) {
     fetch("index.php?c=Leer&a=lectura", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ function cargarProducciones(tabla, divProducciones) {
 
             divProducciones.style.display = "block";
 
-            let claseEspecial = null;                
+            let claseEspecial = null;
 
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";
@@ -235,14 +235,16 @@ function activarEventosTabla(tabla) {
         const iconoEditar = e.target.closest(".icono-editar, .icono-nota");
         if (iconoEditar) {
             const datos = JSON.parse(iconoEditar.dataset.info);
-            //console.log(datos); debugger
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
+            /*console.log(localStorage.getItem("datosEditables"));
+            console.log(localStorage.getItem("modo")); debugger*/            
             if (datos.Producto_id === "Sulfato") {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datos.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
             } else if (datos.Producto_id === "Ferrico") {
+                console.log(datos);
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             } else if (datos.Producto_id === "Filtrado") {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
@@ -289,22 +291,22 @@ function activarEventosTabla(tabla) {
             if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion === null) {
                 console.log(datosTransferir); debugger
                 window.location.href = "index.php?c=Formulario&a=p18";
-            }  else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {
+            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal === null) {
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             } else if (datosTransferir.Producto_id === "Filtrado") {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
-            } else if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion !== null){
+            } else if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion !== null) {
                 localStorage.setItem("modo", "terminar");
                 window.location.href = "index.php?c=Formulario&a=p18";
-            }else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal) {
+            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal) {
                 localStorage.setItem("modo", "terminar")
                 window.location.href = "index.php?c=Formulario&a=sulfato";
-            } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal) {                
+            } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal) {
                 localStorage.setItem("modo", "terminar");
                 window.location.href = "index.php?c=Formulario&a=ferrico";
-            } 
+            }
 
             return;
         }
