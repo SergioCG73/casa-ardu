@@ -15,10 +15,13 @@ $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 $tabla = "ferrico_terminadas";
 $numeroProduccion = $_POST["numeroProduccion"] ?? "";
+$receta = $_POST["receta"] ?? "Receta 1";
 
 /*echo json_encode(["modo" => $modo,
                   "producto" => $producto,
-                  "numeroProduccion" => $numeroProduccion
+                  "numeroProduccion" => $numeroProduccion,
+                  "receta" => $receta,
+                  "LINE" => __LINE__
 ]); exit;*/
 
 function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
@@ -139,6 +142,20 @@ function obtenerDatosProducto($conexion, $producto, $modo)
     }
 }
 
+function obtenerDatosProduccionEnCurso($conexion)
+{
+    $numeroProduccion = $_POST["numeroProduccion"] ?? null;
+
+    // Produccion en curso
+    $sqlSelect = "SELECT * FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
+    $stmt = $conexion->prepare($sqlSelect);
+    $stmt->bindParam(":nf", $numeroProduccion);
+    $stmt->execute();
+    $produccionCurso = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    /*echo json_encode(["produccionCurso" => $produccionCurso]); exit;*/
+    return $produccionCurso;
+}
 
 // ENVIAR JSON
 if ($modo === "crear") {
@@ -162,21 +179,9 @@ if ($modo === "crear") {
         "ultimaEnCurso" => $ultimaEnCurso,
         "sacas" => $sacas,/*
         "notas" => $notas*/
-    ]); exit;
-} /*else if ($modo === "editar") {
-    echo json_encode([
-        "ok" => true,
-        "LINE" => __LINE__,
-        "modo" => $modo,
-        "producto" => $producto,
-        "equipos" => $equipos, 
-        "recetas" => $recetas,       
-        "tabla" => $tabla,
-        "numeroFabricacion" => $numeroProduccion
     ]);
     exit;
-}*/
-
+} 
 
 if ($modo === "editar") {
     list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
@@ -186,6 +191,7 @@ if ($modo === "editar") {
         : max($ultimaAcabada, $ultimaEnCurso) + 1;
 
     list($equipos, $recetas, $sacas, $fabricacionesEnCurso) = obtenerDatosProducto($conexion, $producto, $modo);
+    $produccionEnCurso = obtenerDatosProduccionEnCurso($conexion);
 
     echo json_encode([
         "ok" => true,
@@ -195,9 +201,11 @@ if ($modo === "editar") {
         "equipos" => $equipos,
         "recetas" => $recetas,
         "tabla" => $tabla,
-        "numeroFabricacion" => $numeroProduccion,        
+        "numeroFabricacion" => $numeroProduccion,
         "sacas" => $sacas,
-        "fabricacionesEnCurso" => $fabricacionesEnCurso
+        "receta" => $receta,
+        "fabricacionesEnCurso" => $fabricacionesEnCurso,
+        "produccionesEnCurso" => $produccionEnCurso
     ]);
     exit;
 }
