@@ -127,6 +127,16 @@ document.addEventListener("DOMContentLoaded", () => {
             input.id = id;
             input.value = receta.NombreReceta;
 
+
+            //BORRRAR---------------
+            console.log(datosEdicion);
+            console.log(receta.NombreReceta);
+            //console.log(datosEdicion.recetas);
+            console.log(input.value);
+            //--------------
+
+
+
             if (datosEdicion && datosEdicion.Receta == receta.NombreReceta) {
                 input.checked = true;
                 recetaSeleccionada = receta.NombreReceta;
@@ -293,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const valNotas = txtNotas.value;
 
-                    const datosEnviar = new FormData();                    
+                    const datosEnviar = new FormData();
                     datosEnviar.append("numeroProduccion", numeroProduccion);
                     datosEnviar.append("mezclador", mezcladorSeleccionado);
                     datosEnviar.append("receta", recetaSeleccionada);
