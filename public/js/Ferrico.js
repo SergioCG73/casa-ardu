@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
 
     // === DECLARACION CONSTANTES ===
@@ -18,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const txtNotas = document.getElementById("txtnotas"); //<textarea>
     const volumen_D111 = document.getElementById("volumen_D111");
     const datosTabla = JSON.parse(localStorage.getItem("datosEditables"));
+    const inputSacas = document.getElementById("sacas");
 
     // === DECLARACION VARIABLES ===
 
@@ -61,11 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
             btnCrear.textContent = "Editar";
             console.log("inicializarFormulario --> editar");
             contenedorPesoFinal.style.display = "none";
-            sacasEstado = datosEdicion.sacas;   //sacasEstado = false            
+            sacasEstado = datosEdicion.produccionesEnCurso.Sacas;   //sacasEstado = false
 
             numeroProduccionActual = Number(datosTabla.NumeroFabricacion);
             displayProduccion.textContent = numeroProduccionActual;
         }
+
+        // ===MARCAS CHECKBOX SACAS ===//        
+        inputSacas.checked = Number(sacasEstado) === 1;
 
         // === GENERAR RADIOS MEZCLADORES ==== //
         contenedorMezcladores.innerHTML = "";
@@ -101,54 +104,67 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         //==== CARGAR DATOS EN EL FORMULARIO ====        
-        if (modo === "editar") {            
+        if (modo === "editar" || modo === "transferir") {
+            console.log(`${modo}`); debugger
             console.log(datosEdicion);
             console.log(datosEdicion.produccionesEnCurso.Sacas);
             peso_inicial_mezclador.value = datosEdicion.produccionesEnCurso.PesoInicialMezclador;
             txtNotas.value = datosEdicion.produccionesEnCurso.Notas;
-            sacas.value = datosEdicion.produccionesEnCurso.Sacas;
-            debugger
+            //sacas.value = datosEdicion.produccionesEnCurso.Sacas;            
         };
 
+        //=== ACCION AL PULSAR CLICK en CREAR O EDITAR ===//
 
-        btnCrear.addEventListener("click", () => {
-            console.log("click en botón CREAR");
+        if (modo === "crear" | modo === "editar") {
 
-            //Para obtener el mezclador y receta seleccionados. Si no pones este código da problemas al aparecer marcado si solo hay un mezclador
-            const mezcladorSeleccionado = document.querySelector("input[name='mezclador']:checked");
+            btnCrear.addEventListener("click", () => {
+                console.log(`click en botón ${modo.toUpperCase()}`);
 
-            if (peso_inicial_mezclador.value === "") {
-                alert("Introduzca un peso válido");
-                return;
-            }
+                //Obtener el mezclador seleccionado
+                const mezcladorSeleccionado = document.querySelector("input[name='mezclador']:checked");
 
-            if (!mezcladorSeleccionado) {
-                alert("Seleccione un mezclador");
-                return;
-            }
+                //Validar peso inicial
+                if (peso_inicial_mezclador.value === "") {
+                    alert("Introduzca un peso válido");
+                    return;
+                }
 
-            const recetaSeleccionada = document.querySelector("input[name='receta']:checked");
+                //Validar el mezclador
+                if (!mezcladorSeleccionado) {
+                    alert("Seleccione un mezclador");
+                    return;
+                }
 
-            if (!recetaSeleccionada) {
-                alert("Seleccione una receta");
-                return;
-            }
+                //Obtener y validar la receta seleccionada
+                const recetaSeleccionada = document.querySelector("input[name='receta']:checked");
 
-            datos = new FormData();
-            datos.append("numeroProduccion", numeroProduccionActual);
-            datos.append("mezclador", mezcladorSeleccionado.value);
-            datos.append("pesoInicialMezclador", quitarPuntoMiles(peso_inicial_mezclador.value));
-            datos.append("receta", recetaSeleccionada.value);
-            datos.append("sacas", sacasEstado);  //Envia false si no está seleccionado el checkbox y envia 1 si está seleccionado el checkbox
-            datos.append("notas", txtNotas.value);
-            datos.append("producto", producto);
+                if (!recetaSeleccionada) {
+                    alert("Seleccione una receta");
+                    return;
+                }
 
-            /*const objeto = Object.fromEntries(datos.entries());
-            console.log(objeto); debugger*/
+                //Crear los datos del formulario
+                datos = new FormData();
+                datos.append("numeroProduccion", numeroProduccionActual);
+                datos.append("mezclador", mezcladorSeleccionado.value);
+                datos.append("pesoInicialMezclador", quitarPuntoMiles(peso_inicial_mezclador.value));
+                datos.append("receta", recetaSeleccionada.value);
+                datos.append("sacas", sacasEstado);  //Envia false si no está seleccionado el checkbox y envia 1 si está seleccionado el checkbox
+                datos.append("notas", txtNotas.value);
+                datos.append("producto", producto);
 
-            if (modo === "crear") { //Este if se ejecuta cuando el usuario hace click en Crear
-                console.log("fetch crear");
-                fetch("index.php?c=Crear&a=ferrico", {
+                /*const objeto = Object.fromEntries(datos.entries());
+                console.log(objeto); debugger*/
+
+                //Seleccionar la URL según el modo                
+                const url = modo === "crear"
+                    ? "index.php?c=Crear&a=ferrico"
+                    : "index.php?c=Editar&a=fabCurso";
+
+                console.log(`fetch ${modo}`);
+
+                //Enviar datos al servidor
+                fetch(url, {
                     method: "POST",
                     body: datos
                 })
@@ -157,12 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.log(json);
                         window.location.href = "index.php?c=Formulario&a=home";
                     })
-                    .catch(error => { console.log("error: ", error) });
-            }
-
-        });
-
+                    .catch(error => {
+                        console.log("error ", error);
+                    });
+            });
+        }
     }
+
     // ===== FIN ZONA DE FUNCIONES ======
 
     [peso_inicial_mezclador, peso_final_mezclador, volumen_D111].forEach(input => {
@@ -206,6 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    //=== MODO EDITAR ===
     if (modo === "editar") {
         console.log("modo editar...");
         console.log(datosTabla);
@@ -242,8 +260,27 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    //=== MODO TRANSFERIR ===
+    if (modo === "transferir") {
+        console.log(`${modo}`);
+        console.log(datosTabla);
+
+        const datos = new FormData();
+        datos.append("modo", modo);
+        datos.append("producto", producto);
+        datos.append("numeroProduccion", datosTabla.NumeroFabricacion);
+        datos.append("receta", datosTabla.Receta);
+
+        /*const objeto = Object.fromEntries(datos.entries());
+        console.log(objeto);*/
+
+        fetch("index.php?c=Ferrico&a=transferir", {
+            
+
+        })
 
 
-
+        debugger
+    }
 
 });
