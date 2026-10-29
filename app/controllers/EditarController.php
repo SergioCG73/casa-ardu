@@ -11,4 +11,8 @@ class EditarController {
         //echo json_encode(["FILE" => __FILE__]); exit;
         require_once __DIR__ . "/../models/editarFiltrado.php";
     }
+
+    public function ferrico() {
+        //echo json_encode(["FILE" => __FILE__]); exit;
+    }
 }
