@@ -58,7 +58,7 @@
 
             <div class="sacas-container">
                 <label class="sacas-label">
-                    <input type="checkbox" class="sacas" name="sacas" value="1">
+                    <input type="checkbox" id="sacas" class="sacas" name="sacas" value="1">
                     <span>Sacas dosificadas</span>
                 </label>
             </div>
