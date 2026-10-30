@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === FUNCIONES ===
     function inicializarFormulario(modo, producto, datosEdicion) {
-        console.log("--- inicializarFormulario ---");
+        console.log("--- inicializarFormulario ---");        
 
         // --- DATOS A CARGAR EN EL FORMULARIO 
         if (modo === "crear") {
@@ -61,8 +61,19 @@ document.addEventListener("DOMContentLoaded", () => {
             btnCrear.textContent = "Editar";
             console.log("inicializarFormulario --> editar");
             contenedorPesoFinal.style.display = "none";
-            sacasEstado = datosEdicion.produccionesEnCurso.Sacas;   //sacasEstado = false
+            sacasEstado = datosEdicion.produccionesEnCurso.Sacas;   
 
+            numeroProduccionActual = Number(datosTabla.NumeroFabricacion);
+            displayProduccion.textContent = numeroProduccionActual;
+        }
+
+        if (modo === "transferir") {
+            console.log(datosEdicion);
+            btnCrear.textContent = "Transferir";
+            console.log("inicializarFormulario --> transferir");            
+            console.log(contenedorPesoFinal);
+            contenedorPesoFinal.style.display = "block";
+            sacasEstado = datosEdicion.produccionesEnCurso.Sacas;
             numeroProduccionActual = Number(datosTabla.NumeroFabricacion);
             displayProduccion.textContent = numeroProduccionActual;
         }
@@ -105,13 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //==== CARGAR DATOS EN EL FORMULARIO ====        
         if (modo === "editar" || modo === "transferir") {
-            console.log(`${modo}`); debugger
+            console.log(`${modo}`);
             console.log(datosEdicion);
             console.log(datosEdicion.produccionesEnCurso.Sacas);
             peso_inicial_mezclador.value = datosEdicion.produccionesEnCurso.PesoInicialMezclador;
-            txtNotas.value = datosEdicion.produccionesEnCurso.Notas;
-            //sacas.value = datosEdicion.produccionesEnCurso.Sacas;            
+            txtNotas.value = datosEdicion.produccionesEnCurso.Notas;            
         };
+        
 
         //=== ACCION AL PULSAR CLICK en CREAR O EDITAR ===//
 
@@ -178,6 +189,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
             });
         }
+
+        if (modo === "transferir") {
+            btnCrear.textContent = "Transferir";
+            console.log("inicializar formulario/transferir"); 
+            
+            
+            debugger
+        }
     }
 
     // ===== FIN ZONA DE FUNCIONES ======
@@ -242,10 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
             body: datos
         })
             .then(response => response.json())
-            .then(json => {
-                //console.log (json)
-                datosEdicion = json;
-                //console.log(datosEdicion); debugger
+            .then(json => {                
+                datosEdicion = json;                
 
                 if (datosEdicion.ok) {
                     console.log("datosEdicion.ok");
@@ -274,13 +291,24 @@ document.addEventListener("DOMContentLoaded", () => {
         /*const objeto = Object.fromEntries(datos.entries());
         console.log(objeto);*/
 
-        fetch("index.php?c=Ferrico&a=transferir", {
-            
-
+        fetch("index.php?c=Ferrico&a=leer", {
+            method: "POST",
+            body: datos
         })
+            .then(response => response.json())
+            .then(json => {
+                datosEdicion = json;
+                console.log(datosEdicion);
+                if (datosEdicion.ok) {
+                    console.log("datosEdicion.ok");
+                } else {
+                    alert("Error: " + datosEdicion.error);
+                }
 
-
-        debugger
+                return inicializarFormulario(modo, producto, datosEdicion);
+            })
+            .catch(error => {
+                console.log("ERROR", error)
+            });
     }
-
 });
