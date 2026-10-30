@@ -46,8 +46,7 @@ function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo)
     });
 }
 
-function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
-    //console.log(listaRecetas); debugger
+function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {    
     listaRecetas.forEach((receta, index) => {
         const id = `R${index + 1}_p18`;
 
@@ -60,8 +59,12 @@ function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicio
         input.name = "receta";
         input.id = id;
         input.value = receta.NombreReceta;
+        
+        console.log(modo);
+        console.log(datosEdicion.receta);
+        console.log(receta.NombreReceta);
 
-        if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.receta == receta.NombreReceta) {
+        if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.receta === receta.NombreReceta) {
             input.checked = true;
             recetaSeleccionada = receta.NombreReceta;
         } 
@@ -102,8 +105,6 @@ function generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion
         radioGroup.appendChild(label);
     });
 }
-
-
 
 function mostrarModal(mensaje) {
     const modal = document.getElementById("modal");
