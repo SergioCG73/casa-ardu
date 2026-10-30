@@ -44,7 +44,6 @@ if ($modo === "transferir") {
                   Sacas = :sacas
               WHERE NumeroFabricacion = :nf";
 
-
     $stmt = $conexion->prepare($sqlUpdate);
     $stmt->bindParam(":pesoM", $pesoM);
     $stmt->bindParam(":pesoMF", $pesoMF);
