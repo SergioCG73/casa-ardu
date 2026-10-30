@@ -86,7 +86,7 @@ function obtenerDatosProducto($conexion, $producto, $modo)
         $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return [$equipos, $recetas, $sacas, $notas];
-    } elseif ($producto === "Ferrico" && $modo === "editar") { ///TRABAJANDO AQUÍ
+    } elseif ($producto === "Ferrico" && ($modo === "editar" || $modo === "transferir")) { ///TRABAJANDO AQUÍ
         $numeroProduccion = $_POST["numeroFabricacion"];
 
         //Equipos
@@ -213,6 +213,7 @@ if ($modo === "editar") {
 if ($modo === "transferir" || $modo === "terminar") {
     list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);
     list($equipos, $recetas, $sacas, $notas) = obtenerDatosProducto($conexion, $producto, $modo);
+    $produccionEnCurso = obtenerDatosProduccionEnCurso($conexion);
 
     echo json_encode([
         "producto" => $producto,
@@ -221,8 +222,10 @@ if ($modo === "transferir" || $modo === "terminar") {
         "ultimaEnCurso" => $ultimaEnCurso,
         "equipos" => $equipos,
         "recetas" => $recetas,
+        "receta" => $receta,
         "sacas" => $sacas,
-        "notas" => $notas
+        "notas" => $notas,
+        "produccionesEnCurso" => $produccionEnCurso
     ]);
     exit;
 }
