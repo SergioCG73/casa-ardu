@@ -1,0 +1,505 @@
+const nombres = {
+    ferrico: "Férrico",
+    sulfato: "Sulfato",
+    p18: "P18",
+    hb10: "HB10",
+    filtrado: "Filtrado"
+};
+
+
+function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo) {
+    //console.log(listaMezcladores); debugger
+    listaMezcladores.forEach(mezclador => {
+        const id = "mezclador_" + mezclador.Equipo_id;
+
+        const label = document.createElement("label");
+        label.className = "radio-label";
+        label.htmlFor = id;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "mezclador";
+        input.id = id;
+        input.value = mezclador.Equipo_id;
+
+        //Si sólo hay un mezclador, seleccionarlo
+        if (listaMezcladores.length === 1) {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+
+        // Si algún mezclador está en uso, seleccionarlo
+        if (mezclador.Estado === "En uso") {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+
+        if (mezclador.Estado === "En uso") {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(mezclador.Equipo_id));
+
+        contenedorMezcladores.appendChild(label);
+    });
+}
+
+function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
+    /*console.log(datosEdicion.produccionesEnCurso.Receta);
+    console.log(datosEdicion.receta);*/
+
+    listaRecetas.forEach((receta, index) => {
+        const id = `R${index + 1}_p18`;
+
+        const label = document.createElement("label");
+        label.className = "radio-label";
+        label.htmlFor = id;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "receta";
+        input.id = id;
+        input.value = receta.NombreReceta;
+
+        /*console.log("DATOS QUE RECIBIDOS: ", datosEdicion);
+        console.log("RECETA RECIBIDA: ", datosEdicion.receta);
+
+        console.log("produccionesEnCurso", datosEdicion.produccionesEnCurso);
+        console.log("Receta BD", datosEdicion.produccionesEnCurso?.Receta);*/
+
+        /*console.log("modo:", modo);
+        console.log("datosEdicion.receta:", datosEdicion.receta);
+        console.log("receta.NombreReceta:", receta.NombreReceta);
+        console.log(
+            "coincide",
+            datosEdicion.receta === receta.NombreReceta
+        );*/
+
+        /*if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.receta === receta.NombreReceta) {
+            input.checked = true;
+            recetaSeleccionada = receta.NombreReceta;
+        }*/
+
+        /*if (
+            (modo === "editar" || modo === "transferir" || modo === "terminar") &&
+            datosEdicion.produccionesEnCurso?.Receta === receta.NombreReceta
+        ) {
+            input.checked = true;
+            recetaSeleccionada = receta.NombreReceta;
+        }*/
+
+        const recetaActual = datosEdicion.produccionesEnCurso?.Receta;
+
+        if (
+            (modo === "editar" || modo === "transferir" || modo === "terminar") &&
+            recetaActual === receta.NombreReceta
+        ) {
+            input.checked = true;
+            recetaSeleccionada = receta.NombreReceta;
+        }
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(receta.NombreReceta));
+
+        contenedorRecetas.appendChild(label);
+    });
+}
+
+function generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion) {
+    //console.log(listaDepositos); debugger
+    const radioGroup = divDepositos.querySelector(".radio-group");
+    radioGroup.innerHTML = "";
+
+    listaDepositos.forEach((depositos, index) => {
+        const id = `Dep${index + 1}_Ferrico`;
+
+        const label = document.createElement("label");
+        label.className = "radio-label";
+        label.htmlFor = id;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "deposito";
+        input.id = id;
+        input.value = depositos.Equipo_id;
+
+        if (listaDepositos.length === 1) {
+            input.checked = true;
+            depositoSeleccionado = depositos.Equipo_id;  // ← SOLUCIÓN
+        }
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(depositos.Equipo_id));
+
+        radioGroup.appendChild(label);
+    });
+}
+
+function mostrarModal(mensaje) {
+    const modal = document.getElementById("modal");
+    document.getElementById("modalMsg").textContent = mensaje;
+    modal.hidden = false;
+    modal.style.display = "flex";
+}
+
+function cerrarModal() {
+    const modal = document.getElementById("modal");
+    modal.hidden = true;
+    modal.style.display = "none";
+    window.location.href = "index.php?c=Formulario&a=home";
+}
+
+function abrirModalGenerico(idModal) {
+    const modal = document.getElementById(idModal);
+    if (!modal) return;
+
+    modal.hidden = false;
+    modal.style.display = "flex";
+}
+
+function cerrarModalGenerico(idModal) {
+    const modal = document.getElementById(idModal);
+    if (!modal) return;
+
+    modal.hidden = true;
+    modal.style.display = "none";
+}
+
+function formatearNumero(input) {
+    let valor = input.value;
+    if (valor == null) return;
+    valor = String(valor).replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    input.value = valor;
+    return valor;
+}
+
+function formatearMiles(num) {
+    return num
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function quitarPuntoMiles(valor) {
+    return valor.replace(/\./g, "");
+}
+
+function formatearFecha(fechaStr) {
+    if (!fechaStr) return "";
+
+    const fecha = new Date(fechaStr);
+
+    if (isNaN(fecha)) return fechaStr; // Si no se puede convertir, devolver tal cual
+
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const año = fecha.getFullYear();
+
+    const horas = String(fecha.getHours()).padStart(2, "0");
+    const minutos = String(fecha.getMinutes()).padStart(2, "0");
+    const segundos = String(fecha.getSeconds()).padStart(2, "0");
+
+    return `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+}
+
+async function sePuedeFabricar(producto, data) {
+    // 1. Cargar festivos.json
+    const res = await fetch("data/festivos.json");
+    const json = await res.json();
+    const festivos = json.festivos; // array YYYY-MM-DD
+
+    // 2. Fecha y hora actual
+    const ahora = new Date();
+    const dia = ahora.getDay(); // 5 = viernes
+    const horaActual = ahora.getHours();
+    const minActual = ahora.getMinutes();
+
+    // 3. Calcular si mañana es festivo    
+    const mañana = new Date(ahora);
+    mañana.setDate(ahora.getDate() + 1);
+
+    console.log(mañana); debugger
+
+    const yyyy = mañana.getFullYear();
+    const mm = String(mañana.getMonth() + 1).padStart(2, "0");
+    const dd = String(mañana.getDate()).padStart(2, "0");
+
+    const fechaMañana = `${yyyy}-${mm}-${dd}`;
+    const esVisperaFestivo = festivos.includes(fechaMañana);
+
+    // 4. Equipos disponibles    
+    const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");
+    const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id != "M311" && m.Equipo_id != "M411");
+    const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
+    const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
+    const mezcladoresDisponiblesFerrico = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio");
+
+    // 5. Condiciones de bloqueo
+    let tmargen;
+    switch (producto) {
+        case "P18":
+            tmargen = 11; //11am
+            break;
+        case "Sulfato":
+            tmargen = 14; //14pm
+            break;
+        case "Ferrico":
+            tmaren = 17; //17pm
+        default:
+            tmargen = 0; // por si llega un producto inesperado
+            break;
+    }
+
+    const viernesTarde = (dia === 5 && (horaActual > tmargen || (horaActual === tmargen && minActual > 0)));
+    const visperaFestivoTarde = (esVisperaFestivo && (horaActual > tmargen || (horaActual === tmargen && minActual > 0)));
+    const noHayEquipos = (mezcladoresDisponibles.length === 0 || reactoresDisponiblesP18.length === 0 || mezcladoresUsados.length != 0);
+
+    // 6. Resultado final
+    if (producto === "P18" && (
+        viernesTarde ||                                         //Si es viernes tarde y son más de las 11am
+        visperaFestivoTarde ||                                  //Si es víspera de festivo y son más de las 11am
+        noHayEquipos)) {                                        //No hay equipos disponibles    
+        console.log("NO se puede fabricar vispera festivo");
+        mostrarModal("No se puede fabricar");
+        return false;
+    }
+
+    if (producto === "Sulfato" && (
+        viernesTarde ||                                             //Si es viernes tarde y son más de las 14pm
+        visperaFestivoTarde ||                                      //Si es víspera de festivo y son más de la 14pm
+        reactoresDisponiblesSulfato.length === 0 ||                 //Si no hay reactores de sulfato disponibles
+        mezcladoresUsados.length != 0)) {                           //???????
+        console.log("NO se puede fabricar víspera festivo");
+        mostrarModal("NO se puede fabricar");
+        return false;
+    }
+
+    if (producto === "Ferrico" && (
+        viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
+        visperaFestivoTarde ||                                                  //Si es víspera de festivo y son más de las 17am
+        mezcladoresDisponiblesFerrico.length === 0)) {                          //Si el M311 no está disponible
+        console.log("NO se puede fabricar por ser víspera de festivo");
+        mostrarModal("NO se puede fabricar");
+        return false;
+    }
+
+    return true;
+}
+
+async function configurarBuscador() {
+    // Leer JSON config.JSON
+    const res = await fetch("index.php?c=Leer&a=leerJSON");
+    const config = await res.json();
+
+    // ============================
+    // 1. Generar checkboxes
+    // ============================
+    const contenedor = document.querySelector("#productos");
+    contenedor.innerHTML = "";
+
+    const productos = config.productos;
+
+    productos.forEach(p => {
+        const nombre = typeof p === "string" ? p : p.ProductoFabricado;
+        const id = "prod_" + nombre.replace(/\s+/g, "_");
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.name = "producto";
+        input.value = nombre;
+
+        const label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.textContent = nombre;
+
+        contenedor.appendChild(input);
+        contenedor.appendChild(label);
+    });
+
+    // =============================
+    // 2. Configurar select cantidad
+    // =============================
+    /*const selectCantidad = document.getElementById("cantidad");
+    selectCantidad.innerHTML = "";
+ 
+    const minCant = config.limitesSelect.inferior;
+    const maxCant = config.limitesSelect.superior;
+ 
+    for (let i = minCant; i <= maxCant; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        selectCantidad.appendChild(option);
+    }
+ 
+    selectCantidad.value = 5;*/
+
+    // =====================
+    // 3. Limitar date Desde
+    // =====================
+    const dateDesde = document.getElementById("desde");
+
+    if (config.fechas.minDesde) {
+        dateDesde.min = config.fechas.minDesde;
+    }
+
+    //console.log(dateDesde.min); debugger
+
+    // =============================
+    // 4. Configurar select valor (rango)
+    // =============================
+    const selectMin = document.getElementById("valor_min");
+    const selectMax = document.getElementById("valor_max");
+
+    selectMin.innerHTML = "";
+    selectMax.innerHTML = "";
+
+    const minVal = config.valoresAnaliticas.inferior;
+    const maxVal = config.valoresAnaliticas.superior;
+
+    for (let a = minVal; a <= maxVal; a++) {
+        const opt1 = document.createElement("option");
+        opt1.value = a;
+        opt1.textContent = a;
+        selectMin.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = a;
+        opt2.textContent = a;
+        selectMax.appendChild(opt2);
+    }
+
+    // Valores por defecto
+    selectMin.value = minVal;
+    selectMax.value = maxVal;
+}
+
+async function obtenerAnaliticas(productosSeleccionados = [], desde = null, hasta = null, buscador, valorMin = null, valorMax = null, pagina = 1, porPagina = 20) {
+    try {
+        const response = await fetch("index.php?c=Laboratorio&a=obtenerAnaliticas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                productosSeleccionados,
+                desde,
+                hasta,
+                buscador,
+                valorMin,
+                valorMax,
+                pagina,
+                porPagina
+            })
+        });
+
+        const data = await response.json();
+        console.log("Analíticas cargadas:", data);
+        return data;
+
+    } catch (error) {
+        console.error("Error:", error);
+        return { error: "Error al obtener analíticas" };
+    }
+}
+
+function cargarPagina(num) {
+    filtros.pagina = num;
+    filtros.porPagina = 15;
+    obtenerAnaliticas(
+        filtros.productosSeleccionados,
+        filtros.desde,
+        filtros.hasta,
+        filtros.buscador,
+        filtros.valorMin,
+        filtros.valorMax,
+        filtros.pagina,
+        filtros.porPagina
+    ).then(data => renderizarTabla(data.analiticas));
+}
+
+window.cargarPagina = cargarPagina;
+
+
+function obtenerCamposAnalitica(producto) {
+    switch (producto.toUpperCase()) {
+        case "P18":
+            return `
+        <label>Densidad:</label>
+        <input type="number" step="0.01" id="densidad" name="Densidad">                
+                
+        <label>Riqueza:</label>
+        <input type="number" step="0.01" id="riqueza" name="Riqueza">
+
+        <label>Basicidad:</label>
+        <input type="number" step="0.01" id="basicidad" name="Basicidad">
+
+        <label>Observaciones:</label>
+        <textarea id="observaciones" name="Observaciones"></textarea>
+    `;
+
+
+        case "FERRICO":
+            return `
+        <label>Densidad:</label>
+        <input type="number" step="0.001" id="densidad" name="Densidad">
+
+        <label>Riqueza:</label>
+        <input type="number" step="0.01" id="riqueza" name="Riqueza">
+
+        <label>Observaciones:</label>
+        <textarea id="observaciones" name="Observaciones"></textarea>
+    `;
+
+        case "SULFATO":
+            return `
+        <label>Densidad:</label>
+        <input type="number" step="0.001" id="densidad" name="Densidad">
+
+        <label>pH:</label>
+        <input type="number" step="0.01" id="ph" name="ph">
+
+        <label>Riqueza:</label>
+        <input type="number" step="0.01" id="riqueza" name="Riqueza">
+
+        <label>Observaciones:</label>
+        <textarea id="observaciones" name="Observaciones"></textarea>
+    `;
+
+    }
+}
+
+function recogerDatosAnalitica(producto) {
+    switch (producto.toUpperCase()) {
+        case "FERRICO":
+            return {
+                densidad: document.getElementById("densidad")?.value ?? null,
+                riqueza: document.getElementById("riqueza")?.value ?? null,
+                observaciones: document.getElementById("observaciones")?.value ?? null
+                //acidez: document.getElementById("acidez")?.value ?? null,
+            };
+
+        case "P18":
+            return {
+                densidad: document.getElementById("densidad")?.value ?? null,
+                riqueza: document.getElementById("riqueza")?.value ?? null,
+                basicidad: document.getElementById("basicidad")?.value ?? null,
+                observaciones: document.getElementById("observaciones")?.value ?? null,
+                producciones: document.getElementById("produccionesAnalitica")?.value ?? null
+            };
+
+        case "SULFATO":
+            return {
+                densidad: document.getElementById("densidad")?.value ?? null,
+                riqueza: document.getElementById("riqueza")?.value ?? null,
+                ph: document.getElementById("ph")?.value ?? null,
+                observaciones: document.getElementById("observaciones")?.value ?? null
+                //alcalinidad: document.getElementById("alcalinidad")?.value ?? null
+            };
+
+        default:
+            return {
+                observaciones: document.getElementById("observaciones")?.value ?? null
+            };
+    }
+}
