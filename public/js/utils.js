@@ -46,7 +46,10 @@ function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo)
     });
 }
 
-function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {    
+function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicion) {
+    /*console.log(datosEdicion.produccionesEnCurso.Receta);
+    console.log(datosEdicion.receta);*/
+
     listaRecetas.forEach((receta, index) => {
         const id = `R${index + 1}_p18`;
 
@@ -59,16 +62,44 @@ function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicio
         input.name = "receta";
         input.id = id;
         input.value = receta.NombreReceta;
-        
-        console.log(modo);
-        console.log(datosEdicion.receta);
-        console.log(receta.NombreReceta);
 
-        if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.receta === receta.NombreReceta) {
+        /*console.log("DATOS QUE RECIBIDOS: ", datosEdicion);
+        console.log("RECETA RECIBIDA: ", datosEdicion.receta);
+
+        console.log("produccionesEnCurso", datosEdicion.produccionesEnCurso);
+        console.log("Receta BD", datosEdicion.produccionesEnCurso?.Receta);*/
+
+        /*console.log("modo:", modo);
+        console.log("datosEdicion.receta:", datosEdicion.receta);
+        console.log("receta.NombreReceta:", receta.NombreReceta);
+        console.log(
+            "coincide",
+            datosEdicion.receta === receta.NombreReceta
+        );*/
+
+        /*if ((modo === "editar" || modo === "transferir" || modo === "terminar") && datosEdicion.receta === receta.NombreReceta) {
             input.checked = true;
             recetaSeleccionada = receta.NombreReceta;
-        } 
-        
+        }*/
+
+        /*if (
+            (modo === "editar" || modo === "transferir" || modo === "terminar") &&
+            datosEdicion.produccionesEnCurso?.Receta === receta.NombreReceta
+        ) {
+            input.checked = true;
+            recetaSeleccionada = receta.NombreReceta;
+        }*/
+
+        const recetaActual = datosEdicion.produccionesEnCurso?.Receta;
+
+        if (
+            (modo === "editar" || modo === "transferir" || modo === "terminar") &&
+            recetaActual === receta.NombreReceta
+        ) {
+            input.checked = true;
+            recetaSeleccionada = receta.NombreReceta;
+        }
+
         label.appendChild(input);
         label.appendChild(document.createTextNode(receta.NombreReceta));
 
@@ -471,4 +502,46 @@ function recogerDatosAnalitica(producto) {
                 observaciones: document.getElementById("observaciones")?.value ?? null
             };
     }
+}
+
+// Valida el formulario y devuelve el mezclador y la receta seleccionados.
+// Si algo no es válido, muestra el aviso y devuelve null.
+// pesoFinal es opcional: solo se valida si se le pasa (modo transferir).
+function validarFormulario(pesoInicial, pesoFinal = null) {
+    if (pesoInicial.value.trim() === "") {
+        alert("Introduzca un peso inicial válido");
+        return null;
+    }
+
+    if (pesoFinal !== null && pesoFinal.value.trim() === "") {
+        alert("Introduzca un peso final válido");
+        return null;
+    }
+
+    const mezclador = document.querySelector("input[name='mezclador']:checked");
+    if (!mezclador) {
+        alert("Seleccione un mezclador");
+        return null;
+    }
+
+    const receta = document.querySelector("input[name='receta']:checked");
+    if (!receta) {
+        alert("Seleccione una receta");
+        return null;
+    }
+
+    return { mezclador, receta };
+}
+
+// Crea el FormData con los datos comunes a todos los modos
+function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, receta, sacas, notas, producto) {
+    const datos = new FormData();
+    datos.append("numeroProduccion", numeroProduccion);
+    datos.append("mezclador", mezclador.value);
+    datos.append("pesoInicialMezclador", quitarPuntoMiles(pesoInicial.value));
+    datos.append("receta", receta.value);
+    datos.append("sacas", sacas); // Envía false si el checkbox no está seleccionado y 1 si lo está
+    datos.append("notas", notas.value);
+    datos.append("producto", producto);
+    return datos;
 }
