@@ -15,7 +15,8 @@ $modo = $input["modo"] ?? $_POST["modo"] ?? null;
 $producto = $input["producto"] ?? $_POST["producto"] ?? null;
 $tabla = "ferrico_terminadas";
 $numeroProduccion = $_POST["numeroProduccion"] ?? "";
-$receta = $_POST["receta"] ?? "Receta 1";
+//$receta = $_POST["receta"] ?? "Receta 1";
+//$receta = $_POST["receta"] ?? null;
 
 /*echo json_encode(["modo" => $modo,
                   "producto" => $producto,
@@ -173,7 +174,7 @@ if ($modo === "crear") {
         "modo" => $modo,
         "producto" => $producto,
         "equipos" => $equipos,
-        "recetas" => $recetas,
+        /*"recetas" => $recetas,*/
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
@@ -203,7 +204,7 @@ if ($modo === "editar") {
         "tabla" => $tabla,
         "numeroFabricacion" => $numeroProduccion,
         "sacas" => $sacas,
-        "receta" => $receta,
+        /*"receta" => $receta,*/
         "fabricacionesEnCurso" => $fabricacionesEnCurso,
         "produccionesEnCurso" => $produccionEnCurso
     ]);
@@ -212,19 +213,20 @@ if ($modo === "editar") {
 
 if ($modo === "transferir" || $modo === "terminar") {
     list($ultimaAcabada, $ultimaEnCurso) =  obtenerUltimasFabricaciones($conexion, $producto, $tabla);
-    list($equipos, $recetas, $sacas, $notas) = obtenerDatosProducto($conexion, $producto, $modo);
+    list($equipos, $recetas, $sacas, $notas, $fabricacionesEnCurso) = obtenerDatosProducto($conexion, $producto, $modo);
     $produccionEnCurso = obtenerDatosProduccionEnCurso($conexion);
 
     echo json_encode([
-        "producto" => $producto,
+        "ok" => true,
+        "LINE" => __LINE__,
         "modo" => $modo,
-        "ultimaAcabada" => $ultimaAcabada,
-        "ultimaEnCurso" => $ultimaEnCurso,
+        "producto" => $producto,
         "equipos" => $equipos,
         "recetas" => $recetas,
-        "receta" => $receta,
+        "tabla" => $tabla,
+        "numeroFabricacion" => $numeroProduccion,
         "sacas" => $sacas,
-        "notas" => $notas,
+        /*"receta" => $receta,*/
         "produccionesEnCurso" => $produccionEnCurso
     ]);
     exit;
