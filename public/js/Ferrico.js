@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (modo === "transferir") {
             console.log(datosEdicion);
             btnCrear.textContent = "Transferir";
-            console.log("inicializarFormulario --> transferir");
+            console.log("inicializando Formulario/Transferir");
 
             divPesoFinal = document.getElementById("peso_final");
             divPesoFinal.style.display = "block";
@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
         generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo);
 
         // === GENERAR RADIOS RECETAS === //
-        contenedorRecetas.innerHTML = "";                
-        listaRecetas = datosEdicion.recetas.filter(r => r.ProductoFabricado === "Ferrico");        
+        contenedorRecetas.innerHTML = "";
+        listaRecetas = datosEdicion.recetas.filter(r => r.ProductoFabricado === "Ferrico");
 
         generarRadiosRecetas(datosEdicion.recetas, contenedorRecetas, modo, datosEdicion);
 
@@ -191,9 +191,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     txtNotas,
                     producto
                 );
+
+                document.getElementById("modalTransferencia").style.display = "block";
+                
+                document.getElementById("btnTransferirM411").onclick = () => {
+                    createProduccion(datos, "M411");
+                };
+
+                document.getElementById("btnTransferirD111").onclick = () => {
+                    createProduccion(datos, "D111");
+                };
+
+                document.getElementById("btnCancelarTransferencia").onclick = () => {
+                    document.getElementById("modalTransferencia").style.display = "none";
+                };
             });
         }
-
     }
 
     // ===== FIN ZONA DE FUNCIONES ======
@@ -230,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("datosEdicion.ok");
                 } else {
                     alert("Error: " + datosEdicion.error);
-                }                
+                }
 
                 return inicializarFormulario(modo, producto, datosEdicion);
             })
