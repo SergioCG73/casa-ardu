@@ -51,7 +51,7 @@
             <div id="depositos">
                 <fieldset>
                     <legend>Depósitos</legend>
-                    <div class="radio-group">                        
+                    <div class="radio-group">
                     </div>
                 </fieldset>
             </div>
@@ -85,15 +85,48 @@
             <p id="displayProduccion" name="displayProduccion"></p>
         </div>
 
+
+        <!-- Modal mensajes no se puede fabricar -->
         <div id="modal" class="mi-modal">
             <div class="mi-modal-contenido">
                 <p id="modalMsg"></p>
                 <button id="btnAceptar" class="mi-boton">Aceptar</button>
             </div>
         </div>
-    </div>
-    <script src="js/Ferrico.js"></script>
-    <script src="js/utils.js"></script>
+
+        <!-- Modal selección destino transferencia -->
+        <div id="modalTransferencia" class="modal-transferencia">
+            <div class="modal-transferencia-contenido">
+                <h3>Transferencia</h3>
+                <p id="modalTransferenciaMsg">Seleccione el destino de la transferencia</p>
+
+                <div class="modal-transferencia-botones">
+                    <button
+                        id="btnTransferirM411"
+                        class="boton"
+                        type="button">
+                        M411
+                    </button>
+                    <button
+                        id="btnTransferirD111"
+                        class="boton"
+                        type="button">
+                        D111
+                    </button>
+                </div>
+
+                <div class="modal-transferencia-cancelar">
+                    <button
+                        id="btnCancelarTransferencia"
+                        class="boton"
+                        type="button">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script src="js/Ferrico.js"></script>
+        <script src="js/utils.js"></script>
 </body>
 
 </html>
