@@ -174,11 +174,11 @@ if ($modo === "crear") {
         "modo" => $modo,
         "producto" => $producto,
         "equipos" => $equipos,
-        /*"recetas" => $recetas,*/
+        "recetas" => $recetas,
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
         "ultimaEnCurso" => $ultimaEnCurso,
-        "sacas" => $sacas,/*
+        "sacas" => $sacas/*
         "notas" => $notas*/
     ]);
     exit;
