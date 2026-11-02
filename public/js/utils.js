@@ -550,3 +550,12 @@ function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, receta, 
     datos.append("producto", producto);
     return datos;
 }
+
+//Función para 
+
+function createProduccion(datos, destino) {
+    datos.append("destino", destino);
+    console.log("Destino seleccionado: ", destino);
+    transferir(datos);
+
+}
