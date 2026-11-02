@@ -44,10 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === FUNCIONES ===
     function inicializarFormulario(modo, producto, datosEdicion) {
-        console.log("--- inicializarFormulario ---");
+        console.log("inicializando Formulario...");
 
         // --- DATOS A CARGAR EN EL FORMULARIO 
         if (modo === "crear") {
+            sePuedeFabricar(producto, datosEdicion);
             contenedorPesoFinal.style.display = "none";
             //sacasEstado = datosEdicion.sacas ? Number(datosEdicion.sacas.Sacas) : null
             sacasEstado = datosEdicion.sacas;   //sacasEstado = false
@@ -90,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
         generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo);
 
         // === GENERAR RADIOS RECETAS === //
-        contenedorRecetas.innerHTML = "";
-        listaRecetas = datosEdicion.recetas.filter(r => r.ProductoFabricado === "Ferrico");
+        contenedorRecetas.innerHTML = "";                
+        listaRecetas = datosEdicion.recetas.filter(r => r.ProductoFabricado === "Ferrico");        
 
         generarRadiosRecetas(datosEdicion.recetas, contenedorRecetas, modo, datosEdicion);
 
@@ -229,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("datosEdicion.ok");
                 } else {
                     alert("Error: " + datosEdicion.error);
-                }
+                }                
 
                 return inicializarFormulario(modo, producto, datosEdicion);
             })
