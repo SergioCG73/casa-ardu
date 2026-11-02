@@ -261,3 +261,34 @@ input[type="radio"] {
     min-width: 250px;
     text-align: center;
 }
+
+/* ==== MODAL TRANSFERENCIA */
+
+.modal-transferencia {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-transferencia-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 300px;
+}
+
+.modal-transferencia-botones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.modal-transferencia-cancelar {
+    margin-top: 10px;
+}
