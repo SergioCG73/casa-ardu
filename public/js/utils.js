@@ -219,7 +219,7 @@ async function sePuedeFabricar(producto, data) {
     const mañana = new Date(ahora);
     mañana.setDate(ahora.getDate() + 1);
 
-    console.log(mañana); debugger
+    //console.log(mañana); debugger
 
     const yyyy = mañana.getFullYear();
     const mm = String(mañana.getMonth() + 1).padStart(2, "0");
@@ -229,10 +229,13 @@ async function sePuedeFabricar(producto, data) {
     const esVisperaFestivo = festivos.includes(fechaMañana);
 
     // 4. Equipos disponibles    
+    //console.log(data.equipos); debugger
     const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");
     const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id != "M311" && m.Equipo_id != "M411");
     const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
-    const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
+    if (producto === "Sulfato") {
+        const reactoresDisponiblesSulfato = data.reactores.filter(r => r.Tipo === "Reactor" && r.ProductoFabricado === "Sulfato" && r.Estado === "Vacio");
+    }
     const mezcladoresDisponiblesFerrico = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio");
 
     // 5. Condiciones de bloqueo
@@ -274,6 +277,8 @@ async function sePuedeFabricar(producto, data) {
         mostrarModal("NO se puede fabricar");
         return false;
     }
+
+    console.log(mezcladoresDisponiblesFerrico);
 
     if (producto === "Ferrico" && (
         viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
