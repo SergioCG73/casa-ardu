@@ -44,10 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === FUNCIONES ===
     function inicializarFormulario(modo, producto, datosEdicion) {
-        console.log("--- inicializarFormulario ---");
+        console.log("inicializando Formulario...");
 
         // --- DATOS A CARGAR EN EL FORMULARIO 
         if (modo === "crear") {
+            sePuedeFabricar(producto, datosEdicion);
             contenedorPesoFinal.style.display = "none";
             //sacasEstado = datosEdicion.sacas ? Number(datosEdicion.sacas.Sacas) : null
             sacasEstado = datosEdicion.sacas;   //sacasEstado = false
@@ -70,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (modo === "transferir") {
             console.log(datosEdicion);
             btnCrear.textContent = "Transferir";
-            console.log("inicializarFormulario --> transferir");
+            console.log("inicializando Formulario/Transferir");
 
             divPesoFinal = document.getElementById("peso_final");
             divPesoFinal.style.display = "block";
@@ -134,50 +135,27 @@ document.addEventListener("DOMContentLoaded", () => {
             btnCrear.addEventListener("click", () => {
                 console.log(`click en botón ${modo.toUpperCase()}`);
 
-                //Obtener el mezclador seleccionado
-                const mezcladorSeleccionado = document.querySelector("input[name='mezclador']:checked");
+                const seleccion = validarFormulario(peso_inicial_mezclador);
+                if (!seleccion) return;
 
-                //Validar peso inicial
-                if (peso_inicial_mezclador.value === "") {
-                    alert("Introduzca un peso válido");
-                    return;
-                }
+                const datos = crearDatosFormulario(
+                    numeroProduccionActual,
+                    seleccion.mezclador,
+                    peso_inicial_mezclador,
+                    seleccion.receta,
+                    sacasEstado,
+                    txtNotas,
+                    producto
+                );
 
-                //Validar el mezclador
-                if (!mezcladorSeleccionado) {
-                    alert("Seleccione un mezclador");
-                    return;
-                }
-
-                //Obtener y validar la receta seleccionada
-                const recetaSeleccionada = document.querySelector("input[name='receta']:checked");
-
-                if (!recetaSeleccionada) {
-                    alert("Seleccione una receta");
-                    return;
-                }
-
-                //Crear los datos del formulario
-                datos = new FormData();
-                datos.append("numeroProduccion", numeroProduccionActual);
-                datos.append("mezclador", mezcladorSeleccionado.value);
-                datos.append("pesoInicialMezclador", quitarPuntoMiles(peso_inicial_mezclador.value));
-                datos.append("receta", recetaSeleccionada.value);
-                datos.append("sacas", sacasEstado);  //Envia false si no está seleccionado el checkbox y envia 1 si está seleccionado el checkbox
-                datos.append("notas", txtNotas.value);
-                datos.append("producto", producto);
-
-                /*const objeto = Object.fromEntries(datos.entries());
-                console.log(objeto); debugger*/
-
-                //Seleccionar la URL según el modo                
+                // Seleccionar la URL según el modo
                 const url = modo === "crear"
                     ? "index.php?c=Crear&a=ferrico"
                     : "index.php?c=Editar&a=fabCurso";
 
                 console.log(`fetch ${modo}`);
 
-                //Enviar datos al servidor
+                // Enviar datos al servidor
                 fetch(url, {
                     method: "POST",
                     body: datos
@@ -188,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         window.location.href = "index.php?c=Formulario&a=home";
                     })
                     .catch(error => {
-                        console.log("error ", error);
+                        console.error("error ", error);
                     });
             });
         }
@@ -201,49 +179,37 @@ document.addEventListener("DOMContentLoaded", () => {
             btnCrear.addEventListener("click", () => {
                 console.log(`click en botón ${modo.toUpperCase()}`);
 
-                //Obtener el mezclador seleccionado
-                mezcladorSeleccionado = document.querySelector("input[name='mezclador']:checked");
+                document.getElementById("modalTransferencia").style.display = "block";
 
-                //Validar peso inicial
-                if (peso_inicial_mezclador.value === "") {
-                    alert("Introduzca un peso inicial válido");
-                    return;
-                }
+                createProduccion();
 
-                //Validar peso final
-                if (peso_final_mezclador.value === "") {
-                    alert("Introduzca un peso final válido");
-                    return
-                }
+                document.getElementById("btnDestipublic/js/Ferrico.jsnoM411").addEventListener("click", () => {
+                    transferir("M411");
+                });
 
-                //Validar el mezclador
-                if (!mezcladorSeleccionado) {
-                    alert("Seleccione un mezclador");
-                    return;
-                }
+                document.getElementById("btnDestinoD111").addEventListener("click", () => {
+                    transferir("D111");
+                });
 
-                //Obtener y validar la receta seleccionada
-                const recetaSeleccionada = document.querySelector("input[name='receta']:checked");
+                document.getElementById("btnCancelarTransferencia").addEventListener("click", () => {
+                    document.getElementById("modalTransferencia").style.display = "none";
+                });
 
-                if (!recetaSeleccionada) {
-                    alert("Seleccione una receta");
-                    return;
-                }                
+                const seleccion = validarFormulario(peso_inicial_mezclador, peso_final_mezclador);
+                if (!seleccion) return;
 
-                const datos = new FormData();
-                datos.append("numeroProduccion", numeroProduccionActual);
-                datos.append("mezclador", mezcladorSeleccionado.value);
-                datos.append("pesoInicialMezclador", quitarPuntoMiles(peso_inicial_mezclador.value));
-                datos.append("receta", recetaSeleccionada.value);
-                datos.append("sacas", sacasEstado);
-                datos.append("notas", txtNotas.value);
-                datos.append("producto", producto);
-
-                /*const objeto = Object.fromEntries(datos.entries());
-                console.log(objeto);*/
-
+                const datos = crearDatosFormulario(
+                    numeroProduccionActual,
+                    seleccion.mezclador,
+                    peso_inicial_mezclador,
+                    seleccion.receta,
+                    sacasEstado,
+                    txtNotas,
+                    producto
+                );
             });
         }
+
     }
 
     // ===== FIN ZONA DE FUNCIONES ======
