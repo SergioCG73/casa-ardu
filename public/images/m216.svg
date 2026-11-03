@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 800 600"
+     width="100%"
+     height="100%">
+            <defs>
+                <!-- Estilos CSS integrados para controlar animaciones y diseño plano industrial -->
+                <style>
+                    .tank-structure {
+                        fill: #D1D5DB;
+                        stroke: #4B5563;
+                        stroke-width: 4;
+                        stroke-linejoin: round;
+                    }
+
+                    .motor-part {
+                        fill: #718096;
+                        stroke: #2D3748;
+                        stroke-width: 3;
+                    }
+
+                    /* Líquido dinámico: con transición suave para cuando cambies el nivel por JS */
+                    #liquido-mezclador {
+                        fill: #3498DB;
+                        opacity: 0.75;
+                        transition: y 0.6s ease-out, height 0.6s ease-out;
+                    }
+
+                    /* Animación opcional para el eje y las hélices en JS (añadiendo la clase 'rotar') */
+                    @keyframes girarAgitador {
+                        from {
+                            transform: rotateY(0deg);
+                        }
+
+                        to {
+                            transform: rotateY(360deg);
+                        }
+                    }
+
+                    .eje-giro {
+                        transform-origin: 400px 300px;
+                        animation: girarAgitador 2s linear infinite;
+                    }
+
+                    .tag-text {
+                        font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+                        font-weight: bold;
+                        fill: #2D3748;
+                    }
+
+                    .display-text {
+                        font-family: 'Courier New', monospace;
+                        font-weight: bold;
+                        fill: #1A202C;
+                    }
+                </style>
+
+                <!-- Máscara de recorte (ClipPath) con la forma interna exacta del tanque -->
+                <!-- Evita que el líquido se salga de los bordes cilíndricos y del fondo curvo -->
+                <clipPath id="recorte-tanque">
+                    <path d="M 280,210 
+               L 520,210 
+               L 520,440 
+               Q 520,510 400,510 
+               Q 280,510 280,440 
+               Z" />
+                </clipPath>
+            </defs>
+
+            <!-- Fondo neutro estilo sala de control (High-Performance HMI) -->
+            <rect width="100%" height="100%" fill="#F3F4F6" />
+
+            <!-- ==================== 1. PATAS DEL TANQUE ==================== -->
+            <g id="soporte-patas">
+                <rect x="300" y="460" width="25" height="110" fill="#9CA3AF" stroke="#4B5563" stroke-width="3" />
+                <rect x="475" y="460" width="25" height="110" fill="#9CA3AF" stroke="#4B5563" stroke-width="3" />
+            </g>
+
+            <!-- ==================== 2. LÍQUIDO DINÁMICO (CONTROLADO POR JS) ==================== -->
+            <!-- Al 100% de nivel: height="300" e y="210" -->
+            <!-- Al 0% de nivel: height="0" e y="510" -->
+            <g clip-path="url(#recorte-tanque)">
+                <rect id="liquido-mezclador" x="270" y="285" width="260" height="225" />
+            </g>
+
+            <!-- ==================== 3. CUERPO DEL TANQUE (TRANSPARENTE/CONTORNO) ==================== -->
+            <g id="cuerpo-tanque">
+                <!-- Fondo del tanque translúcido para ver el agitador interior -->
+                <path d="M 280,210 L 520,210 L 520,440 Q 520,510 400,510 Q 280,510 280,440 Z"
+                    fill="none" stroke="#4B5563" stroke-width="5" stroke-linejoin="round" />
+
+                <!-- Tapa Superior Curva -->
+                <path d="M 280,210 Q 400,165 520,210 Z" class="tank-structure" />
+
+                <!-- Junta/Borde de la tapa -->
+                <rect x="273" y="205" width="254" height="10" rx="3" fill="#9CA3AF" stroke="#4B5563" stroke-width="3" />
+            </g>
+
+            <!-- ==================== 4. AGITADOR INTERNO ==================== -->
+            <!-- Puedes añadirle la clase CSS 'eje-giro' para simular movimiento web -->
+            <g id="agitador-mecanico" class="eje-giro">
+                <!-- Eje central -->
+                <rect x="394" y="200" width="12" height="230" fill="#E5E7EB" stroke="#374151" stroke-width="2" />
+                <!-- Hélice / Impulsor inferior -->
+                <path d="M 330,420 Q 365,415 394,428 L 394,435 Q 365,425 330,420 Z" fill="#9CA3AF" stroke="#374151" stroke-width="2" />
+                <path d="M 470,420 Q 435,415 406,428 L 406,435 Q 435,425 470,420 Z" fill="#718096" stroke="#374151" stroke-width="2" />
+                <rect x="390" y="423" width="20" height="15" rx="2" fill="#4B5563" stroke="#1F2937" stroke-width="2" />
+            </g>
+
+            <!-- ==================== 5. MOTOR SUPERIOR ==================== -->
+            <g id="motor-reductor">
+                <rect x="375" y="160" width="50" height="20" class="motor-part" />
+                <rect x="382" y="90" width="36" height="70" class="motor-part" />
+                <!-- Aletas de refrigeración del motor -->
+                <line x1="388" y1="100" x2="388" y2="150" stroke="#2D3748" stroke-width="2" />
+                <line x1="394" y1="100" x2="394" y2="150" stroke="#2D3748" stroke-width="2" />
+                <line x1="400" y1="100" x2="400" y2="150" stroke="#2D3748" stroke-width="2" />
+                <line x1="406" y1="100" x2="406" y2="150" stroke="#2D3748" stroke-width="2" />
+                <line x1="412" y1="100" x2="412" y2="150" stroke="#2D3748" stroke-width="2" />
+                <!-- Tapa del ventilador del motor -->
+                <path d="M 382,90 Q 400,75 418,90 Z" class="motor-part" />
+            </g>
+
+            <!-- ==================== 6. PLACA DE IDENTIFICACIÓN M216 ==================== -->
+            <g id="placa-identificacion" transform="translate(400, 310)">
+                <!-- Base del letrero industrial -->
+                <rect x="-65" y="-25" width="130" height="50" rx="5" fill="#E5E7EB" stroke="#4B5563" stroke-width="3" />
+                <!-- Remaches en las esquinas -->
+                <circle cx="-55" cy="-15" r="3" fill="#4B5563" />
+                <circle cx="55" cy="-15" r="3" fill="#4B5563" />
+                <circle cx="-55" cy="15" r="3" fill="#4B5563" />
+                <circle cx="55" cy="15" r="3" fill="#4B5563" />
+                <!-- Texto identificador -->
+                <text x="0" y="8" text-anchor="middle" font-size="24" class="tag-text">M216</text>
+            </g>
+
+            <!-- ==================== 7. DISPLAY DIGITAL DE NIVEL (%) ==================== -->
+            <g id="display-nivel" transform="translate(400, 50)">
+                <!-- Marco del indicador -->
+                <rect x="-70" y="-20" width="140" height="40" rx="4" fill="#111827" stroke="#9CA3AF" stroke-width="2" />
+                <!-- Texto que actualizarás con JavaScript -->
+                <text id="texto-nivel-porcentaje" x="0" y="8" text-anchor="middle" font-size="22" fill="#10B981" class="display-text">75.0%</text>
+            </g>
+        </svg>
