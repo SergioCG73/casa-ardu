@@ -545,11 +545,13 @@ function validarFormulario(pesoInicial, pesoFinal = null) {
 }
 
 // Crea el FormData con los datos comunes a todos los modos
-function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, receta, sacas, notas, producto) {
+function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, pesoFinal,  receta, sacas, notas, producto) {
+    
     const datos = new FormData();
     datos.append("numeroProduccion", numeroProduccion);
     datos.append("mezclador", mezclador.value);
     datos.append("pesoInicialMezclador", quitarPuntoMiles(pesoInicial.value));
+    datos.append("pesoFinalMezclador", quitarPuntoMiles(pesoFinal.value));    
     datos.append("receta", receta.value);
     datos.append("sacas", sacas); // Envía false si el checkbox no está seleccionado y 1 si lo está
     datos.append("notas", notas.value);
@@ -557,11 +559,35 @@ function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, receta, 
     return datos;
 }
 
-//Función para 
-
+//Función para selección la ubicación donde se transfiere el M311
 function createProduccion(datos, destino) {
-    datos.append("destino", destino);
-    console.log("Destino seleccionado: ", destino);
-    transferir(datos);
+    //console.log(datos); debugger
 
+    switch (destino) {
+        case "M411":
+            modo = "transferir";
+            break;
+
+        case "D111":
+            modo = "terminar";
+            break;
+    }
+
+    datos.append("destino", destino);
+    datos.append("modo", modo);    
+    console.log("Destino seleccionado: ", destino);
+
+    fetch("index.php?c=Ferrico&a=transferir", {
+        method: "POST",
+        body: datos
+    })
+        .then(response => response.json())
+        .then(json => {
+            console.log(json);
+            if (json.ok) mostrarModal("Producción enviada a M411");
+            else alert(json.error);
+        })
+        .catch(error => {
+            console.log("ERROR: ", error);
+        });
 }
