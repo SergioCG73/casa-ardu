@@ -535,6 +535,12 @@ function validarFormulario(pesoInicial, pesoFinal = null) {
         return null;
     }
 
+    const sacas = document.querySelector("input[name='sacas']:checked")
+    if (!sacas) {
+        alert("No ha dosificado las sacas de férrico");
+        return null;
+    }
+
     return { mezclador, receta };
 }
 
