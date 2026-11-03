@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const input = document.createElement("input");
             input.type = "radio";
             input.name = "receta";
-            input.id = id;
+            input.id = id;tra
             input.value = receta.NombreReceta;
 
 
@@ -465,7 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                         .then(res => res.json())
                         .then(json => {
-                            console.log(json); debugger
+                            console.log(json);
                             if (json.ok) mostrarModal("Producción transferida correctamente");
                             else alert(json.error);
                         });
