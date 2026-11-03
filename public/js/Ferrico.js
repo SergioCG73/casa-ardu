@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("inicializar formulario/transferir");
 
             btnCrear.addEventListener("click", () => {
-                console.log(`click en botón ${modo.toUpperCase()}`);
+                console.log(`click en botón ${modo.toUpperCase()}`);               
 
                 const seleccion = validarFormulario(peso_inicial_mezclador, peso_final_mezclador);
                 if (!seleccion) return;
@@ -186,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     numeroProduccionActual,
                     seleccion.mezclador,
                     peso_inicial_mezclador,
+                    peso_final_mezclador,    //Añadida
                     seleccion.receta,
                     sacasEstado,
                     txtNotas,
@@ -295,12 +296,13 @@ document.addEventListener("DOMContentLoaded", () => {
     //=== MODO TRANSFERIR ===
     if (modo === "transferir") {
         //console.log(`${modo}`);
-        //console.log(datosTabla);
+        //console.log(datosTabla); debugger        
 
         const datos = new FormData();
         datos.append("modo", modo);
         datos.append("producto", producto);
         datos.append("numeroProduccion", datosTabla.NumeroFabricacion);
+        datos.append("pesoInicialMezclador", datosTabla.pesoInicialMezclador);
         datos.append("receta", datosTabla.Receta);
 
         /*const objeto = Object.fromEntries(datos.entries());
