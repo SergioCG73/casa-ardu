@@ -545,13 +545,13 @@ function validarFormulario(pesoInicial, pesoFinal = null) {
 }
 
 // Crea el FormData con los datos comunes a todos los modos
-function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, pesoFinal,  receta, sacas, notas, producto) {
-    
+function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, pesoFinal, receta, sacas, notas, producto) {
+
     const datos = new FormData();
     datos.append("numeroProduccion", numeroProduccion);
     datos.append("mezclador", mezclador.value);
     datos.append("pesoInicialMezclador", quitarPuntoMiles(pesoInicial.value));
-    datos.append("pesoFinalMezclador", quitarPuntoMiles(pesoFinal.value));    
+    datos.append("pesoFinalMezclador", quitarPuntoMiles(pesoFinal.value));
     datos.append("receta", receta.value);
     datos.append("sacas", sacas); // Envía false si el checkbox no está seleccionado y 1 si lo está
     datos.append("notas", notas.value);
@@ -574,7 +574,7 @@ function createProduccion(datos, destino) {
     }
 
     datos.append("destino", destino);
-    datos.append("modo", modo);    
+    datos.append("modo", modo);
     console.log("Destino seleccionado: ", destino);
 
     fetch("index.php?c=Ferrico&a=transferir", {
@@ -590,4 +590,109 @@ function createProduccion(datos, destino) {
         .catch(error => {
             console.log("ERROR: ", error);
         });
+}
+
+// =====================================
+// VARIABLES SVG M216
+// =====================================
+
+let svgDocumentM216 = null;
+let ultimoNivelM216 = null;
+
+const displayM216 = document.getElementById("displayM216");
+const svgM216 = document.getElementById("svgM216");
+
+// Esperar a que cargue el SVG
+svgM216.addEventListener("load", () => {
+
+    svgDocumentM216 = svgM216.contentDocument;
+
+    if (ultimoNivelM216 !== null) {
+        dibujarNivelM216(ultimoNivelM216);
+    }
+
+});
+
+
+// =====================================
+// CONTROL SVG M216
+// =====================================
+
+// Esperar a que se cargue el SVG externo
+if (svgM216) {
+    svgM216.addEventListener("load", () => {
+        svgDocumentM216 = svgM216.contentDocument;
+
+        if (ultimoNivelM216 !== null) {
+            dibujarNivelM216(ultimoNivelM216);
+        }
+    });
+}
+
+// =====================================
+// ACTUALIZAR NIVEL M216
+// =====================================
+
+function actualizarM216(volumen) {    
+    volumen = Number(volumen);
+
+    if (!Number.isFinite(volumen)) return;
+
+    if (volumen <= 0) {
+        if (displayM216) displayM216.style.display = "none";
+        return;
+    }
+
+    if (displayM216) displayM216.style.display = "block";
+
+    const volumenMaximoM216 = 60000;
+
+    let porcentaje = Math.round(
+        (volumen / volumenMaximoM216) * 100
+    );
+
+    porcentaje = Math.min(100, Math.max(0, porcentaje));
+
+    ultimoNivelM216 = porcentaje;
+
+    dibujarNivelM216(porcentaje);
+}
+
+// =====================================
+// DIBUJAR NIVEL SVG M216
+// =====================================
+
+function dibujarNivelM216(porcentaje) {
+
+    if (!svgDocumentM216) return;
+
+    const liquido = svgDocumentM216.getElementById("liquido-mezclador");
+    const textoNivel = svgDocumentM216.getElementById("texto-nivel-porcentaje");
+
+    if (!liquido || !textoNivel) return;
+
+    const alturaMaxima = 300;
+    const altura = (porcentaje / 100) * alturaMaxima;
+    const posicionY = 510 - altura;
+
+    liquido.setAttribute("y", posicionY);
+    liquido.setAttribute("height", altura);
+
+    porcentaje = 60;
+    textoNivel.textContent = porcentaje + "%";
+
+    let color;
+
+    if (porcentaje <= 50) {
+        color = "#22C55E";
+    } else if (porcentaje <= 70) {
+        color = "#EAB308";
+    } else if (porcentaje <= 80) {
+        color = "#F97316";
+    } else {
+        color = "#EF4444";
+    }
+
+    liquido.style.fill = color;
+    textoNivel.style.fill = color;
 }
