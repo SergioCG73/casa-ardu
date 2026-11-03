@@ -9,6 +9,21 @@ function init() {
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
     const displayM216 = document.getElementById("displayM216");
+    const svgM216 = document.getElementById("svgM216");
+
+    let svgDocumentM216 = null;
+    let ultimoNivelM216 = null;
+
+    //Esperar a qu4e se cargue el SVG externo
+    svgM216.addEventListener("load", () => {
+        svgDocumentM216 = svgM216.contentDocument;
+        console.log("SVG M216 cargado correctamente");
+
+        //Si los datos llegaron antes de cargar el SVG
+        if (ultimoNivelM216 !== null) {
+            dibujarNivelM216(ultimoNivelM216);
+        }
+    })
 
     localStorage.setItem("modo", "inicial");
 
@@ -70,6 +85,7 @@ function cargarProducciones(tabla, divProducciones) {
         .then(data => {
             //console.log(data); debugger
             if (!data.ok) return;
+
             tabla.innerHTML = generarEncabezado() + construirTabla(data);
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
             localStorage.setItem("existeFiltrado", existeFiltrado ? "1" : "0");
@@ -78,7 +94,7 @@ function cargarProducciones(tabla, divProducciones) {
 
             divProducciones.style.display = "block";
 
-            let claseEspecial = null;
+            /*let claseEspecial = null;
 
             if (data.volumen_M216 === 0) {
                 displayM216.style.display = "none";
@@ -105,7 +121,12 @@ function cargarProducciones(tabla, divProducciones) {
 
                 textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
                 textM216.classList.add(claseEspecial);
-            }
+
+                
+            }*/
+
+            //Actualizar el SVG del tanque M216
+            actualizarM216(data.volumen_M216);
         })
         .catch(err => console.error("Error cargando producciones:", err));
 }
@@ -238,7 +259,7 @@ function activarEventosTabla(tabla) {
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
             /*console.log(localStorage.getItem("datosEditables"));
-            console.log(localStorage.getItem("modo")); debugger*/            
+            console.log(localStorage.getItem("modo")); debugger*/
             if (datos.Producto_id === "Sulfato") {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datos.Producto_id === "P18") {
