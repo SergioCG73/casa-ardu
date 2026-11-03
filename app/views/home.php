@@ -41,5 +41,6 @@
     const ROL_USUARIO = "<?= isset($rol) ? $rol : '' ?>";
 </script>
 <script src="js/home.js"></script>
+<script src="js/utils.js"></script>
 
 </html>
