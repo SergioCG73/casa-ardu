@@ -19,11 +19,24 @@ $numeroProduccion           = $_POST["numeroProduccion"] ?? null;
 $mezcladorNuevo             = $_POST["mezclador"] ?? null;
 $pesoM                      = $_POST["pesoInicialMezclador"] ?? null;
 $pesoMF                     = $_POST["pesoFinalMezclador"] ?? null;
-$volumenD111                = $_POST["volumenD111"] ?? null;
+//$volumenD111                = $_POST["volumenD111"] ?? null;
 $receta                     = $_POST["receta"] ?? null;
 $notas                      = $_POST["notas"] ?? null;
 $modo                       = $_POST["modo"] ?? null;
 $sacas                      = $_POST["sacas"] ??  null;
+$destino                    = $_POST["destino"] ?? null;
+
+/*echo json_encode([
+    "NumeroProduccion" => $numeroProduccion,
+    "Mezclador" => $mezcladorNuevo,
+    "pesoInicialMezclador" => $pesoM,
+    "pesoFinalMezclador" => $pesoMF,    
+    "receta" => $receta,
+    "notas" => $notas,
+    "modo" => $modo,
+    "sacas" => $sacas,
+    "destino" => $destino
+]); exit;*/
 
 if (!$numeroProduccion) {
     echo json_encode([
@@ -34,14 +47,18 @@ if (!$numeroProduccion) {
 }
 
 if ($modo === "transferir") {
+    $mezcladorNuevo = "M411";
+//Actualizar la fabricación en curso pasando el M311 a M411 (decantador)
+//FechaInicioReaccion recoge la fecha y hora que se realiza la transferencia desde M311 a M411
     $sqlUpdate = "UPDATE fabricaciones_en_curso
               SET 
                   PesoInicialMezclador = :pesoM,
                   PesoFinalMezclador = :pesoMF,
-                  FechaFinal = NOW(),
+                  FechaInicioReaccion = NOW(),     
                   Notas = :notas,
                   Receta = :receta,
-                  Sacas = :sacas
+                  Sacas = :sacas,
+                  Mezclador = :mezclador
               WHERE NumeroFabricacion = :nf";
 
     $stmt = $conexion->prepare($sqlUpdate);
@@ -50,8 +67,9 @@ if ($modo === "transferir") {
     $stmt->bindParam(":notas", $notas);
     $stmt->bindParam(":receta", $receta);
     $stmt->bindParam(":sacas", $sacas);
+    $stmt->bindParam(":mezclador", $mezcladorNuevo);
     $stmt->bindParam("nf", $numeroProduccion);
-    $stmt->execute();
+    //$stmt->execute();
 
     echo json_encode([
         "ok" => true,
@@ -61,11 +79,11 @@ if ($modo === "transferir") {
         "pesoMF" => $pesoMF,
         "recetas" => $receta,
         "notas" => $notas,
-        "sacas" => $sacas
+        "sacas" => $sacas        
     ]);
     exit;
 }
-
+/*
 if ($modo === "terminar") {
     $sqlInsert = "
 INSERT INTO ferrico_terminadas (
@@ -93,7 +111,7 @@ WHERE NumeroFabricacion = :nf
     $stmt->bindParam(":nf", $numeroProduccion);
     $stmt->bindParam(":mezclador", $mezcladorNuevo);
     $stmt->bindParam(":vi", $pesoM);
-    $stmt->bindParam(":vf", $pesoMF);    
+    $stmt->bindParam(":vf", $pesoMF);
     $stmt->bindParam(":notas", $notas);
     $stmt->execute();
 
