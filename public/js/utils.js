@@ -610,7 +610,6 @@ svgM216.addEventListener("load", () => {
     if (ultimoNivelM216 !== null) {
         dibujarNivelM216(ultimoNivelM216);
     }
-
 });
 
 
@@ -633,7 +632,7 @@ if (svgM216) {
 // ACTUALIZAR NIVEL M216
 // =====================================
 
-function actualizarM216(volumen) {    
+function actualizarM216(volumen) {
     volumen = Number(volumen);
 
     if (!Number.isFinite(volumen)) return;
@@ -662,9 +661,8 @@ function actualizarM216(volumen) {
 // DIBUJAR NIVEL SVG M216
 // =====================================
 
-function dibujarNivelM216(porcentaje) {
-
-    if (!svgDocumentM216) return;
+function dibujarNivelM216(porcentaje) {    
+    if (!svgDocumentM216) return;    
 
     const liquido = svgDocumentM216.getElementById("liquido-mezclador");
     const textoNivel = svgDocumentM216.getElementById("texto-nivel-porcentaje");
@@ -677,8 +675,7 @@ function dibujarNivelM216(porcentaje) {
 
     liquido.setAttribute("y", posicionY);
     liquido.setAttribute("height", altura);
-
-    porcentaje = 60;
+    
     textoNivel.textContent = porcentaje + "%";
 
     let color;
@@ -686,10 +683,13 @@ function dibujarNivelM216(porcentaje) {
     if (porcentaje <= 50) {
         color = "#22C55E";
     } else if (porcentaje <= 70) {
+        console.log("naranja");
         color = "#EAB308";
     } else if (porcentaje <= 80) {
+        console.log("rojo 1");
         color = "#F97316";
     } else {
+        console.log("lleno");
         color = "#EF4444";
     }
 
