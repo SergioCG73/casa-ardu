@@ -52,7 +52,7 @@ function obtenerDatosProducto($conexion, $producto, $modo)
         $numeroProduccion = $_POST["numeroFabricacion"];
 
         //Equipos
-        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";
+        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";+
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
@@ -177,9 +177,7 @@ if ($modo === "crear") {
         "recetas" => $recetas,
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
-        "ultimaEnCurso" => $ultimaEnCurso,
-        "sacas" => $sacas/*
-        "notas" => $notas*/
+        "ultimaEnCurso" => $ultimaEnCurso        
     ]);
     exit;
 } 
