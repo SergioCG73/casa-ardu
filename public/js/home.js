@@ -126,7 +126,9 @@ function cargarProducciones(tabla, divProducciones) {
             }*/
 
             //Actualizar el SVG del tanque M216
-            actualizarM216(data.volumen_M216);
+
+            //console.log(data.producciones_en_curso[0].Producto_id); debugger
+            actualizarM216(data.volumen_M216, data.producciones_en_curso[0].Producto_id);
         })
         .catch(err => console.error("Error cargando producciones:", err));
 }
@@ -209,9 +211,8 @@ function construirTabla(data) {
             </td>
             <td>${p.NumeroFabricacion}</td>
             <td>${p.FechaInicio}</td>
-            <td class="${claseMezclador}">${mezclador}</td> <!--26/03/2026-->
-            <td>${reactor}</td>
-            <!--<td>${campo}</td>-->
+            <td class="${claseMezclador}">${mezclador}</td> 
+            <td>${reactor}</td>            
             <td>${receta}</td>                        
             ${td}
             <td>
