@@ -278,7 +278,7 @@ async function sePuedeFabricar(producto, data) {
         return false;
     }
 
-    console.log(mezcladoresDisponiblesFerrico);
+    //console.log(mezcladoresDisponiblesFerrico);
 
     if (producto === "Ferrico" && (
         viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
@@ -512,13 +512,22 @@ function recogerDatosAnalitica(producto) {
 // Valida el formulario y devuelve el mezclador y la receta seleccionados.
 // Si algo no es válido, muestra el aviso y devuelve null.
 // pesoFinal es opcional: solo se valida si se le pasa (modo transferir).
-function validarFormulario(pesoInicial, pesoFinal = null) {
-    if (pesoInicial.value.trim() === "") {
+function validarFormulario(pesoInicial, modo, pesoFinal = null) {
+    console.log("validarFormulario");
+    /*console.log(modo);
+    console.log(pesoInicial);
+    console.log(pesoFinal); debugger*/
+    /*if (pesoInicial.value.trim() === "") {
+        alert("Introduzca un peso inicial válido");
+        return null;
+    } */
+
+    if (pesoInicial.trim() === "") {
         alert("Introduzca un peso inicial válido");
         return null;
     }
 
-    if (pesoFinal !== null && pesoFinal.value.trim() === "") {
+    if (pesoFinal !== null && pesoFinal.trim() === "") {
         alert("Introduzca un peso final válido");
         return null;
     }
@@ -529,33 +538,51 @@ function validarFormulario(pesoInicial, pesoFinal = null) {
         return null;
     }
 
-    const receta = document.querySelector("input[name='receta']:checked");
+    const receta = document.querySelector("input[name='receta']:checked")?.value;
+
     if (!receta) {
         alert("Seleccione una receta");
         return null;
     }
 
-    const sacas = document.querySelector("input[name='sacas']:checked")
-    if (!sacas) {
+    //const sacas = document.querySelector("input[name='sacas']:checked")
+    const sacasCheckBox = document.querySelector("#sacas");
+    sacas = sacasCheckBox.checked ? 1 : 0;
+
+    /*if (!sacas && modo !== "crear") {
+        alert("No ha dosificado las sacas de férrico");
+        return null;
+    }*/
+
+    if (!sacas && modo === "transferir") {
         alert("No ha dosificado las sacas de férrico");
         return null;
     }
-
     return { mezclador, receta };
 }
 
 // Crea el FormData con los datos comunes a todos los modos
 function crearDatosFormulario(numeroProduccion, mezclador, pesoInicial, pesoFinal, receta, sacas, notas, producto) {
-
+    //console.log(receta); debugger
     const datos = new FormData();
     datos.append("numeroProduccion", numeroProduccion);
     datos.append("mezclador", mezclador.value);
     datos.append("pesoInicialMezclador", quitarPuntoMiles(pesoInicial.value));
-    datos.append("pesoFinalMezclador", quitarPuntoMiles(pesoFinal.value));
-    datos.append("receta", receta.value);
-    datos.append("sacas", sacas); // Envía false si el checkbox no está seleccionado y 1 si lo está
+    //datos.append("pesoFinalMezclador", quitarPuntoMiles(pesoFinal.value));
+    //datos.append("pesoFinalMezclador", pesoFinal ? quitarPuntoMiles(pesoFinal) : "");
+    datos.append(
+        "pesoFinalMezclador",
+        pesoFinal?.value ? quitarPuntoMiles(pesoFinal.value) : ""
+    );
+    //datos.append("receta", receta.value);
+    datos.append("receta", receta);
+    datos.append("sacas", sacas);           // Envía false si el checkbox no está seleccionado y 1 si lo está
     datos.append("notas", notas.value);
     datos.append("producto", producto);
+
+    /*const objeto = Object.fromEntries(datos.entries());
+    console.log(objeto); debugger*/
+
     return datos;
 }
 
@@ -564,7 +591,7 @@ function createProduccion(datos, destino) {
     //console.log(datos); debugger
 
     switch (destino) {
-        case "M411":
+        case "M412":
             modo = "transferir";
             break;
 
@@ -584,7 +611,7 @@ function createProduccion(datos, destino) {
         .then(response => response.json())
         .then(json => {
             console.log(json);
-            if (json.ok) mostrarModal("Producción enviada a M411");
+            if (json.ok) mostrarModal("Producción enviada a M412");
             else alert(json.error);
         })
         .catch(error => {
@@ -603,14 +630,14 @@ const displayM216 = document.getElementById("displayM216");
 const svgM216 = document.getElementById("svgM216");
 
 // Esperar a que cargue el SVG
-svgM216.addEventListener("load", () => {
+/*svgM216.addEventListener("load", () => {
 
     svgDocumentM216 = svgM216.contentDocument;
 
     if (ultimoNivelM216 !== null) {
         dibujarNivelM216(ultimoNivelM216);
     }
-});
+});*/
 
 
 // =====================================
@@ -632,7 +659,13 @@ if (svgM216) {
 // ACTUALIZAR NIVEL M216
 // =====================================
 
-function actualizarM216(volumen) {
+function actualizarM216(volumen, producto) {
+    console.log(volumen, producto); debugger
+
+    if (producto === "Ferrico") {
+        return;
+    }
+
     volumen = Number(volumen);
 
     if (!Number.isFinite(volumen)) return;
@@ -661,8 +694,8 @@ function actualizarM216(volumen) {
 // DIBUJAR NIVEL SVG M216
 // =====================================
 
-function dibujarNivelM216(porcentaje) {    
-    if (!svgDocumentM216) return;    
+function dibujarNivelM216(porcentaje) {
+    if (!svgDocumentM216) return;
 
     const liquido = svgDocumentM216.getElementById("liquido-mezclador");
     const textoNivel = svgDocumentM216.getElementById("texto-nivel-porcentaje");
@@ -675,7 +708,7 @@ function dibujarNivelM216(porcentaje) {
 
     liquido.setAttribute("y", posicionY);
     liquido.setAttribute("height", altura);
-    
+
     textoNivel.textContent = porcentaje + "%";
 
     let color;
