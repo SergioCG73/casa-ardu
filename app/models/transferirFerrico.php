@@ -27,6 +27,7 @@ $sacas                      = $_POST["sacas"] ??  null;
 $destino                    = $_POST["destino"] ?? null;
 
 /*echo json_encode([
+    "LINE" => __LINE__,
     "NumeroProduccion" => $numeroProduccion,
     "Mezclador" => $mezcladorNuevo,
     "pesoInicialMezclador" => $pesoM,
@@ -46,8 +47,7 @@ if (!$numeroProduccion) {
     exit;
 }
 
-if ($modo === "transferir") {
-    $mezcladorNuevo = "M411";
+/*if ($modo === "transferir") {    
 //Actualizar la fabricación en curso pasando el M311 a M411 (decantador)
 //FechaInicioReaccion recoge la fecha y hora que se realiza la transferencia desde M311 a M411
     $sqlUpdate = "UPDATE fabricaciones_en_curso
@@ -69,9 +69,9 @@ if ($modo === "transferir") {
     $stmt->bindParam(":sacas", $sacas);
     $stmt->bindParam(":mezclador", $mezcladorNuevo);
     $stmt->bindParam("nf", $numeroProduccion);
-    //$stmt->execute();
+    $stmt->execute();*/
 
-    echo json_encode([
+    /*echo json_encode([
         "ok" => true,
         "numeroProduccion" => $numeroProduccion,
         "mezcladorNuevo" => $mezcladorNuevo,
@@ -82,9 +82,9 @@ if ($modo === "transferir") {
         "sacas" => $sacas        
     ]);
     exit;
-}
-/*
-if ($modo === "terminar") {
+}*/
+
+
     $sqlInsert = "
 INSERT INTO ferrico_terminadas (
     NumeroFabricacion,
@@ -113,40 +113,39 @@ WHERE NumeroFabricacion = :nf
     $stmt->bindParam(":vi", $pesoM);
     $stmt->bindParam(":vf", $pesoMF);
     $stmt->bindParam(":notas", $notas);
-    $stmt->execute();
+    //$stmt->execute();
 
     // Reactor → Vacío
     $sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :mezclador";
     $stmt = $conexion->prepare($sqlUpdate);
-    $stmt->execute([":mezclador" => $mezcladorNuevo]);
+    //$stmt->execute([":mezclador" => $mezcladorNuevo]);
 
     // Actualizar depósito D111
     $sqlUpdate = "UPDATE equipos SET Volumen = :volumen WHERE Equipo_id = 'D111'";
     $stmt = $conexion->prepare($sqlUpdate);
     $stmt->bindParam(":volumen", $volumenD111);
-    $stmt->execute();
+    //$stmt->execute();
 
     // Borrar fabricación en curso
     $numeroProduccion = (int)$numeroProduccion;
-
     $sqlDelete = "DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
     $stmtDelete = $conexion->prepare($sqlDelete);
     $stmtDelete->bindParam(":nf", $numeroProduccion, PDO::PARAM_INT);
-    $stmtDelete->execute();
+    //$stmtDelete->execute();
 
     echo json_encode([
+        "LINE" => __LINE__,
         "ok" => true,
         "numeroProduccion" => $numeroProduccion,
         "mezcladorNuevo" => $mezcladorNuevo,
         "pesoM" => $pesoM,
         "pesoMF" => $pesoMF,
-        "d11" => $volumen_D111,
         "recetas" => $receta,
         "notas" => $notas,
         "sacas" => $sacas
     ]);
     exit;
-}
+
 
 
 /*
