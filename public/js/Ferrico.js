@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (modo === "crear") {
             sePuedeFabricar(producto, datosEdicion);
             contenedorPesoFinal.style.display = "none";
+            inputSacas.disabled = "true";            
+            
             //sacasEstado = datosEdicion.sacas ? Number(datosEdicion.sacas.Sacas) : null
             sacasEstado = datosEdicion.sacas;   //sacasEstado = false
 
@@ -124,24 +126,31 @@ document.addEventListener("DOMContentLoaded", () => {
             /*console.log(`${modo}`);
             console.log(datosEdicion.produccionesEnCurso.PesoInicialMezclador);
             console.log(datosEdicion.produccionesEnCurso.Sacas);*/
-            peso_inicial_mezclador.value = datosEdicion.produccionesEnCurso.PesoInicialMezclador;
+            peso_inicial_mezclador.value = formatearMiles(datosEdicion.produccionesEnCurso.PesoInicialMezclador);
             txtNotas.value = datosEdicion.produccionesEnCurso.Notas;
         };
 
 
-        //=== ACCION AL PULSAR CLICK en CREAR O EDITAR ===//
+        //=== ACCION AL PULSAR CLICK EN CREAR O EDITAR ===//
 
         if (modo === "crear" || modo === "editar") {
             btnCrear.addEventListener("click", () => {
                 console.log(`click en botón ${modo.toUpperCase()}`);
 
-                const seleccion = validarFormulario(peso_inicial_mezclador);
+                const seleccion = validarFormulario(peso_inicial_mezclador, modo);
                 if (!seleccion) return;
+
+                // El peso final sólo se utiliza en modo edición
+
+                const pesoFinal = modo === "editar"
+                    ? peso_final_mezclador
+                    : null;
 
                 const datos = crearDatosFormulario(
                     numeroProduccionActual,
                     seleccion.mezclador,
                     peso_inicial_mezclador,
+                    peso_final_mezclador,
                     seleccion.receta,
                     sacasEstado,
                     txtNotas,
@@ -162,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                     .then(response => response.json())
                     .then(json => {
-                        console.log(json);
+                        console.log(json); debugger
                         window.location.href = "index.php?c=Formulario&a=home";
                     })
                     .catch(error => {
@@ -173,28 +182,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (modo === "transferir") {
             btnCrear.textContent = "Transferir";
-
             console.log("inicializar formulario/transferir");
 
             btnCrear.addEventListener("click", () => {
-                console.log(`click en botón ${modo.toUpperCase()}`);               
+                console.log(`click en botón ${modo.toUpperCase()}`);
 
-                const seleccion = validarFormulario(peso_inicial_mezclador, peso_final_mezclador);
-                if (!seleccion) return;
+                let pesoInicialMezclador = quitarPuntoMiles(peso_inicial_mezclador.value);
+                let pesoFinalMezclador =  quitarPuntoMiles(peso_final_mezclador.value);
+                
+                const seleccion = validarFormulario(pesoInicialMezclador, modo, pesoFinalMezclador);
+                if (!seleccion) return;                
 
                 const datos = crearDatosFormulario(
                     numeroProduccionActual,
                     seleccion.mezclador,
                     peso_inicial_mezclador,
-                    peso_final_mezclador,    //Añadida
+                    peso_final_mezclador,
                     seleccion.receta,
                     sacasEstado,
                     txtNotas,
-                    producto
+                    producto                    
                 );
 
-                document.getElementById("modalTransferencia").style.display = "block";
+                // Seleccionar la URL según el modo
+                fetch("index.php?c=Ferrico&a=transferir", {
+                    method: "POST",
+                    body: datos
+                })
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json); debugger;
+                })
+                .catch(error => {
+                    console.log("ERROR: ", error)
+                })
                 
+                console.log(`fetch ${modo}`);
+
+                /*document.getElementById("modalTransferencia").style.display = "block";
+
                 document.getElementById("btnTransferirM411").onclick = () => {
                     createProduccion(datos, "M411");
                 };
@@ -205,13 +231,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 document.getElementById("btnCancelarTransferencia").onclick = () => {
                     document.getElementById("modalTransferencia").style.display = "none";
-                };
+                };*/
             });
         }
     }
 
     // ===== FIN ZONA DE FUNCIONES ======
-
     [peso_inicial_mezclador, peso_final_mezclador, volumen_D111].forEach(input => {
         input.addEventListener("input", () => formatearNumero(input));
     });
@@ -256,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //=== MODO EDITAR ===
     if (modo === "editar") {
         //console.log("modo editar...");
-        //console.log(datosTabla);
+        //console.log(datosTabla); debugger
 
         const datos = new FormData();
         datos.append("modo", modo);
