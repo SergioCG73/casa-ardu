@@ -221,23 +221,11 @@ function construirTabla(data) {
                      title="Editar fabricación">
             </td>
             
-            <!--<td>
-                     <img src="images/flecha_amarilla_icon_15x20.png"
-                     class="icono-transferir"
-                     data-info='${JSON.stringify(p)}'
-                     title="Transferir fabricación">
-            </td>-->
-            
             <td>
-                    <!--<img src="images/${p.FechaFinal ? 'flecha_negra_icon_15x20.png' : 'flecha_amarilla_icon_15x20.png'}"-->
-                    <img src="images/${(p.FechaFinal || p.FechaInicioReaccion || p.Producto_id === "Filtrado") ? 'flag_finish.png' : 'flecha_amarilla_icon_15x20.png'}"
+                    <img src="images/${(p.FechaFinal || p.FechaInicioReaccion || p.Producto_id === "Filtrado" || p.Producto_id === "Ferrico") ? 'flag_finish.png' : 'flecha_amarilla_icon_15x20.png'}"
                     class="icono-transferir"
                     data-info='${JSON.stringify(p)}'
-                    title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">
-                    <!--<img src="images/${p.FechaFinal ? 'flag_finish.png' : 'flag_finish.png'}"
-                    class="icono-transferir"
-                    data-info='${JSON.stringify(p)}'
-                    title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">-->
+                    title="${p.FechaFinal ? 'Producción finalizada' : 'Transferir fabricación'}">                    
             </td>
 
             <td>
