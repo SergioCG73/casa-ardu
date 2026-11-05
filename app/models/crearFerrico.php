@@ -9,7 +9,6 @@ header('Content-Type: application/json; charset=utf-8'); //Le dice al navegador 
 error_reporting(0);
 ini_set('display_errors', 0);
 
-
 //Evita que nos envíen datos por GET
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
@@ -32,6 +31,8 @@ if ($sacas === "1") {
 } else {
     $sacas = 0;
 }
+
+//echo json_encode(["FILE" => __FILE__]); exit;
 
 //Validación de datos recibidos
 try {
@@ -60,6 +61,7 @@ try {
 
     echo json_encode([
         "ok" => true,
+        "LINE" => __LINE__,
         "numeroProduccion" => $numeroProduccion,
         "mezclador" => $mezclador,
         "pesoInicialMezclador" => $pesoInicialMezclador,
