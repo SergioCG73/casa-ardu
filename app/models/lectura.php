@@ -47,14 +47,15 @@ if ($modo === "inicial") {
         $fila["NumeroFabricacion"] !== "0000"
     );
 
-    echo json_encode([
+   /* echo json_encode([
         "ok" => true,
+        "LINE" => __LINE__,
         "modo" => $modo,
         "producto" => $producto,
         "producciones_en_curso" => $producciones_en_curso,
         "volumen_M216" => $volumen_M216
     ]);
-    exit;
+    exit;*/
 }
 
 // -----------------------------------------------
@@ -78,7 +79,6 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
     $ultimaEnCurso = $stmt->fetchColumn() ?? 0;
 
     if ($producto === "P18") {
-
         // Última sin filtrar (solo para CREAR)
         $sql = "SELECT MAX(NumeroFabricacion) FROM mezclador_216";
         $stmt = $conexion->prepare($sql);
@@ -87,14 +87,6 @@ function obtenerUltimasFabricaciones($conexion, $producto, $tablaTerminadas)
     } else {
         $ultimaSinFiltrar = 0;
     }
-
-    echo json_encode([
-        "LINE" => __LINE__,
-        "ultimaAcabada" => $ultimaAcabada,
-        "ultimaEnCurso" => $ultimaEnCurso,
-        "ultimaSinFiltrar" => $ultimaSinFiltrar
-    ]);
-    exit;
 
     return [$ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar];
 }
@@ -204,9 +196,10 @@ if ($modo === "transferir" && $producto === "Sulfato") {
 if (($modo === "editar" || $modo === "crear") && $producto === "Sulfato") {
     $tabla = "sulfato_terminadas";
     list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    $ultimaSinFiltrar = 0;
 
     $siguienteFabricacion = ($modo === "crear")
-        ? max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1
+        ? max($ultimaAcabada, $ultimaEnCurso, $ultimaSinFiltrar) + 1        
         : max($ultimaAcabada, $ultimaEnCurso) + 1;
 
     list($reactores, $recetas, $equipos, $notas) = obtenerDatosProducto($conexion, $producto);
@@ -234,9 +227,9 @@ if ($modo === "transferir" && $producto === "Ferrico") {
         "producto" => $producto,
         "modo" => $modo,
         "ultimaAcabada" => $ultimaAcabada,
-        "ultimaEnCurso" => $ultimaEnCurso,
+        "ultimaEnCurso" => $ultimaEnCurso,/*
         "ultimaSinFiltrar" => $ultimaSinFiltrar,
-        "reactores" => $reactores,
+        "reactores" => $reactores,*/
         "recetas" => $recetas,
         "equipos" => $equipos,
         "linea" => __LINE__
@@ -271,8 +264,8 @@ if (in_array($modo, ["crear", "editar", "transferir"]) && $producto === "P18") {
         "equipos" => $equipos,
         "recetas" => $recetas,
         "reactores" => $reactores,
-        "tabla" => $tabla,
-        "pesoInicialMezclador" => $pesoInicialMezclador,
+        "tabla" => $tabla,/*
+        "pesoInicialMezclador" => $pesoInicialMezclador,*/
         "linea" => __LINE__
     ]);
     exit;
@@ -289,19 +282,6 @@ if ($modo === "crear") {
 }
 
 list($equipos, $recetas, $reactores) = obtenerDatosProducto($conexion, $producto);
-
-echo json_encode([
-    "prueba" => "SULFATO",
-    "modo" => $modo,
-    "producto" => $producto,
-    "tabla" => $tabla,
-    "Fabricacion" => $siguienteFabricacion,
-    "recetas" => $recetas,
-    "reactores" => $reactores,
-    "equipos" => $equipos,
-    "linea" => __LINE__
-]);
-exit;
 
 // -----------------------------
 // MODO FILTRAR
