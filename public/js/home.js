@@ -76,59 +76,29 @@ function init() {
    CARGAR DATOS DESDE PHP
    ============================================================ */
 function cargarProducciones(tabla, divProducciones) {
-    fetch("index.php?c=Leer&a=lectura", {
+    fetch("index.php?c=Leer&a=inicial", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modo: "inicial" })
     })
         .then(response => response.json())
         .then(data => {
-            //console.log(data); debugger
+            //console.log(data);
             if (!data.ok) return;
 
-            tabla.innerHTML = generarEncabezado() + construirTabla(data);
+            tabla.innerHTML = generarEncabezado() + construirTabla(data);            
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
-            localStorage.setItem("existeFiltrado", existeFiltrado ? "1" : "0");
+            localStorage.setItem("existeFiltrado", existeFiltrado ? "1" : "0");            
 
-            activarEventosTabla(tabla);
+            activarEventosTabla(tabla);            
 
             divProducciones.style.display = "block";
 
-            /*let claseEspecial = null;
-
-            if (data.volumen_M216 === 0) {
-                displayM216.style.display = "none";
-            } else {
-                displayM216.style.display = "block";
-                const textM216 = document.getElementById("label_m216");
-                volumenMaximoM216 = 60000;
-                volumenUsado = Math.round((data.volumen_M216 / volumenMaximoM216) * 100);
-
-                textM216.innerHTML = volumenUsado + "%";
-
-                const valorM216 = Number(textM216.innerHTML);
-                textM216.innerHTML = volumenUsado + "%";
-
-                if (volumenUsado >= 0 && volumenUsado <= 50) {
-                    claseEspecial = "M216_Green";
-                } else if (volumenUsado > 50 && volumenUsado <= 70) {
-                    claseEspecial = "M216_Yellow";
-                } else if (volumenUsado > 70 && volumenUsado <= 80) {
-                    claseEspecial = "M216_Orange";
-                } else if (volumenUsado > 80) {
-                    claseEspecial = "M216_Red";
-                }
-
-                textM216.classList.remove("M216_Green", "M216_Yellow", "M216_Red");
-                textM216.classList.add(claseEspecial);
-
-                
-            }*/
-
             //Actualizar el SVG del tanque M216
-
             //console.log(data.producciones_en_curso[0].Producto_id); debugger
-            actualizarM216(data.volumen_M216, data.producciones_en_curso[0].Producto_id);
+
+            //console.log(data); debugger
+            actualizarM216(data.volumen_M216, "P18");
         })
         .catch(err => console.error("Error cargando producciones:", err));
 }
@@ -136,7 +106,7 @@ function cargarProducciones(tabla, divProducciones) {
 /* =======
    TABLA
    ======= */
-function generarEncabezado() {
+function generarEncabezado() {    
     return `
         <tr>
             <th>Producto</th>
@@ -153,14 +123,15 @@ function generarEncabezado() {
 }
 
 function construirTabla(data) {
+    //console.log(data);
     return data.producciones_en_curso.map(p => {
         //Determinamos la clase según el Producto_id        
         //Control de valores undefined/null con ternario
         //console.log(data.producciones_en_curso); debugger
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
-        const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador; //28/03/26    
+        const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador;
         const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta;
-        const deposito = (p.Deposito === "undefined" || p.Deposito === null) ? "" : p.Deposito; //03/04/26                
+        const deposito = (p.Deposito === "undefined" || p.Deposito === null) ? "" : p.Deposito;
 
         let claseEspecial = "";
         let claseMezclador = "";
