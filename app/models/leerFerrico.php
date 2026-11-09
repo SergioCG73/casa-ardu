@@ -20,8 +20,7 @@ $numeroProduccion = $_POST["numeroProduccion"] ?? "";
 
 /*echo json_encode(["modo" => $modo,
                   "producto" => $producto,
-                  "numeroProduccion" => $numeroProduccion,
-                  "receta" => $receta,
+                  "numeroProduccion" => $numeroProduccion,                  
                   "LINE" => __LINE__
 ]); exit;*/
 
@@ -52,7 +51,7 @@ function obtenerDatosProducto($conexion, $producto, $modo)
         $numeroProduccion = $_POST["numeroFabricacion"];
 
         //Equipos
-        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto";+
+        $sql = "SELECT Equipo_id, Estado, Tipo FROM equipos WHERE ProductoFabricado = :producto AND Estado = 'Vacio'";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
@@ -71,7 +70,6 @@ function obtenerDatosProducto($conexion, $producto, $modo)
         $stmt->bindParam(":producto", $producto);
         $stmt->execute();
         $recetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         // Sacas
         $sql = "SELECT Sacas FROM fabricaciones_en_curso WHERE Producto_id = :producto";
         $stmt = $conexion->prepare($sql);
@@ -160,7 +158,7 @@ function obtenerDatosProduccionEnCurso($conexion)
 
 // ENVIAR JSON
 if ($modo === "crear") {
-    list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
+    list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);  //OK    
 
     $siguienteFabricacion = ($modo === "crear")
         ? max($ultimaAcabada, $ultimaEnCurso) + 1
@@ -177,10 +175,10 @@ if ($modo === "crear") {
         "recetas" => $recetas,
         "tabla" => $tabla,
         "ultimaAcabada" => $ultimaAcabada,
-        "ultimaEnCurso" => $ultimaEnCurso        
+        "ultimaEnCurso" => $ultimaEnCurso
     ]);
     exit;
-} 
+}
 
 if ($modo === "editar") {
     list($ultimaAcabada, $ultimaEnCurso) = obtenerUltimasFabricaciones($conexion, $producto, $tabla);
