@@ -137,7 +137,9 @@ document.addEventListener("DOMContentLoaded", () => {
             btnCrear.addEventListener("click", () => {
                 console.log(`click en botón ${modo.toUpperCase()}`);
 
-                const seleccion = validarFormulario(peso_inicial_mezclador, modo);
+                let pesoInicialMezclador = peso_inicial_mezclador.value;                
+                //const seleccion = validarFormulario(peso_inicial_mezclador, modo);
+                const seleccion = validarFormulario(pesoInicialMezclador, modo);
                 if (!seleccion) return;
 
                 // El peso final sólo se utiliza en modo edición
