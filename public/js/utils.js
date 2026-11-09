@@ -279,6 +279,7 @@ async function sePuedeFabricar(producto, data) {
     }
 
     //console.log(mezcladoresDisponiblesFerrico);
+    console.log(viernesTarde); debugger
 
     if (producto === "Ferrico" && (
         viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
@@ -522,6 +523,8 @@ function validarFormulario(pesoInicial, modo, pesoFinal = null) {
         return null;
     } */
 
+    console.log(pesoInicial); debugger
+
     if (pesoInicial.trim() === "") {
         alert("Introduzca un peso inicial válido");
         return null;
@@ -660,9 +663,7 @@ if (svgM216) {
 // =====================================
 
 function actualizarM216(volumen, producto) {
-    console.log(volumen, producto); debugger
-
-    if (producto === "Ferrico") {
+    if (producto !== "P18") {
         return;
     }
 
@@ -707,8 +708,7 @@ function dibujarNivelM216(porcentaje) {
     const posicionY = 510 - altura;
 
     liquido.setAttribute("y", posicionY);
-    liquido.setAttribute("height", altura);
-
+    liquido.setAttribute("height", altura);    
     textoNivel.textContent = porcentaje + "%";
 
     let color;
