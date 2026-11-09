@@ -3,8 +3,8 @@
 //echo json_encode(["FILE" => __FILE__]); exit;
 
 class LeerController {
-    public function lectura() {
-        include __DIR__ . '/../models/lectura.php';
+    public function inicial() {
+        include __DIR__ . '/../models/lecturaInicial.php';
     }
 
     public function leerP18() {
