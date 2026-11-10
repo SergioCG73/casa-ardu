@@ -7,8 +7,7 @@ const nombres = {
 };
 
 
-function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo) {
-    //console.log(listaMezcladores); debugger
+function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo, mezcladorIdEditar) {
     listaMezcladores.forEach(mezclador => {
         const id = "mezclador_" + mezclador.Equipo_id;
 
@@ -21,6 +20,8 @@ function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo)
         input.name = "mezclador";
         input.id = id;
         input.value = mezclador.Equipo_id;
+
+        /*
 
         //Si sólo hay un mezclador, seleccionarlo
         if (listaMezcladores.length === 1) {
@@ -35,6 +36,22 @@ function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo)
         }
 
         if (mezclador.Estado === "En uso") {
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+        */        
+        if (modo === "editar" && mezcladorIdEditar === mezclador.Equipo_id) {
+            // Si estamos editando y coincide con el ID de la tabla, tiene prioridad absoluta
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+        else if (modo !== "editar" && listaMezcladores.length === 1) {
+            // Si no es edición y solo hay uno, se selecciona automáticamente
+            input.checked = true;
+            mezcladorSeleccionado = mezclador.Equipo_id;
+        }
+        else if (modo !== "editar" && mezclador.Estado === "En uso") {
+            // Si no es edición y está en uso (evita que en modo editar pise la selección real)
             input.checked = true;
             mezcladorSeleccionado = mezclador.Equipo_id;
         }
@@ -204,6 +221,7 @@ function formatearFecha(fechaStr) {
 }
 
 async function sePuedeFabricar(producto, data) {
+    console.log(producto, data);
     // 1. Cargar festivos.json
     const res = await fetch("data/festivos.json");
     const json = await res.json();
@@ -219,8 +237,6 @@ async function sePuedeFabricar(producto, data) {
     const mañana = new Date(ahora);
     mañana.setDate(ahora.getDate() + 1);
 
-    //console.log(mañana); debugger
-
     const yyyy = mañana.getFullYear();
     const mm = String(mañana.getMonth() + 1).padStart(2, "0");
     const dd = String(mañana.getDate()).padStart(2, "0");
@@ -230,6 +246,7 @@ async function sePuedeFabricar(producto, data) {
 
     // 4. Equipos disponibles    
     //console.log(data.equipos); debugger
+    console.log(data.equipos); debugger
     const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");
     const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id != "M311" && m.Equipo_id != "M411");
     const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
@@ -279,7 +296,7 @@ async function sePuedeFabricar(producto, data) {
     }
 
     //console.log(mezcladoresDisponiblesFerrico);
-    console.log(viernesTarde); debugger
+    //console.log(viernesTarde); debugger
 
     if (producto === "Ferrico" && (
         viernesTarde ||                                                         //Si es viernes tarde y son más de las 17pm
@@ -523,7 +540,7 @@ function validarFormulario(pesoInicial, modo, pesoFinal = null) {
         return null;
     } */
 
-    console.log(pesoInicial); debugger
+    //console.log(pesoInicial); debugger
 
     if (pesoInicial.trim() === "") {
         alert("Introduzca un peso inicial válido");
@@ -632,17 +649,6 @@ let ultimoNivelM216 = null;
 const displayM216 = document.getElementById("displayM216");
 const svgM216 = document.getElementById("svgM216");
 
-// Esperar a que cargue el SVG
-/*svgM216.addEventListener("load", () => {
-
-    svgDocumentM216 = svgM216.contentDocument;
-
-    if (ultimoNivelM216 !== null) {
-        dibujarNivelM216(ultimoNivelM216);
-    }
-});*/
-
-
 // =====================================
 // CONTROL SVG M216
 // =====================================
@@ -651,6 +657,7 @@ const svgM216 = document.getElementById("svgM216");
 if (svgM216) {
     svgM216.addEventListener("load", () => {
         svgDocumentM216 = svgM216.contentDocument;
+        console.log("SVG M216 cargado en utils.js");
 
         if (ultimoNivelM216 !== null) {
             dibujarNivelM216(ultimoNivelM216);
@@ -708,7 +715,7 @@ function dibujarNivelM216(porcentaje) {
     const posicionY = 510 - altura;
 
     liquido.setAttribute("y", posicionY);
-    liquido.setAttribute("height", altura);    
+    liquido.setAttribute("height", altura);
     textoNivel.textContent = porcentaje + "%";
 
     let color;
