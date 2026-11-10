@@ -11,10 +11,10 @@ function init() {
     const displayM216 = document.getElementById("displayM216");
     const svgM216 = document.getElementById("svgM216");
 
-    let svgDocumentM216 = null;
+    /*let svgDocumentM216 = null;
     let ultimoNivelM216 = null;
 
-    //Esperar a qu4e se cargue el SVG externo
+    //Esperar a que se cargue el SVG externo
     svgM216.addEventListener("load", () => {
         svgDocumentM216 = svgM216.contentDocument;
         console.log("SVG M216 cargado correctamente");
@@ -23,7 +23,7 @@ function init() {
         if (ultimoNivelM216 !== null) {
             dibujarNivelM216(ultimoNivelM216);
         }
-    })
+    })*/
 
     localStorage.setItem("modo", "inicial");
 
