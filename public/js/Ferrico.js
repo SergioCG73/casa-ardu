@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let mezcladorSeleccionado;
     let modo = localStorage.getItem("modo");
     let numeroProduccion;
-    let producto;
-    producto = datosTabla.Producto_id;
+    let producto;    
+    producto = localStorage.getItem("producto");    
     let recetaSeleccionada;
     let sacas = document.querySelector(".sacas");
     let sacasEstado = null;
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("inicializando Formulario...");
 
         // --- DATOS A CARGAR EN EL FORMULARIO 
-        if (modo === "crear") {
+        if (modo === "crear") {            
             sePuedeFabricar(producto, datosEdicion);
             contenedorPesoFinal.style.display = "none";
             inputSacas.disabled = "true";            
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (modo === "editar") {
             btnCrear.textContent = "Editar";
-            console.log("inicializarFormulario --> editar");
+            console.log("inicializarFormulario/editar");
             contenedorPesoFinal.style.display = "none";
             sacasEstado = datosEdicion.produccionesEnCurso.Sacas;
 
@@ -90,7 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // === GENERAR RADIOS MEZCLADORES ==== //
         contenedorMezcladores.innerHTML = "";
         listaMezcladores = datosEdicion.equipos.filter(m => m.Tipo === "Mezclador");
-        generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo);
+        const mezcladorIdEditar = (modo === "editar" && typeof datosTabla !== 'undefined') ? datosTabla.Mezclador : null;        
+        generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo, mezcladorIdEditar);
 
         // === GENERAR RADIOS RECETAS === //
         contenedorRecetas.innerHTML = "";
@@ -173,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                     .then(response => response.json())
                     .then(json => {
-                        console.log(json); debugger
+                        console.log(json);
                         window.location.href = "index.php?c=Formulario&a=home";
                     })
                     .catch(error => {
@@ -252,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==== MODO CREAR ====
     if (modo === "crear") {
-        console.log("modo crear...");
+        console.log("modo crear...");        
 
         const datos = new FormData();
         datos.append("modo", modo);
@@ -272,7 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     alert("Error: " + datosEdicion.error);
                 }
-
+                
+                console.log(datosEdicion); debugger
                 return inicializarFormulario(modo, producto, datosEdicion);
             })
             .catch(error => {
@@ -300,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(response => response.json())
             .then(json => {
-                //console.log(json.produccionesEnCurso); 
+                //console.log(json); debugger 
                 //console.log(json.fabricacionesEnCurso);
                 datosEdicion = json;
 
