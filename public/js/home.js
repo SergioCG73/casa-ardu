@@ -86,11 +86,11 @@ function cargarProducciones(tabla, divProducciones) {
             //console.log(data);
             if (!data.ok) return;
 
-            tabla.innerHTML = generarEncabezado() + construirTabla(data);            
+            tabla.innerHTML = generarEncabezado() + construirTabla(data);
             let existeFiltrado = data.producciones_en_curso.some(p => p.Producto_id === "Filtrado");
-            localStorage.setItem("existeFiltrado", existeFiltrado ? "1" : "0");            
+            localStorage.setItem("existeFiltrado", existeFiltrado ? "1" : "0");
 
-            activarEventosTabla(tabla);            
+            activarEventosTabla(tabla);
 
             divProducciones.style.display = "block";
 
@@ -106,7 +106,7 @@ function cargarProducciones(tabla, divProducciones) {
 /* =======
    TABLA
    ======= */
-function generarEncabezado() {    
+function generarEncabezado() {
     return `
         <tr>
             <th>Producto</th>
@@ -261,16 +261,18 @@ function activarEventosTabla(tabla) {
 
         const iconoTransferir = e.target.closest(".icono-transferir");
         if (iconoTransferir) {
-            const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
-            localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
-            localStorage.setItem("modo", "transferir");
+            //const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
+            //localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
+            const datosTabla = JSON.parse(iconoTransferir.dataset.info);
+            localStorage.setItem("datosTabla", JSON.stringify(datosTabla));
+            localStorage.setItem("modo", "transferir");            
 
-            if (datosTransferir.Producto_id === "Filtrado") {
+            /*if (datosTransferir.Producto_id === "Filtrado") {
                 localStorage.setItem("modo", "finalizar");
             }
 
             if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion === null) {
-                console.log(datosTransferir); debugger
+                console.log(datosTransferir);
                 window.location.href = "index.php?c=Formulario&a=p18";
             } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
@@ -285,6 +287,30 @@ function activarEventosTabla(tabla) {
                 localStorage.setItem("modo", "terminar")
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal) {
+                localStorage.setItem("modo", "terminar");
+                window.location.href = "index.php?c=Formulario&a=ferrico";
+            }*/
+
+            if (datosTabla.Producto_id === "Filtrado") {
+                localStorage.setItem("modo", "finalizar");
+            }
+
+            if (datosTabla.Producto_id === "P18" && datosTabla.FechaInicioReaccion === null) {
+                console.log(datosTabla);
+                window.location.href = "index.php?c=Formulario&a=p18";
+            } else if (datosTabla.Producto_id === "Sulfato" && datosTabla.FechaFinal === null) {
+                window.location.href = "index.php?c=Formulario&a=sulfato";
+            } else if (datosTabla.Producto_id === "Ferrico" && datosTabla.FechaFinal === null) {
+                window.location.href = "index.php?c=Formulario&a=ferrico";
+            } else if (datosTabla.Producto_id === "Filtrado") {
+                window.location.href = "index.php?c=Formulario&a=filtrado";
+            } else if (datosTabla.Producto_id === "P18" && datosTabla.FechaInicioReaccion !== null) {
+                localStorage.setItem("modo", "terminar");
+                window.location.href = "index.php?c=Formulario&a=p18";
+            } else if (datosTabla.Producto_id === "Sulfato" && datosTabla.FechaFinal) {
+                localStorage.setItem("modo", "terminar");
+                window.location.href = "index.php?c=Formulario&a=sulfato";
+            } else if (datosTabla.Producto_id === "Ferrico" && datosTabla.FechaFinal) {
                 localStorage.setItem("modo", "terminar");
                 window.location.href = "index.php?c=Formulario&a=ferrico";
             }
