@@ -1,163 +1,312 @@
-/* Fuente */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+:root {
+    --bg-app: #f1f5f9;
+    --bg-card: #ffffff;
+    --primary: #1e293b;
+    --accent: #0284c7;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
 
-/* RESET + BODY */
-body {
-    background-color: #eef2f7;
-    font-family: 'Roboto', sans-serif;
+* {
+    box-sizing: border-box;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
+    padding: 0;
 }
 
-/* CONTENEDOR */
-#contenedor {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    max-width: 1100px;
+html, body {
+    display: block !important;
     width: 100%;
-    position: relative;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-app) !important;
+    color: var(--text-main);
 }
 
-/* TÍTULO */
-#titulo-formulario {
-    color: #1e293b;
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 30px;
-    border-left: 5px solid #2563eb;
-    padding-left: 15px;
-    text-transform: uppercase;
-}
-
-/* M216 */
-#displayM216 {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-
+/* Barra superior */
+.topbar {
+    width: 100%;
+    background-color: var(--primary);
+    color: #ffffff;
+    padding: 14px 28px;
     display: flex;
-    flex-direction: column;   /* M216 arriba, número debajo */
+    justify-content: space-between;
     align-items: center;
-    gap: 4px;
-
-    font-weight: 700;
-    font-size: 24px;
-    color: #334155;           /* mismo tono gris azulado de tu UI */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-/* El número con fondo verde */
-#label_m216 {
-    /*background-color: #16a34a;  /* verde elegante */
-    color: white;
+.topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-brand h1 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--success);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--success);
+}
+
+.badge-rol {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Contenedor principal */
+.dashboard-container {
+    max-width: 1440px;
+    margin: 24px auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Tarjetas */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+    position: relative !important;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.badge-live {
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 0.75rem;
+    font-weight: 700;
     padding: 4px 10px;
     border-radius: 6px;
-    font-size: 20px;            /* ligeramente más pequeño que el título */
-    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
-.M216_Green { background-color: #16a34a;}
-.M216_Yellow {
-    background-color: yellow;    
-    color: black !important;
+/* Botonera */
+.botonera-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
 }
 
-.M216_Orange { background-color: orange;}
-
-.M216_Red { background-color: red;}
-
-/* LABELS + INPUTS */
-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #64748b;
-    cursor: pointer;
-}
-
-/* CONTENEDOR DE BOTONES SUPERIORES */
-[name="botonera"] {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 25px;
-    justify-content: center;
-}
-
-/* ESTILO BASE PARA TODOS LOS BOTONES */
 .boton {
-    background-color: #334155;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--primary);
+    color: #ffffff;
     border: none;
-    padding: 10px 22px;
-    border-radius: 6px;
-    cursor: pointer;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 0.95rem;
     font-weight: 600;
-    font-size: 15px;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    min-width: 110px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.15);
 }
 
-/* HOVER */
 .boton:hover {
-    background-color: #475569;
+    background-color: var(--accent);
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(2, 132, 199, 0.25);
 }
 
-/* ACTIVO */
 .boton:active {
     transform: translateY(0);
-    background-color: #0f172a;
 }
 
-/* TABLA */
-.producciones_en_curso {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+/* Zona de trabajo: Sinóptico compacto + Tabla amplia */
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 24px;
+    align-items: start;
     width: 100%;
-    padding: 20px;
+}
+
+.m216 {
+    position: relative !important;
+    width: 100%;
+    height: 240px;
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tabla de producciones compacta */
+#producciones_en_curso,
+.producciones_en_curso {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
 }
 
 .tabla {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    font-size: 0.88rem;
 }
 
 .tabla th,
 .tabla td {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
+    text-align: center !important;
+    vertical-align: middle !important;
 }
 
-.tabla th { border-bottom: 3px solid #ccc; }
-
-.tabla tr:hover { background: #f9f9f9; }
-
-/* DESTACADOS */
-.p18_destacado,
-.ferrico_destacado,
-.M311_destacado,
-.sulfato_destacado {
-    color: white;
-    font-weight: bold;
-    padding: 4px 8px;
-    border-radius: 4px;
-    text-align: center;
+.tabla td > * {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
 }
 
-.p18_destacado { background-color: #f2c85b; }
-.ferrico_destacado { background-color: brown; }
-.sulfato_destacado { background-color: #cfe8d5; }
-.M311_destacado { color: green;}
-.filtrado {color: blueviolet;}
+.tabla th {
+    background-color: #f1f5f9;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    padding: 8px 12px !important;
+    border-bottom: 2px solid var(--border);
+}
 
-/* ICONOS */
-.icono-borrar,
-.icono-editar,
-.icono-transferir {
+.tabla td {
+    padding: 6px 12px !important;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.2;
+}
+
+.tabla tr:hover td {
+    background-color: #f8fafc;
+}
+
+.tabla td img {
+    vertical-align: middle;
     cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.tabla td img:hover {
+    transform: scale(1.2);
+}
+
+/* =========================================================
+   ESTILOS DE PRODUCTOS Y DESTACADOS (Adaptados a home.js)
+   ========================================================= */
+
+.p18_destacado,
+.papilla_destacado,
+.sulfato_destacado,
+.ferrico_destacado,
+.filtrado,
+[class*="producto_HB"] {
+    font-weight: 700 !important;
+    letter-spacing: 0.03em;
+    border-radius: 5px;
+    padding: 5px 10px !important;
+}
+
+/* 1. P18 -> Ámbar / Dorado */
+.p18_destacado,
+.producto_P18 {
+    background-color: #fde047 !important;
+    color: #422006 !important;
+}
+
+/* 2. PP18 -> Naranja suave */
+.papilla_destacado,
+.producto_PP18 {
+    background-color: #fdba74 !important;
+    color: #431407 !important;
+}
+
+/* 3. Férrico -> Rojo óxido */
+.ferrico_destacado,
+.producto_Ferrico {
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+}
+
+/* 4. Sulfato -> Verde técnico */
+.sulfato_destacado,
+.producto_Sulfato {
+    background-color: #0d9488 !important;
+    color: #ffffff !important;
+}
+
+/* 5. Filtrado P18 -> Azul agua */
+.filtrado,
+.producto_Filtrado {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+}
+
+/* 6. HB10 -> Índigo */
+[class*="producto_HB"] {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+/* 7. Mezclador destacado (Férrico + Sacas === 1) */
+.M311_destacado {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    font-weight: 700 !important;
+    border: 1px solid #fca5a5 !important;
+    border-radius: 5px;
 }

@@ -1,0 +1,163 @@
+/* Fuente */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+/* RESET + BODY */
+body {
+    background-color: #eef2f7;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* CONTENEDOR */
+#contenedor {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    max-width: 1100px;
+    width: 100%;
+    position: relative;
+}
+
+/* TÍTULO */
+#titulo-formulario {
+    color: #1e293b;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    border-left: 5px solid #2563eb;
+    padding-left: 15px;
+    text-transform: uppercase;
+}
+
+/* M216 */
+#displayM216 {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    display: flex;
+    flex-direction: column;   /* M216 arriba, número debajo */
+    align-items: center;
+    gap: 4px;
+
+    font-weight: 700;
+    font-size: 24px;
+    color: #334155;           /* mismo tono gris azulado de tu UI */
+}
+
+/* El número con fondo verde */
+#label_m216 {
+    /*background-color: #16a34a;  /* verde elegante */
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 20px;            /* ligeramente más pequeño que el título */
+    font-weight: 700;
+}
+
+.M216_Green { background-color: #16a34a;}
+.M216_Yellow {
+    background-color: yellow;    
+    color: black !important;
+}
+
+.M216_Orange { background-color: orange;}
+
+.M216_Red { background-color: red;}
+
+/* LABELS + INPUTS */
+label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+}
+
+/* CONTENEDOR DE BOTONES SUPERIORES */
+[name="botonera"] {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+
+/* ESTILO BASE PARA TODOS LOS BOTONES */
+.boton {
+    background-color: #334155;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    min-width: 110px;
+}
+
+/* HOVER */
+.boton:hover {
+    background-color: #475569;
+    transform: translateY(-2px);
+}
+
+/* ACTIVO */
+.boton:active {
+    transform: translateY(0);
+    background-color: #0f172a;
+}
+
+/* TABLA */
+.producciones_en_curso {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.tabla th,
+.tabla td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla th { border-bottom: 3px solid #ccc; }
+
+.tabla tr:hover { background: #f9f9f9; }
+
+/* DESTACADOS */
+.p18_destacado,
+.ferrico_destacado,
+.M311_destacado,
+.sulfato_destacado {
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.p18_destacado { background-color: #f2c85b; }
+.ferrico_destacado { background-color: brown; }
+.sulfato_destacado { background-color: #cfe8d5; }
+.M311_destacado { color: green;}
+.filtrado {color: blueviolet;}
+
+/* ICONOS */
+.icono-borrar,
+.icono-editar,
+.icono-transferir {
+    cursor: pointer;
+}
