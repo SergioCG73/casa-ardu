@@ -211,11 +211,12 @@ function construirTabla(data) {
     }).join("");
 }
 
-function activarEventosTabla(tabla) {
+function activarEventosTabla(tabla) {    
     tabla.addEventListener("click", e => {
         const iconoEditar = e.target.closest(".icono-editar, .icono-nota");
         if (iconoEditar) {
             const datos = JSON.parse(iconoEditar.dataset.info);
+            console.log(datos); debugger
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
             /*console.log(localStorage.getItem("datosEditables"));
@@ -238,7 +239,7 @@ function activarEventosTabla(tabla) {
             if (confirm("¿Estás seguro de que deseas eliminar esta producción?")) {
                 const datos = JSON.parse(iconoBorrar.dataset.info);
                 localStorage.setItem("datosBorrables", JSON.stringify(datos));
-                localStorage.setItem("modo", "borrar");
+                localStorage.setItem("modo", "borrar");                
 
                 fetch("index.php?c=Borrar&a=borrarFabricacion", {
                     method: "POST",
@@ -246,7 +247,7 @@ function activarEventosTabla(tabla) {
                     body: JSON.stringify(datos)
                 })
                     .then(response => response.json())
-                    .then(json => { //console.log(json); debugger
+                    .then(json => { console.log(json); debugger
                         if (json.ok) {
                             alert("Producción eliminada correctamente");
                             window.location.href = "index.php?c=Formulario&a=home";
