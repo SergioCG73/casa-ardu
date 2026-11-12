@@ -111,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function generarRadiosRecetas(recetas, datosEdicion, modo) {
-        //console.log(recetas);
         const contenedorRecetas = document.querySelector("#recetas .radio-group");
         contenedorRecetas.innerHTML = "";
 
@@ -124,15 +123,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const input = document.createElement("input");
             input.type = "radio";
             input.name = "receta";
-            input.id = id;tra
+            input.id = id;
             input.value = receta.NombreReceta;
-
 
             //BORRRAR---------------
             console.log(datosEdicion);
             console.log(receta.NombreReceta);
             //console.log(datosEdicion.recetas);
-            console.log(input.value);
+            console.log(input.value); debugger
             //--------------
 
 
