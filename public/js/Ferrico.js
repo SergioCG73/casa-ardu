@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const contenedorPesoFinal = document.getElementById("peso_final_mezclador");
     const contenedorMezcladores = document.querySelector("#mezcladores .radio-group");
     const contenedorRecetas = document.querySelector("#recetas .radio-group");
+    const contenedorDepositos = document.querySelector("#depositos .radio-group");
     const displayProduccion = document.getElementById("displayProduccion");
     const divCantidadTransferida = document.getElementById("contenedor_cantidad_transferida");
     const divPesoFinalMezclador = document.getElementById("peso_final");
@@ -16,15 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const peso_final_mezclador = document.getElementById("peso_final_mezclador");
     const txtNotas = document.getElementById("txtnotas"); //<textarea>
     const volumen_D111 = document.getElementById("volumen_D111");
-    const datosTabla = JSON.parse(localStorage.getItem("datosEditables"));
+    const datosTabla = JSON.parse(localStorage.getItem("datosTabla"));    
     const inputSacas = document.getElementById("sacas");
 
     // === DECLARACION VARIABLES ===
-
     let datosEdicion;
     let depositoSeleccionado;
     let fechaHoraInicio;
-
     let mezcladorSeleccionado;
     let modo = localStorage.getItem("modo");
     let numeroProduccion;
@@ -65,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("inicializarFormulario/editar");
             contenedorPesoFinal.style.display = "none";
             sacasEstado = datosEdicion.produccionesEnCurso.Sacas;
-
             numeroProduccionActual = Number(datosTabla.NumeroFabricacion);
             displayProduccion.textContent = numeroProduccionActual;
         }
@@ -74,11 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(datosEdicion);
             btnCrear.textContent = "Transferir";
             console.log("inicializando Formulario/Transferir");
-
             divPesoFinal = document.getElementById("peso_final");
             divPesoFinal.style.display = "block";
             peso_final_mezclador.style.display = "block";
-
             sacasEstado = datosEdicion.produccionesEnCurso.Sacas;
             numeroProduccionActual = Number(datosTabla.NumeroFabricacion);
             displayProduccion.textContent = numeroProduccionActual;
@@ -96,8 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // === GENERAR RADIOS RECETAS === //
         contenedorRecetas.innerHTML = "";
         listaRecetas = datosEdicion.recetas.filter(r => r.ProductoFabricado === "Ferrico");
-
         generarRadiosRecetas(datosEdicion.recetas, contenedorRecetas, modo, datosEdicion);
+
+        // === GENERAR RADIOS DEPÓSITOS === //
+        //contenedorDepositos.innerHTML = "";        
+        //listaDepositos = datosEdicion.equipos.filter(d => d.Tipo === "Deposito");        
+        //generarRadiosDepositos(listaDepositos, contenedorDepositos, modo, datosEdicion);
 
         //==== LISTENERS ====
         document.addEventListener("change", function (e) {
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (modo === "transferir") {
             btnCrear.textContent = "Transferir";
-            console.log("inicializar formulario/transferir");
+            console.log("Inicializar formulario/transferir");
 
             btnCrear.addEventListener("click", () => {
                 console.log(`click en botón ${modo.toUpperCase()}`);
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json); debugger;
+                    console.log(json);
                 })
                 .catch(error => {
                     console.log("ERROR: ", error)
