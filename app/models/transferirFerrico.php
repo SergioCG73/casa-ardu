@@ -47,45 +47,7 @@ if (!$numeroProduccion) {
     exit;
 }
 
-/*if ($modo === "transferir") {    
-//Actualizar la fabricación en curso pasando el M311 a M411 (decantador)
-//FechaInicioReaccion recoge la fecha y hora que se realiza la transferencia desde M311 a M411
-    $sqlUpdate = "UPDATE fabricaciones_en_curso
-              SET 
-                  PesoInicialMezclador = :pesoM,
-                  PesoFinalMezclador = :pesoMF,
-                  FechaInicioReaccion = NOW(),     
-                  Notas = :notas,
-                  Receta = :receta,
-                  Sacas = :sacas,
-                  Mezclador = :mezclador
-              WHERE NumeroFabricacion = :nf";
-
-    $stmt = $conexion->prepare($sqlUpdate);
-    $stmt->bindParam(":pesoM", $pesoM);
-    $stmt->bindParam(":pesoMF", $pesoMF);
-    $stmt->bindParam(":notas", $notas);
-    $stmt->bindParam(":receta", $receta);
-    $stmt->bindParam(":sacas", $sacas);
-    $stmt->bindParam(":mezclador", $mezcladorNuevo);
-    $stmt->bindParam("nf", $numeroProduccion);
-    $stmt->execute();*/
-
-    /*echo json_encode([
-        "ok" => true,
-        "numeroProduccion" => $numeroProduccion,
-        "mezcladorNuevo" => $mezcladorNuevo,
-        "pesoM" => $pesoM,
-        "pesoMF" => $pesoMF,
-        "recetas" => $receta,
-        "notas" => $notas,
-        "sacas" => $sacas        
-    ]);
-    exit;
-}*/
-
-
-    $sqlInsert = "
+$sqlInsert = "
 INSERT INTO ferrico_terminadas (
     NumeroFabricacion,
     Mezclador,
@@ -107,62 +69,34 @@ FROM fabricaciones_en_curso
 WHERE NumeroFabricacion = :nf
 ";
 
-    $stmt = $conexion->prepare($sqlInsert);
-    $stmt->bindParam(":nf", $numeroProduccion);
-    $stmt->bindParam(":mezclador", $mezcladorNuevo);
-    $stmt->bindParam(":vi", $pesoM);
-    $stmt->bindParam(":vf", $pesoMF);
-    $stmt->bindParam(":notas", $notas);
-    //$stmt->execute();
+$stmt = $conexion->prepare($sqlInsert);
+$stmt->bindParam(":nf", $numeroProduccion);
+$stmt->bindParam(":mezclador", $mezcladorNuevo);
+$stmt->bindParam(":vi", $pesoM);
+$stmt->bindParam(":vf", $pesoMF);
+$stmt->bindParam(":notas", $notas);
+$stmt->execute();  
 
-    // Reactor → Vacío
-    $sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :mezclador";
-    $stmt = $conexion->prepare($sqlUpdate);
-    //$stmt->execute([":mezclador" => $mezcladorNuevo]);
-
-    // Actualizar depósito D111
-    $sqlUpdate = "UPDATE equipos SET Volumen = :volumen WHERE Equipo_id = 'D111'";
-    $stmt = $conexion->prepare($sqlUpdate);
-    $stmt->bindParam(":volumen", $volumenD111);
-    //$stmt->execute();
-
-    // Borrar fabricación en curso
-    $numeroProduccion = (int)$numeroProduccion;
-    $sqlDelete = "DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
-    $stmtDelete = $conexion->prepare($sqlDelete);
-    $stmtDelete->bindParam(":nf", $numeroProduccion, PDO::PARAM_INT);
-    //$stmtDelete->execute();
-
-    echo json_encode([
-        "LINE" => __LINE__,
-        "ok" => true,
-        "numeroProduccion" => $numeroProduccion,
-        "mezcladorNuevo" => $mezcladorNuevo,
-        "pesoM" => $pesoM,
-        "pesoMF" => $pesoMF,
-        "recetas" => $receta,
-        "notas" => $notas,
-        "sacas" => $sacas
-    ]);
-    exit;
-
-
-
-/*
-// Reactor → Vacío
+// Mezclador → Vacío
 $sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :mezclador";
 $stmt = $conexion->prepare($sqlUpdate);
 $stmt->execute([":mezclador" => $mezcladorNuevo]);
 
+// Actualizar depósito D111
+//$sqlUpdate = "UPDATE equipos SET Volumen = :volumen WHERE Equipo_id = 'D111'";
+//$stmt = $conexion->prepare($sqlUpdate);
+//$stmt->bindParam(":volumen", $volumenD111);
+//$stmt->execute();
+
 // Borrar fabricación en curso
 $numeroProduccion = (int)$numeroProduccion;
-
 $sqlDelete = "DELETE FROM fabricaciones_en_curso WHERE NumeroFabricacion = :nf";
 $stmtDelete = $conexion->prepare($sqlDelete);
 $stmtDelete->bindParam(":nf", $numeroProduccion, PDO::PARAM_INT);
 $stmtDelete->execute();
 
 echo json_encode([
+    "LINE" => __LINE__,
     "ok" => true,
     "numeroProduccion" => $numeroProduccion,
     "mezcladorNuevo" => $mezcladorNuevo,
@@ -170,6 +104,7 @@ echo json_encode([
     "pesoMF" => $pesoMF,
     "recetas" => $receta,
     "notas" => $notas,
-
+    "sacas" => $sacas
 ]);
-exit;*/
+exit;
+
