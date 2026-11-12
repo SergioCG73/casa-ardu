@@ -21,13 +21,26 @@
         <table id="tabla" name="tabla" class="tabla"> </table>
     </div>
 
-    <div id="displayM216" class="m216">
+    <!--<div id="displayM216" class="m216">
         <label>M216</label>
         <label id="label_m216"></label>
+    </div>-->
+
+    <div id="displayM216" class="m216">
+        <object
+            id="svgM216"
+            type="image/svg+xml"
+            data="images/m216.svg"
+            width="100%"
+            height="100%">
+        </object>
     </div>
 
 </body>
-<script>const ROL_USUARIO = "<?= isset($rol) ? $rol : '' ?>";</script>
+<script>
+    const ROL_USUARIO = "<?= isset($rol) ? $rol : '' ?>";
+</script>
 <script src="js/home.js"></script>
+<script src="js/utils.js"></script>
 
 </html>
