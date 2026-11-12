@@ -10,15 +10,48 @@ require_once("miconexion.php");
 $input = json_decode(file_get_contents("php://input"), true);
 $mezclador = $input["Mezclador"];
 $reactor = $input["Reactor"];
-
 $NumeroFabricacion = $input["NumeroFabricacion"];
+$producto = $input["Producto_id"];
+
+/*echo json_encode([
+    "LINE" => __LINE__,
+    "POST" => $input,
+    "Producto" => $producto,
+    "NumeroFabricacion" => $NumeroFabricacion
+]);
+exit;*/
+
+
+$sqlSelect = "SELECT NumeroFabricacion
+              FROM fabricaciones_en_curso
+              WHERE Producto_id = :producto";
+
+$stmt = $conexion->prepare($sqlSelect);
+$stmt->bindParam(':producto', $producto);
+$rtdo = $stmt->execute();
+$datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/*echo json_encode([
+    "LINE" => __LINE__,
+    "Rtdo" => $rtdo,
+    "Datos" => $datos
+]);
+exit;*/
+
 
 $sqlDelete = "DELETE FROM fabricaciones_en_curso
               WHERE NumeroFabricacion = :num";
-
 $stmt = $conexion->prepare($sqlDelete);
 $stmt->bindParam(":num", $NumeroFabricacion);
 $ok = $stmt->execute();
+
+$sqlUpdate = "UPDATE fabricaciones_en_curso
+              SET NumeroFabricacion = NumeroFabricacion - 1
+              WHERE NumeroFabricacion > :num";
+
+$stmt = $conexion->prepare($sqlUpdate);
+$stmt->bindParam(":num", $NumeroFabricacion);
+$rtdo = $stmt->execute();
 
 $sqlUpdate = "UPDATE equipos SET Estado = 'Vacio' WHERE Equipo_id = :mezclador";
 $stmt = $conexion->prepare($sqlUpdate);
@@ -35,5 +68,3 @@ echo json_encode([
     "status" => $ok ? "Registro eliminado" : "Error al eliminar",
     "NumeroFabricacion" => $NumeroFabricacion
 ]);
-
-?>
