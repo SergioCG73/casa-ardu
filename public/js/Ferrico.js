@@ -359,4 +359,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("ERROR", error)
             });
     }
+
+    if (modo === "borrar") {
+        console.log(modo); 
+    }
+
 });
