@@ -145,7 +145,7 @@ function generarRadiosDepositos(listaDepositos, contenedorDepositos, modo, datos
             depositoSeleccionado = depositos.Equipo_id;
         }
 
-        const depositoActual = datosEdicion; debugger
+        //const depositoActual = datosEdicion; debugger
 
         label.appendChild(input);
         label.appendChild(document.createTextNode(depositos.Equipo_id));
@@ -247,7 +247,7 @@ async function sePuedeFabricar(producto, data) {
 
     // 4. Equipos disponibles    
     //console.log(data.equipos); debugger
-    console.log(data.equipos); debugger
+    //console.log(data.equipos); debugger
     const mezcladoresDisponibles = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "Vacio" && m.Equipo_id != "M216");
     const mezcladoresUsados = data.equipos.filter(m => m.Tipo === "Mezclador" && m.Estado === "En uso" && m.Equipo_id != "M311" && m.Equipo_id != "M411");
     const reactoresDisponiblesP18 = data.equipos.filter(r => r.Tipo === "Reactor" && r.Estado !== "Averiado");
@@ -644,11 +644,85 @@ function createProduccion(datos, destino) {
 // VARIABLES SVG M216
 // =====================================
 
+
+// =====================================
+// VARIABLES SVG M216
+// =====================================
+
 let svgDocumentM216 = null;
 let ultimoNivelM216 = null;
 
 const displayM216 = document.getElementById("displayM216");
 const svgM216 = document.getElementById("svgM216");
+
+// =====================================
+// INICIALIZACIÓN ROBUSTA DEL SVG M216
+// =====================================
+
+function inicializarSvgM216() {
+    let intentosM216 = 0;
+    let intervaloM216 = null;
+
+    function intentarAsignar() {
+        intentosM216++;
+
+        try {
+            const documento = svgM216?.contentDocument;
+
+            if (
+                documento &&
+                (
+                    documento.readyState === "complete" ||
+                    documento.documentElement
+                )
+            ) {
+                svgDocumentM216 = documento;
+
+                // Limpiar polling si ya se ha cargado
+                if (intervaloM216 !== null) {
+                    clearInterval(intervaloM216);
+                    intervaloM216 = null;
+                }
+
+                // Dibujar el último nivel si existe
+                if (ultimoNivelM216 !== null) {
+                    dibujarNivelM216();
+                }
+
+                return true;
+            }
+        } catch (error) {
+            console.warn("Error al acceder al SVG M216:", error);
+        }
+
+        // Detener después de unos 5 segundos
+        if (intentosM216 >= 50 && intervaloM216 !== null) {
+            clearInterval(intervaloM216);
+            intervaloM216 = null;
+            console.warn("No se pudo cargar el SVG M216 tras 5 segundos.");
+        }
+
+        return false;
+    }
+
+    // Caso 1: el SVG ya está cargado (caché)
+    if (intentarAsignar()) {
+        return;
+    }
+
+    // Caso 2: carga normal
+    svgM216?.addEventListener("load", intentarAsignar, { once: true });
+
+    // Caso 3: fallback mediante polling
+    intervaloM216 = setInterval(intentarAsignar, 100);
+}
+
+// =====================================
+// EJECUTAR INICIALIZACIÓN
+// =====================================
+
+inicializarSvgM216();
+
 
 // =====================================
 // CONTROL SVG M216

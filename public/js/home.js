@@ -8,8 +8,8 @@ function init() {
     const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
-    const displayM216 = document.getElementById("displayM216");
-    const svgM216 = document.getElementById("svgM216");
+    //const displayM216 = document.getElementById("displayM216");
+    //const svgM216 = document.getElementById("svgM216");
 
     /*let svgDocumentM216 = null;
     let ultimoNivelM216 = null;
