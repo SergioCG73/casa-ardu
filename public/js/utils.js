@@ -124,14 +124,12 @@ function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicio
     });
 }
 
-function generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion) {
-    //console.log(listaDepositos); debugger
-    const radioGroup = divDepositos.querySelector(".radio-group");
-    radioGroup.innerHTML = "";
+function generarRadiosDepositos(listaDepositos, contenedorDepositos, modo, datosEdicion) {    
+    /*const radioGroup = divDepositos.querySelector(".radio-group");    
+    radioGroup.innerHTML = "";*/
 
     listaDepositos.forEach((depositos, index) => {
         const id = `Dep${index + 1}_Ferrico`;
-
         const label = document.createElement("label");
         label.className = "radio-label";
         label.htmlFor = id;
@@ -144,13 +142,16 @@ function generarRadiosDepositos(listaDepositos, divDepositos, modo, datosEdicion
 
         if (listaDepositos.length === 1) {
             input.checked = true;
-            depositoSeleccionado = depositos.Equipo_id;  // ← SOLUCIÓN
+            depositoSeleccionado = depositos.Equipo_id;
         }
+
+        const depositoActual = datosEdicion; debugger
 
         label.appendChild(input);
         label.appendChild(document.createTextNode(depositos.Equipo_id));
 
-        radioGroup.appendChild(label);
+        //radioGroup.appendChild(label);        
+        contenedorDepositos.appendChild(label);
     });
 }
 
