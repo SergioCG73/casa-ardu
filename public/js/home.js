@@ -8,23 +8,8 @@ function init() {
     const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
-    //const displayM216 = document.getElementById("displayM216");
-    //const svgM216 = document.getElementById("svgM216");
-
-    /*let svgDocumentM216 = null;
-    let ultimoNivelM216 = null;
-
-    //Esperar a que se cargue el SVG externo
-    svgM216.addEventListener("load", () => {
-        svgDocumentM216 = svgM216.contentDocument;
-        console.log("SVG M216 cargado correctamente");
-
-        //Si los datos llegaron antes de cargar el SVG
-        if (ultimoNivelM216 !== null) {
-            dibujarNivelM216(ultimoNivelM216);
-        }
-    })*/
-
+    const datosTabla = JSON.parse(iconoTransferir.dataset.info);
+    
     localStorage.setItem("modo", "inicial");
 
     if (ROL_USUARIO === "LAB") {
@@ -57,8 +42,6 @@ function init() {
     })
 
     btnFiltrado.addEventListener("click", () => {
-        /*localStorage.setItem("modo", "filtrado");
-        localStorage.setItem("producto", "P18");*/
         localStorage.setItem("modo", "crear");
         localStorage.setItem("producto", "filtrado");
         window.location.href = "index.php?c=Formulario&a=filtrado";
@@ -93,11 +76,7 @@ function cargarProducciones(tabla, divProducciones) {
             activarEventosTabla(tabla);
 
             divProducciones.style.display = "block";
-
-            //Actualizar el SVG del tanque M216
-            //console.log(data.producciones_en_curso[0].Producto_id); debugger
-
-            //console.log(data); debugger
+            
             actualizarM216(data.volumen_M216, "P18");
         })
         .catch(err => console.error("Error cargando producciones:", err));
@@ -125,9 +104,6 @@ function generarEncabezado() {
 function construirTabla(data) {
     //console.log(data);
     return data.producciones_en_curso.map(p => {
-        //Determinamos la clase según el Producto_id        
-        //Control de valores undefined/null con ternario
-        //console.log(data.producciones_en_curso); debugger
         const reactor = (p.Reactor === "undefined" || p.Reactor === null) ? "" : p.Reactor;
         const mezclador = (p.Mezclador === "undefined" || p.Mezclador === null) ? "" : p.Mezclador;
         const receta = (p.Receta === "undefined" || p.Receta === null) ? "" : p.Receta;
@@ -219,8 +195,6 @@ function activarEventosTabla(tabla) {
             console.log(datos); debugger
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
-            /*console.log(localStorage.getItem("datosEditables"));
-            console.log(localStorage.getItem("modo")); debugger*/
             if (datos.Producto_id === "Sulfato") {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datos.Producto_id === "P18") {
@@ -261,36 +235,9 @@ function activarEventosTabla(tabla) {
         }
 
         const iconoTransferir = e.target.closest(".icono-transferir");
-        if (iconoTransferir) {
-            //const datosTransferir = JSON.parse(iconoTransferir.dataset.info);
-            //localStorage.setItem("datosTransferencia", JSON.stringify(datosTransferir));
-            const datosTabla = JSON.parse(iconoTransferir.dataset.info);
+        if (iconoTransferir) {            
             localStorage.setItem("datosTabla", JSON.stringify(datosTabla));
-            localStorage.setItem("modo", "transferir");            
-
-            /*if (datosTransferir.Producto_id === "Filtrado") {
-                localStorage.setItem("modo", "finalizar");
-            }
-
-            if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion === null) {
-                console.log(datosTransferir);
-                window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal === null) {
-                window.location.href = "index.php?c=Formulario&a=sulfato";
-            } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal === null) {
-                window.location.href = "index.php?c=Formulario&a=ferrico";
-            } else if (datosTransferir.Producto_id === "Filtrado") {
-                window.location.href = "index.php?c=Formulario&a=filtrado";
-            } else if (datosTransferir.Producto_id === "P18" && datosTransferir.FechaInicioReaccion !== null) {
-                localStorage.setItem("modo", "terminar");
-                window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datosTransferir.Producto_id === "Sulfato" && datosTransferir.FechaFinal) {
-                localStorage.setItem("modo", "terminar")
-                window.location.href = "index.php?c=Formulario&a=sulfato";
-            } else if (datosTransferir.Producto_id === "Ferrico" && datosTransferir.FechaFinal) {
-                localStorage.setItem("modo", "terminar");
-                window.location.href = "index.php?c=Formulario&a=ferrico";
-            }*/
+            localStorage.setItem("modo", "transferir");
 
             if (datosTabla.Producto_id === "Filtrado") {
                 localStorage.setItem("modo", "finalizar");

@@ -34,12 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let sacasEstado = null;
 
     // === VALORES INICIALES ===
-
     divCantidadTransferida.style.display = "none";
     divDepositos.style.display = "none";
-    divPesoFinalMezclador.style.display = "none";
-
-    //document.getElementById("btnAceptar").addEventListener("click", cerrarModal);
+    divPesoFinalMezclador.style.display = "none";    
 
     // === FUNCIONES ===
     function inicializarFormulario(modo, producto, datosEdicion) {
@@ -50,10 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sePuedeFabricar(producto, datosEdicion);
             contenedorPesoFinal.style.display = "none";
             inputSacas.disabled = "true";            
-            
-            //sacasEstado = datosEdicion.sacas ? Number(datosEdicion.sacas.Sacas) : null
             sacasEstado = datosEdicion.sacas;   //sacasEstado = false
-
             numeroProduccion = Math.max(datosEdicion.ultimaAcabada, datosEdicion.ultimaEnCurso) + 1; //numeroProduccion = 485
             numeroProduccionActual = Number(numeroProduccion);
             displayProduccion.textContent = numeroProduccionActual;
@@ -94,11 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
         listaRecetas = datosEdicion.recetas.filter(r => r.ProductoFabricado === "Ferrico");
         generarRadiosRecetas(datosEdicion.recetas, contenedorRecetas, modo, datosEdicion);
 
-        // === GENERAR RADIOS DEPÓSITOS === //
-        //contenedorDepositos.innerHTML = "";        
-        //listaDepositos = datosEdicion.equipos.filter(d => d.Tipo === "Deposito");        
-        //generarRadiosDepositos(listaDepositos, contenedorDepositos, modo, datosEdicion);
-
         //==== LISTENERS ====
         document.addEventListener("change", function (e) {
             if (e.target.name === "mezclador") {
@@ -124,27 +113,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //==== CARGAR DATOS EN EL FORMULARIO ====        
         if (modo === "editar" || modo === "transferir") {
-            /*console.log(`${modo}`);
-            console.log(datosEdicion.produccionesEnCurso.PesoInicialMezclador);
-            console.log(datosEdicion.produccionesEnCurso.Sacas);*/
             peso_inicial_mezclador.value = formatearMiles(datosEdicion.produccionesEnCurso.PesoInicialMezclador);
             txtNotas.value = datosEdicion.produccionesEnCurso.Notas;
         };
 
 
         //=== ACCION AL PULSAR CLICK EN CREAR O EDITAR ===//
-
         if (modo === "crear" || modo === "editar") {
             btnCrear.addEventListener("click", () => {
                 console.log(`click en botón ${modo.toUpperCase()}`);
 
-                let pesoInicialMezclador = peso_inicial_mezclador.value;                
-                //const seleccion = validarFormulario(peso_inicial_mezclador, modo);
+                let pesoInicialMezclador = peso_inicial_mezclador.value;
                 const seleccion = validarFormulario(pesoInicialMezclador, modo);
                 if (!seleccion) return;
 
                 // El peso final sólo se utiliza en modo edición
-
                 const pesoFinal = modo === "editar"
                     ? peso_final_mezclador
                     : null;
@@ -221,20 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 
                 console.log(`fetch ${modo}`);
-
-                /*document.getElementById("modalTransferencia").style.display = "block";
-
-                document.getElementById("btnTransferirM411").onclick = () => {
-                    createProduccion(datos, "M411");
-                };
-
-                document.getElementById("btnTransferirD111").onclick = () => {
-                    createProduccion(datos, "D111");
-                };
-
-                document.getElementById("btnCancelarTransferencia").onclick = () => {
-                    document.getElementById("modalTransferencia").style.display = "none";
-                };*/
             });
         }
     }
@@ -272,9 +241,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("datosEdicion.ok");
                 } else {
                     alert("Error: " + datosEdicion.error);
-                }
+                }               
                 
-                console.log(datosEdicion); debugger
                 return inicializarFormulario(modo, producto, datosEdicion);
             })
             .catch(error => {
