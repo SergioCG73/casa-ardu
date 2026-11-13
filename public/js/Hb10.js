@@ -5,13 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const peso_agua_M411 = document.getElementById("peso_agua_M411");
     const divMezcladorM411 = document.getElementById("mezclador_M411");
     const parDisplayProduccion = document.getElementById("displayProduccion");
+    const modo = localStorage.getItem("modo");
 
     // ===== VARIABLES GLOBALES =====
 
-    const modo = localStorage.getItem("modo");
-    let producto = localStorage.getItem("producto");
+    let producto = localStorage.getItem("producto");            //hb10
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
     datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));
+
     divMezcladorM411.style.display = "none";
 
     btnRetroceder.addEventListener("click", () => {
@@ -21,45 +22,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== FUNCIONES =====
 
-    function inicializarFormulario(modo, producto) {
+    function inicializarFormulario(modo, producto, datosEdicion) {
         console.log("Inicializando formulario....");
-        console.log(modo, producto);
+        console.log(modo, producto, datosEdicion);
+        
+    }
 
-        const formData = new FormData();
-        formData.append("producto", "hb10");
-        formData.append("modo", modo);
+    // === MODO CREAR ===
+    if (modo === "crear") {
+        console.log("Modo crear...");
+
+        const datos = new FormData();
+        datos.append("producto", producto);
+        datos.append("modo", modo);
 
         return fetch("index.php?c=Leer&a=leerHB10", {
             method: "POST",
-            body: formData
+            body: datos
         })
-            .then(res => res.json())
-            .then(data => {
-                numeroProduccion = Math.max(...Object.values(data).filter(v => typeof v === "number"));
-                console.log("Fabricacion nº", numeroProduccion);
-                console.log("Equipos", data.equipos);
-                return data;
-            }
-            )
+            .then(response => response.json())
+            .then(json => {
+                datosEdicion = json;
+                console.log(datosEdicion);                   //equipos (2), notas[], recetas[{..}], ultimaAcabada: 1009, ultimaEnCurso: false                
 
-        
-    }
-    
-
-    if (modo === "crear") {
-        console.log("Modo crear...");
-        inicializarFormulario(modo, producto)
-            .then(() => {
-                // === NUMERO PRODUCCION === //
-                parDisplayProduccion.textContent = numeroProduccion;
-
-                // === ESTADO EQUIPOS === //
-                if (data.equipos.M512 === "vacio") {
-                    console.log("M512 Vacio");
+                if (datosEdicion.ok) {
+                    console.log("datosEdicion.ok");
+                } else {
+                    alert("Error: " + datosEdicion.error);
                 }
 
+                return inicializarFormulario(modo, producto, datosEdicion);
             })
+            .catch(error => console.log("Error: ", error));
     }
+
+    // === MODO EDITAR ===
 
 
 
