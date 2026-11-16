@@ -8,7 +8,7 @@ function init() {
     const btnFiltrado = document.getElementById("btnFiltrado");
     const tabla = document.getElementById("tabla");
     const divProducciones = document.getElementById("producciones_en_curso");
-    const datosTabla = JSON.parse(iconoTransferir.dataset.info);
+    //const datosTabla = JSON.parse(iconoTransferir.dataset.info);
     
     localStorage.setItem("modo", "inicial");
 
