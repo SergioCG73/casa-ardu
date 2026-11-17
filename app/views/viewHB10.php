@@ -38,12 +38,19 @@
                                 name="fecha"
                                 required>
                         </div>
-                        <div class="form-group full-width">
+                        <!--<div class="form-group full-width">
                             <label for="operario">Operario</label>
                             <input type="text"
                                 id="operario"
                                 name="operario"
                                 required>
+                        </div>-->
+                        <div class="form-group full-width">
+                            <label for="operario">Operario</label>
+                            <select id="operario"
+                                name="operario"
+                                required>
+                            </select>
                         </div>
                     </div>
                 </fieldset>
@@ -380,7 +387,7 @@
                             rows="4"></textarea>
                     </div>
                 </fieldset>
-                
+
                 <!-- BOTONES -->
                 <div class="buttons">
                     <button type="submit" class="btn-save">
@@ -396,5 +403,6 @@
             </form>
         </div>
         <script src="js/utils.js"></script>
-        <script src="js/Hb10.js"></script>        
+        <script src="js/Hb10.js"></script>
+
     </html>

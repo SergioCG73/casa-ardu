@@ -39,7 +39,7 @@ function generarRadiosMezcladores(listaMezcladores, contenedorMezcladores, modo,
             input.checked = true;
             mezcladorSeleccionado = mezclador.Equipo_id;
         }
-        */        
+        */
         if (modo === "editar" && mezcladorIdEditar === mezclador.Equipo_id) {
             // Si estamos editando y coincide con el ID de la tabla, tiene prioridad absoluta
             input.checked = true;
@@ -124,7 +124,7 @@ function generarRadiosRecetas(listaRecetas, contenedorRecetas, modo, datosEdicio
     });
 }
 
-function generarRadiosDepositos(listaDepositos, contenedorDepositos, modo, datosEdicion) {    
+function generarRadiosDepositos(listaDepositos, contenedorDepositos, modo, datosEdicion) {
     /*const radioGroup = divDepositos.querySelector(".radio-group");    
     radioGroup.innerHTML = "";*/
 
@@ -811,3 +811,14 @@ function dibujarNivelM216(porcentaje) {
     liquido.style.fill = color;
     textoNivel.style.fill = color;
 }
+
+function cargarOperarios(lista) {
+    operario.innerHTML = '<option value="">Seleccione un operario</option>';
+    (lista || []).forEach(op => {
+        const option = document.createElement("option");
+        option.value = op.ID_dni;
+        option.textContent = `${op.Nombre} ${op.Apellidos}`.trim();
+        operario.appendChild(option);
+    });
+}
+

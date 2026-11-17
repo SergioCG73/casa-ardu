@@ -87,8 +87,20 @@ function obtenerDatosProducto($conexion, $producto)
     return [$equipos, $recetas, $notas];
 }
 
+function obtenerOperarios($conexion) {
+    // Operarios
+    $sql = "SELECT * FROM empleados WHERE Puesto = 'Operario'";
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
+    $operarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $operarios;
+}
+
 
 list ($equipos, $recetas, $notas) = obtenerDatosProducto($conexion, $producto);
+
+$operarios = obtenerOperarios($conexion);
 
 
 echo json_encode([
@@ -97,6 +109,7 @@ echo json_encode([
     "ultimaEnCurso" => $ultimaEnCurso,
     "equipos" => $equipos,
     "recetas" => $recetas,
-    "notas" => $notas
+    "notas" => $notas,
+    "operarios" => $operarios
 ]);
 exit;

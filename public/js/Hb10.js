@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //const divMezcladorM511 = document.getElementById("mezclador_M511");    
     const lote = document.querySelector("div.form-group input[name='lote']");
     const fecha = document.getElementById("fecha");
+    const operario = document.getElementById("operario");
 
     //const parDisplayProduccion = document.getElementById("displayProduccion");
     const radioMezcladorM511 = document.querySelectorAll("input[name='chk_mezclador_ok']");
@@ -37,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Fecha actual en formato YYYY-MM-DD
             fecha.value = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+
+            //Rellenar select de operarios
+            cargarOperarios(datosEdicion.operarios);
 
             onCambioAguaDosificada();
         }
