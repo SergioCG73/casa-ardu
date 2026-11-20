@@ -16,10 +16,7 @@
                 <p>Registro y control del proceso de fabricación</p>
             </header>
 
-            <form id="formProduccionHB10"
-                action="guardar_hb10.php"
-                method="POST">
-
+            <div id="formulario">
                 <!-- DATOS GENERALES -->
                 <fieldset>
                     <legend>Datos generales</legend>
@@ -367,13 +364,9 @@
                                     value="1">
                                 Zeolita dosificada
                             </label>
-
                         </div>
-
                     </div>
-
                 </fieldset>
-
 
                 <!-- OBSERVACIONES -->
                 <fieldset>
@@ -390,13 +383,13 @@
 
                 <!-- BOTONES -->
                 <div class="buttons">
-                    <button type="submit" class="btn-save">
+                    <button type="button" class="btn-save">
                         Guardar producción
                     </button>
                     <button type="reset" class="btn-reset">
                         Limpiar formulario
                     </button>
-                    <button type="submit" class="btn-back">
+                    <button type="button" class="btn-back">
                         Volver
                     </button>
                 </div>

@@ -1,26 +1,71 @@
 document.addEventListener("DOMContentLoaded", () => {
-    //const btnRetroceder = document.getElementById("btnRetroceder");
     const btnRetroceder = document.querySelector(".btn-back");
-    const btnCrear = document.getElementById("btnCrear");
-    const peso_inicial_M511 = document.getElementById("peso_inicial_M511");
-    const peso_agua_M512 = document.getElementById("peso_agua_M512");
-    //const divMezcladorM511 = document.getElementById("mezclador_M511");    
+    const btnGuardarProduccion = document.querySelector(".btn-save");
+    const m511_peso_inicial = document.getElementById("m511_peso_inicial");
+    const m511_peso_final = document.getElementById("m511_peso_final");
     const lote = document.querySelector("div.form-group input[name='lote']");
     const fecha = document.getElementById("fecha");
     const operario = document.getElementById("operario");
-
-    //const parDisplayProduccion = document.getElementById("displayProduccion");
     const radioMezcladorM511 = document.querySelectorAll("input[name='chk_mezclador_ok']");
     const modo = localStorage.getItem("modo");
     const radiosMezclador = document.querySelectorAll("input[name='chk_mezclador_ok']");
+    const notas = document.getElementById("observaciones");
+
+    //const peso_agua_M512 = document.getElementById("peso_agua_M512");
+    //const btnRetroceder = document.getElementById("btnRetroceder");
+    //const divMezcladorM511 = document.getElementById("mezclador_M511");    
+    //const btnCrear = document.getElementById("btnCrear");
+    //const parDisplayProduccion = document.getElementById("displayProduccion");
+
 
     // ===== VARIABLES GLOBALES =====
-    let producto = localStorage.getItem("producto");                                    //hb10
+    let producto = localStorage.getItem("producto");                                                 //hb10
     datosEdicion = JSON.parse(localStorage.getItem("datosEditables"));
     //datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));   
+    let pesoInicialM511;
+    let pesoFinalM511;
+    let operador;
+    let siguienteFabricacion;
 
-    btnRetroceder.addEventListener("click", () => {
-        window.location.href = "index.php?c=Formulario&a=home";
+    // === LISTENERS === 
+
+    /*btnRetroceder.addEventListener("click", () => {
+        //window.location.href = "index.php?c=Formulario&a=home";
+    })*/
+
+    btnGuardarProduccion.addEventListener("click", () => {
+        console.log("Se ha pulsado Guardar Producción");        
+        pesoInicialM511 = m511_peso_inicial.value;
+        pesoFinalM511 = m511_peso_final.value;
+        operador = operario.options[operario.selectedIndex]?.text ?? "";
+        observaciones = notas.value;
+        console.log(pesoInicialM511);
+        console.log(pesoFinalM511);
+        console.log(operador);
+        console.log(siguienteFabricacion);
+        console.log(observaciones);
+        debugger
+
+        datos = new FormData();
+        datos.append("pesoInicialM511", pesoInicialM511);
+        datos.append("pesoFinalM511", pesoFinalM511);
+        datos.append("operario", operador);
+        datos.append("fabricacion", siguienteFabricacion);
+        datos.append("notas", observaciones)
+
+        fetch("index.php?c=HB10&a=crear", {
+            method: "POST",
+            body: datos
+        })
+            .then(response => response.json())
+            .then(json => {
+                console.log(json);
+                window.location.href = "index.php?c=Formulario&a=home"; 
+            })
+            .catch(error => {
+                console.log("Error: ", error);
+            })
+
     })
 
     // ===== FUNCIONES =====
@@ -32,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (modo === "crear") {
             //divMezcladorM511.style.display = "block";
-            let siguienteFabricacion = Math.max(datosEdicion.ultimaAcabada, datosEdicion.ultimaEnCurso) + 1;
+            siguienteFabricacion = Math.max(datosEdicion.ultimaAcabada, datosEdicion.ultimaEnCurso) + 1;
             siguienteFabricacion = formatearMiles(siguienteFabricacion);
             lote.value = siguienteFabricacion;
 
@@ -88,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return inicializarFormulario(modo, producto, datosEdicion);
             })
             .catch(error => console.log("Error: ", error));
+
     }
 
     // === MODO EDITAR ===

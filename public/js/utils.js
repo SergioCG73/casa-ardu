@@ -532,16 +532,7 @@ function recogerDatosAnalitica(producto) {
 // Si algo no es válido, muestra el aviso y devuelve null.
 // pesoFinal es opcional: solo se valida si se le pasa (modo transferir).
 function validarFormulario(pesoInicial, modo, pesoFinal = null) {
-    console.log("validarFormulario");
-    /*console.log(modo);
-    console.log(pesoInicial);
-    console.log(pesoFinal); debugger*/
-    /*if (pesoInicial.value.trim() === "") {
-        alert("Introduzca un peso inicial válido");
-        return null;
-    } */
-
-    //console.log(pesoInicial); debugger
+    console.log("validarFormulario");   
 
     if (pesoInicial.trim() === "") {
         alert("Introduzca un peso inicial válido");
