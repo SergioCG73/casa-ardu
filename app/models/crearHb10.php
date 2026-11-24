@@ -25,12 +25,15 @@ $operario = $_POST["operario"] ?? null;
 $numeroFabricacion = $_POST["fabricacion"] ?? null;
 $numeroFabricacion = str_replace(".", "", $numeroFabricacion);
 $producto = "HB10";
+$volumenAgua = $_POST["volumenAgua"] ?? null;
+$carbonatoCalcico = $_POST["carbonatoCalcico"] ?? null;
+$aguaDosificada = $_POST["aguaDosificada"] ?? 0;
 $notas = $_POST["notas"] ?? null;
 
 
 $insertSQL = "INSERT INTO fabricaciones_en_curso 
-                      (FechaInicio, PesoInicialMezclador, PesoFinalMezclador, NumeroFabricacion, Producto_id, Notas)
-                      VALUES (NOW(), :pesoInicial, :pesoFinal, :numeroProduccion, :producto, :notas)";
+                      (FechaInicio, PesoInicialMezclador, PesoFinalMezclador, NumeroFabricacion, Producto_id, Notas, Volumen_Agua, PesoInicialReactor, Sacas)
+                      VALUES (NOW(), :pesoInicial, :pesoFinal, :numeroProduccion, :producto, :notas, :volumen, :carbonato, :aguaDosificada)";
 
 $stmt = $conexion->prepare($insertSQL);
 $stmt->bindParam(":pesoInicial", $pesoInicialM511, PDO::PARAM_STR);
@@ -38,9 +41,10 @@ $stmt->bindParam(":pesoFinal", $pesoFinalM511, PDO::PARAM_STR);
 $stmt->bindParam(":numeroProduccion", $numeroFabricacion, PDO::PARAM_STR);
 $stmt->bindParam(":producto", $producto, PDO::PARAM_STR);
 $stmt->bindParam(":notas", $notas, PDO::PARAM_STR);
+$stmt->bindParam(":volumen", $volumenAgua, PDO::PARAM_INT);
+$stmt->bindParam(":carbonato", $carbonatoCalcico, PDO::PARAM_INT);
+$stmt->bindParam(":aguaDosificada", $aguaDosificada, PDO::PARAM_INT);
 $stmt->execute();
-
-
 
 echo json_encode([
     "ok" => true,
@@ -49,6 +53,9 @@ echo json_encode([
     "pesoFinalM511" => $pesoFinalM511,
     "operario" => $operario,
     "numeroFabricacion" => $numeroFabricacion,
-    "producto" => $producto
+    "producto" => $producto,
+    "volumenAgua" => $volumenAgua,
+    "carbonatoCalcico" => $carbonatoCalcico,
+    "aguaDosificada" => $aguaDosificada
 ]);
 exit;
