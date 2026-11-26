@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const m511_agua_kg = document.getElementById("m511_agua_kg");
     const m511_carbonato_kg = document.getElementById("m511_carbonato_kg");
     const m511_agua_dosificada = document.getElementById("m511_agua_dosificada");
+    const m512_peso_inicial = document.getElementById("m512_peso_inicial");
+    const m512_peso_final = document.getElementById("m512_peso_final");
+    const m512_p18_kg = document.getElementById("m512_p18_kg");
     const radioMezcladorM511 = document.querySelectorAll("input[name='chk_mezclador_ok']");
     const modo = localStorage.getItem("modo");
     const radiosMezclador = document.querySelectorAll("input[name='chk_mezclador_ok']");
@@ -27,6 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
     //datosTransferencia = JSON.parse(localStorage.getItem("datosTransferencia"));   
     let pesoInicialM511;
     let pesoFinalM511;
+    let pesoInicialM512;
+    let pesoFinalM512;
+    let p18Dosificado;
     let operador;
     let siguienteFabricacion;
     let volumenAgua;
@@ -42,13 +48,16 @@ document.addEventListener("DOMContentLoaded", () => {
     btnGuardarProduccion.addEventListener("click", () => {
         console.log("Se ha pulsado Guardar Producción");        
         pesoInicialM511 = m511_peso_inicial.value;
-        pesoFinalM511 = m511_peso_final.value;
-        operador = operario.options[operario.selectedIndex]?.text ?? "";
+        pesoFinalM511 = m511_peso_final.value;        
+        //operador = operario.options[operario.selectedIndex]?.text ?? "";
         observaciones = notas.value;
         console.log(m511_agua_kg); 
         volumenAgua = m511_agua_kg.value;
         carbonatoCalcico = m511_carbonato_kg.value;
-        aguaOK = m511_agua_dosificada.value;        
+        aguaOK = m511_agua_dosificada.value;  
+        pesoInicialM512 = m512_peso_inicial.value;        
+        pesoFinalM512 = m512_peso_final.value;      
+        p18Dosificado = m512_p18_kg.value;        
         
         /*console.log(pesoInicialM511);
         console.log(pesoFinalM511);
@@ -69,6 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
         datos.append("carbonatoCalcico", carbonatoCalcico);
         datos.append("aguaDosificada", aguaOK);
         datos.append("notas", observaciones)
+        datos.append("pesoInicialM512", pesoInicialM512);
+        datos.append("pesoFinalM512", pesoFinalM512);
+        datos.append("p18Dosificado", p18Dosificado);        
 
         fetch("index.php?c=HB10&a=crear", {
             method: "POST",
@@ -76,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(response => response.json())
             .then(json => {
-                console.log(json);
+                console.log(json); debugger
                 window.location.href = "index.php?c=Formulario&a=home"; 
             })
             .catch(error => {
@@ -89,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function inicializarFormulario(modo, producto, datosEdicion) {
         console.log("Inicializando formulario....");
         console.log(modo, producto, datosEdicion);                         //crear. hb10, datosEdicion
+        debugger
 
         let hoy = new Date();
 
@@ -106,6 +119,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             onCambioAguaDosificada();
         }
+    }
+
+    if (modo === "editar") {        
+        console.log(datosEdicion);
+        m511_peso_inicial.value = formatearMiles(datosEdicion.PesoInicialMezclador);
+        m511_peso_final.value = formatearMiles(datosEdicion.PesoFinalMezclador);
+        m511_agua_kg.value = formatearMiles(datosEdicion.Volumen_Agua);
+        m511_carbonato_kg.value = formatearMiles(datosEdicion.PesoInicialReactor);
+        m512_peso_inicial.value = formatearMiles(datosEdicion.PesoFinalReactor);
+        m512_peso_final.value = formatearMiles(datosEdicion.M512Final);
+        lote.value = formatearMiles(datosEdicion.NumeroFabricacion);
+        m512_p18_kg.value = formatearMiles(DatosEdicion.p18Dosificado)
+        
+        //operario.value = //Falta guardar el operario y devolverlo
+        //notas.value = // tengo que leer el registro de la base de datos porque no viene con los datos generados de la tabla de home
+
     }
 
     function aguaDosificada() {
@@ -154,5 +183,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // === MODO EDITAR ===
+
+    if (modo === "editar") {
+        console.log("modo editar...");
+        datosEditables = localStorage.getItem("datosEditables");     //datosEditables es un object
+        console.log(datosEditables);
+
+        inicializarFormulario(modo, producto, datosEditables);
+
+        debugger
+    }
 
 })

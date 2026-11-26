@@ -42,13 +42,13 @@
                                 name="operario"
                                 required>
                         </div>-->
-                        <div class="form-group full-width">
+                        <!--<div class="form-group full-width">
                             <label for="operario">Operario</label>
                             <select id="operario"
                                 name="operario"
                                 required>
                             </select>
-                        </div>
+                        </div>-->
                     </div>
                 </fieldset>
                 <!-- MEZCLADOR M511 -->
@@ -181,21 +181,16 @@
                                     id="m512_peso_final"
                                     name="m512_peso_final">
                             </div>
-
                         </div>
-
                     </div>
 
                     <div class="subsection">
-
                         <h3>Dosificación de materias primas</h3>
-
                         <div class="form-group">
                             <label for="m512_p18_kg">
                                 Cantidad de P18
                                 <span class="unit">(kg)</span>
                             </label>
-
                             <input type="number"
                                 step="0.01"
                                 min="0"
@@ -204,7 +199,6 @@
                         </div>
 
                         <div class="checkbox-group" style="margin-top:18px">
-
                             <label class="checkbox-item">
                                 <input type="checkbox"
                                     id="m512_p18_dosificado"

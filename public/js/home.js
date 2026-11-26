@@ -191,20 +191,20 @@ function activarEventosTabla(tabla) {
     tabla.addEventListener("click", e => {
         const iconoEditar = e.target.closest(".icono-editar, .icono-nota");
         if (iconoEditar) {
-            const datos = JSON.parse(iconoEditar.dataset.info);
-            console.log(datos); debugger
+            const datos = JSON.parse(iconoEditar.dataset.info);            
             localStorage.setItem("datosEditables", JSON.stringify(datos));
             localStorage.setItem("modo", "editar");
             if (datos.Producto_id === "Sulfato") {
                 window.location.href = "index.php?c=Formulario&a=sulfato";
             } else if (datos.Producto_id === "P18") {
                 window.location.href = "index.php?c=Formulario&a=p18";
-            } else if (datos.Producto_id === "Ferrico") {
-                console.log(datos);
+            } else if (datos.Producto_id === "Ferrico") {                
                 window.location.href = "index.php?c=Formulario&a=ferrico";
+            } else if (datos.Producto_id === "HB10") {
+                window.location.href = "index.php?c=Formulario&a=hb10";
             } else if (datos.Producto_id === "Filtrado") {
                 window.location.href = "index.php?c=Formulario&a=filtrado";
-            }
+            } 
             return;
         }
 
